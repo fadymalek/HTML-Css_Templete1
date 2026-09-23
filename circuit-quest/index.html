@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Circuit Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --ink:#0A0F2E; --ink2:#0F1540; --stage:#121A4B; --panel:#18215C; --panel2:#212B74; --line:#2E3A92;
+  --text:#F4F5FF; --soft:#B3BAEC; --dim:#737CBE;
+  --volt:#FFD23F; --mint:#3BE0A1; --coral:#FF6B7A; --sky:#5CC8FF; --copper:#E4833F; --wire:#6477FF;
+  --display:'Baloo 2','Trebuchet MS','Comic Sans MS',system-ui,sans-serif;
+  --body:'Nunito','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;color:var(--text);font-family:var(--body);font-size:17px;line-height:1.45;
+  background-color:var(--ink);
+  background-image:
+    radial-gradient(900px 520px at 88% -8%, rgba(100,119,255,.24), transparent 62%),
+    radial-gradient(760px 520px at -12% 108%, rgba(59,224,161,.10), transparent 60%),
+    linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+  background-size:auto,auto,32px 32px,32px 32px;
+  background-attachment:fixed;
+  -webkit-tap-highlight-color:transparent;
+}
+a{color:inherit}
+button{font:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:18px 56px}
+:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;font-family:var(--display);font-weight:800;font-size:1.15rem;
+  border:0;border-radius:999px;padding:.5em 1.4em;min-height:52px;cursor:pointer;text-decoration:none;
+  background:var(--panel2);color:var(--text);box-shadow:inset 0 -4px 0 rgba(0,0,0,.28);transition:transform .12s ease, filter .12s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn.primary{background:var(--volt);color:#211a00}
+.btn.ghost{background:transparent;border:2px solid var(--line);box-shadow:none}
+.btn.small{font-size:1rem;min-height:44px;padding:.35em 1.1em}
+.iconbtn{flex:none;width:48px;height:48px;border-radius:50%;border:2px solid var(--line);background:var(--panel);color:var(--text);display:grid;place-items:center;cursor:pointer}
+.iconbtn svg{width:24px;height:24px;fill:currentColor}
+
+/* ---------- map ---------- */
+.maphead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:800;font-size:1.2rem;letter-spacing:.02em}
+.logo svg{width:28px;height:28px;fill:var(--volt);filter:drop-shadow(0 0 8px rgba(255,210,63,.6))}
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:32px;align-items:center;padding-block:26px 34px}
+.kicker{margin:0 0 6px;font-weight:800;font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mint)}
+.brand{font-family:var(--display);font-weight:800;font-size:clamp(3rem,8vw,5.2rem);line-height:.9;margin:0;letter-spacing:-.01em}
+.brand .q{color:var(--volt);text-shadow:0 0 28px rgba(255,210,63,.5)}
+.lede{color:var(--soft);font-size:1.15rem;max-width:36ch;margin:.8em 0 1.3em;font-weight:700}
+.labcell{background:linear-gradient(180deg,var(--panel2),var(--panel));border:2px solid var(--line);border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.lc-top{display:flex;gap:12px;align-items:center}
+.lc-top .volty{width:74px;height:74px;flex:none}
+.lc-top p{margin:0;font-weight:700;color:var(--soft)}
+.lc-top b{color:var(--text)}
+.bigcell{display:flex;align-items:center}
+.bc-body{flex:1;height:64px;border:4px solid var(--soft);border-radius:16px;padding:5px;position:relative;overflow:hidden;background:var(--ink2)}
+.bc-fill{height:100%;border-radius:9px;background:linear-gradient(90deg,var(--mint),var(--volt));box-shadow:0 0 22px rgba(255,210,63,.45);min-width:6px;transition:width .8s ease}
+.bc-ticks{position:absolute;inset:5px;background:repeating-linear-gradient(90deg,transparent 0 calc(100%/8 - 3px),var(--ink2) calc(100%/8 - 3px) calc(100%/8))}
+.bc-nub{width:12px;height:28px;background:var(--soft);border-radius:0 6px 6px 0}
+.bc-cap{display:flex;justify-content:space-between;font-weight:800;color:var(--soft);font-size:.95rem}
+.bc-cap b{color:var(--volt);font-family:var(--display);font-size:1.3rem}
+.sec{font-family:var(--display);font-size:1.6rem;margin:0 0 14px}
+.missions{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.mcard{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:24px;background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:2px solid var(--line);text-decoration:none;transition:transform .15s ease,border-color .15s}
+.mcard:hover{transform:translateY(-4px);border-color:var(--volt)}
+.mtop{display:flex;justify-content:space-between;align-items:center}
+.mnum{font-family:var(--display);font-weight:800;font-size:1.2rem;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--ink2);border:2px solid var(--line)}
+.mcard.done .mnum{background:var(--volt);color:#211a00;border-color:var(--volt);box-shadow:0 0 18px rgba(255,210,63,.5)}
+.diff{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.dbat{display:inline-flex;gap:2px;padding:2px;border:2px solid var(--soft);border-radius:5px;position:relative;margin-right:4px}
+.dbat::after{content:"";position:absolute;right:-6px;top:50%;width:3px;height:7px;transform:translateY(-50%);background:var(--soft);border-radius:0 2px 2px 0}
+.dbat i{width:6px;height:12px;border-radius:1px;background:rgba(255,255,255,.1)}
+.dbat i.on{background:var(--dc)}
+.mname{font-family:var(--display);font-weight:800;font-size:1.45rem;line-height:1.1;margin:0}
+.mdesc{color:var(--soft);margin:0;font-size:.98rem;font-weight:700;flex:1}
+.mfoot{display:flex;justify-content:space-between;align-items:center}
+.bolts{display:flex;gap:2px}
+.bolt{width:24px;height:24px;fill:rgba(255,255,255,.14)}
+.bolt.on{fill:var(--volt);filter:drop-shadow(0 0 5px rgba(255,210,63,.6))}
+.play{font-family:var(--display);font-weight:800;color:var(--volt);font-size:1.1rem}
+.foot{color:var(--dim);font-weight:700;font-size:.92rem;margin-top:28px;max-width:70ch}
+.foot code{color:var(--soft);background:var(--panel);padding:1px 6px;border-radius:6px}
+
+/* ---------- level ---------- */
+.lvhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.lvtitle{flex:1;min-width:180px}
+.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.lvtitle h1{font-family:var(--display);font-size:clamp(1.6rem,4vw,2.3rem);margin:0;line-height:1.05}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dots i{width:14px;height:14px;border-radius:50%;background:var(--panel2);border:2px solid var(--line)}
+.dots i.done{background:var(--mint);border-color:var(--mint)}
+.dots i.now{background:var(--volt);border-color:var(--volt);box-shadow:0 0 10px rgba(255,210,63,.7)}
+.goal{font-family:var(--display);font-size:clamp(1.12rem,2.6vw,1.38rem);font-weight:700;line-height:1.3;margin:16px 0 12px;text-wrap:balance}
+.goal b{color:var(--volt)}
+.goal-s{display:block;font-family:var(--body);font-size:.95rem;color:var(--soft);font-weight:700;margin-top:4px}
+.stage{background:var(--stage);border:3px solid var(--line);border-radius:26px;overflow:hidden;position:relative;
+  box-shadow:0 22px 50px rgba(0,0,0,.35);transition:border-color .25s}
+.stage.good{border-color:var(--mint)} .stage.bad{border-color:var(--coral)} .stage.warn{border-color:var(--volt)}
+.stage.bare{background:none;border:0;box-shadow:none;overflow:visible;border-radius:0}
+svg.board{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}
+svg.board.drag{touch-action:none}
+.talk{display:flex;gap:12px;align-items:center;margin-top:14px}
+.talk .volty{flex:none;width:68px;height:68px}
+.bubble{position:relative;flex:1;background:var(--panel);border:2px solid var(--line);border-radius:18px;padding:12px 16px;
+  font-size:1.08rem;font-weight:700;min-height:58px;display:flex;align-items:center;transition:border-color .2s}
+.bubble::before{content:"";position:absolute;left:-10px;top:50%;width:16px;height:16px;background:var(--panel);border-left:2px solid;border-bottom:2px solid;border-color:inherit;transform:translateY(-50%) rotate(45deg)}
+.bubble.good{border-color:var(--mint)} .bubble.bad{border-color:var(--coral)} .bubble.warn{border-color:var(--volt)}
+.tray{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:14px}
+.tray:empty,.actions:empty{display:none}
+.part{touch-action:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 8px 10px;border-radius:20px;border:3px solid var(--line);
+  background:var(--panel);color:var(--text);cursor:grab;transition:transform .12s,border-color .12s;width:136px}
+.part:hover{transform:translateY(-3px);border-color:var(--soft)}
+.part.sel{border-color:var(--volt);box-shadow:0 0 0 4px rgba(255,210,63,.25)}
+.part.lifted{opacity:.3}
+.part .icon{display:block;width:116px;height:92px;background:var(--stage);border-radius:14px}
+.part .icon svg{width:100%;height:100%;display:block}
+.pname{font-family:var(--display);font-weight:800;font-size:1rem;line-height:1.1;text-align:center}
+.pname small{display:block;font-family:var(--body);font-size:.78rem;color:var(--soft);font-weight:700;margin-top:2px}
+.part.tool{width:170px}
+.part.tool .icon{width:150px}
+.drag-ghost{position:fixed;left:0;top:0;margin:0;z-index:50;pointer-events:none;transform:scale(1.06) rotate(-3deg);filter:drop-shadow(0 14px 22px rgba(0,0,0,.5));opacity:.95}
+.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.traynote{color:var(--soft);font-weight:700;margin:0}
+
+/* mission 1 cards */
+.cards{display:grid;gap:14px;grid-template-columns:repeat(4,1fr)}
+.cards.six{grid-template-columns:repeat(3,1fr)}
+.ccard{position:relative;display:flex;flex-direction:column;gap:2px;padding:6px 6px 10px;background:var(--stage);border:3px solid var(--line);border-radius:22px;color:var(--text);cursor:pointer;text-align:center;transition:transform .12s,border-color .15s}
+.ccard:hover:not(:disabled){transform:translateY(-3px)}
+.ccard:disabled{cursor:default}
+.ccard.picked{border-color:var(--volt);box-shadow:0 0 0 4px rgba(255,210,63,.18)}
+.ccard.right{border-color:var(--mint)} .ccard.wrong{border-color:var(--coral)} .ccard.missed{border-color:var(--volt);border-style:dashed}
+.cnum{position:absolute;left:10px;top:8px;font-family:var(--display);font-weight:800;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--panel2);font-size:1rem}
+.ccard.picked .cnum{background:var(--volt);color:#211a00}
+.cap{font-weight:800;font-size:.95rem;line-height:1.25;min-height:2.5em;padding:0 8px;color:var(--soft)}
+.ccard.right .cap b{color:var(--mint)} .ccard.wrong .cap b{color:var(--coral)} .ccard.missed .cap b{color:var(--volt)}
+@media (max-width:760px){.cards,.cards.six{grid-template-columns:repeat(2,1fr)}}
+
+/* mission 2 */
+.det{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:16px;align-items:stretch}
+.det-mid{display:flex;flex-direction:column;align-items:center;gap:12px}
+.bin{border-radius:26px;border:3px dashed;min-height:280px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 12px;color:var(--text);cursor:pointer;transition:transform .15s, background .15s}
+.bin.cond{border-color:var(--mint);background:rgba(59,224,161,.07)}
+.bin.ins{border-color:var(--coral);background:rgba(255,107,122,.07)}
+.bin.over,.bin:hover{transform:scale(1.03)}
+.bin.cond.over{background:rgba(59,224,161,.18)} .bin.ins.over{background:rgba(255,107,122,.18)}
+.bin-h{font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1.1}
+.bin.cond .bin-h{color:var(--mint)} .bin.ins .bin-h{color:var(--coral)}
+.bin-s{color:var(--soft);font-weight:800;font-size:.95rem}
+.bin-items{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:1.9rem;margin-top:auto;padding-top:12px}
+.tester{width:100%;max-width:360px;background:var(--stage);border:3px solid var(--line);border-radius:22px;overflow:hidden;transition:border-color .15s}
+.tester.over{border-color:var(--volt)}
+.token{touch-action:none;cursor:grab;background:var(--panel2);border:3px solid var(--volt);border-radius:24px;padding:8px 26px 12px;display:flex;flex-direction:column;align-items:center;color:var(--text);box-shadow:0 12px 26px rgba(0,0,0,.35);min-width:180px}
+.token .te{font-size:4rem;line-height:1.15}
+.token .tn{font-family:var(--display);font-weight:800;font-size:1.25rem}
+.token.shake{animation:shake .45s}
+.token.lifted{opacity:.3}
+@media (max-width:760px){.det{grid-template-columns:1fr 1fr}.det-mid{grid-column:1/-1;order:-1}.bin{min-height:170px}}
+
+/* mission 8 */
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;width:100%}
+.opt{min-height:56px;border-radius:16px;border:2px solid var(--line);background:var(--panel);color:var(--text);font-family:var(--display);font-weight:700;font-size:1.05rem;cursor:pointer;padding:8px 14px;text-align:left;transition:border-color .15s, transform .12s}
+.opt:hover:not(:disabled){border-color:var(--volt);transform:translateY(-2px)}
+.opt:disabled{cursor:default}
+.opt.wrong{border-color:var(--coral);opacity:.55;text-decoration:line-through}
+.opt.right{border-color:var(--mint);background:rgba(59,224,161,.15)}
+
+/* win overlay */
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(6,9,30,.72);backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px}
+.wincard{background:linear-gradient(180deg,var(--panel2),var(--panel));border:3px solid var(--volt);border-radius:30px;padding:26px 24px;max-width:440px;width:100%;text-align:center;box-shadow:0 0 60px rgba(255,210,63,.25);animation:popin .45s cubic-bezier(.2,1.6,.4,1)}
+.wincard .volty{width:96px;height:96px}
+.wincard h2{font-family:var(--display);font-size:2.2rem;margin:4px 0 6px;line-height:1}
+.wincard p{color:var(--soft);font-weight:700;margin:10px 0 0}
+.winbolts{display:flex;justify-content:center;gap:8px}
+.winbolts .bolt{width:52px;height:52px}
+.winbolts .bolt.on{animation:popin .5s both}
+.winbolts .bolt:nth-child(2){animation-delay:.15s}.winbolts .bolt:nth-child(3){animation-delay:.3s}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+
+/* mascot */
+.volty{animation:bob 3.2s ease-in-out infinite}
+
+/* ---------- SVG parts ---------- */
+.w-out{fill:none;stroke:#060920;stroke-width:17;stroke-linecap:round;stroke-linejoin:round}
+.w-in{fill:none;stroke:var(--wire);stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
+.w-red{fill:none;stroke:#FF4D64;stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
+.w-blue{fill:none;stroke:#3FA9FF;stroke-width:10;stroke-linecap:round;stroke-linejoin:round}
+.flow{fill:none;stroke:#FFF0A8;stroke-width:5;stroke-linecap:round;stroke-dasharray:1 23;animation:flow .8s linear infinite}
+.flow.rev{animation-direction:reverse}
+.cut{fill:var(--stage)}
+.joint{fill:#D5D9F2}
+.leg{fill:none;stroke:#D5D9F2;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}
+.leg.big{stroke-width:9}
+.holder{fill:#394282;stroke:#5463C4;stroke-width:2}
+.screw{fill:#B9BDD8}
+.glass{fill:rgba(255,255,255,.07);stroke:rgba(255,255,255,.55);stroke-width:2.5}
+.glass.lit{stroke:#fff}
+.fil{fill:none;stroke:#7D82A8;stroke-width:2.5;stroke-linejoin:round}
+.fil.lit{stroke:#fff}
+.bat-body{fill:#262F78;stroke:#4B58BD;stroke-width:3}
+.bt-p{font:800 26px var(--display);fill:#2a2000}
+.bt-m{font:800 30px var(--display);fill:var(--sky)}
+.bt-v{font:800 17px var(--display);fill:#fff}
+.res{fill:#EAD3A8;stroke:#B8976A;stroke-width:2.5}
+.shield{fill:var(--mint);stroke:#0d5a3f;stroke-width:1.5}
+.sw-base{fill:#232B6E;stroke:#3F4AA6;stroke-width:2}
+.lever{stroke:#E8EBFF;stroke-width:7;stroke-linecap:round}
+.knob{fill:var(--coral)}
+.tip{fill:var(--copper)}
+.socket{fill:rgba(255,210,63,.06);stroke:var(--volt);stroke-width:3;stroke-dasharray:8 7;animation:pulse 1.6s ease-in-out infinite}
+.socket-q{font:800 28px var(--display);fill:var(--volt)}
+.socket-q.sm{font-size:17px}
+.probe-e{font-size:40px}
+.hit{fill:transparent;transition:fill .15s}
+.slot.tap{cursor:pointer}
+.slot.tap:hover .hit,.hit.over{fill:rgba(255,210,63,.13)}
+.ring{fill:none;stroke:var(--coral);stroke-width:5;animation:ringp 1s ease-in-out infinite}
+.ring.good{stroke:var(--mint)}
+.sparks path{fill:none;stroke:#FFE58A;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round;animation:flick .16s steps(2) infinite}
+.sparks path:nth-child(2){animation-delay:.08s}
+.smoke circle{fill:rgba(170,170,190,.5);animation:smoke 1.8s ease-out infinite}
+.smoke circle:nth-child(2){animation-delay:.6s}.smoke circle:nth-child(3){animation-delay:1.2s}
+.waves path{fill:none;stroke:var(--sky);stroke-width:4;stroke-linecap:round;animation:wave .8s ease-out infinite}
+.waves path:nth-child(2){animation-delay:.25s}.waves path:nth-child(3){animation-delay:.5s}
+.legtxt{font:800 22px var(--display);fill:var(--soft)}
+.pad{fill:rgba(255,255,255,.05);stroke:rgba(255,255,255,.55);stroke-width:3;stroke-dasharray:6 6;animation:pulse 1.4s ease-in-out infinite}
+.wend{stroke:#fff;stroke-width:4;cursor:grab}
+.wend.red{fill:#FF4D64} .wend.blue{fill:#3FA9FF}
+.wend.idle{animation:pulse 1.2s ease-in-out infinite}
+.flipb{cursor:pointer}
+.flipc{fill:var(--volt);stroke:#211a00;stroke-width:2}
+.flipi{fill:none;stroke:#211a00;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.tag-t{font:800 17px var(--display);fill:#141a40}
+.swl{font:800 16px var(--display);fill:var(--soft)}
+.swg{cursor:pointer}
+.swg:hover .hit{fill:rgba(255,210,63,.13)}
+.g-t{font:800 17px var(--display);fill:var(--soft)}
+.g-l{font:800 15px var(--display)}
+.needle{stroke:#fff;stroke-width:6;stroke-linecap:round}
+.plus-mark{font:800 34px var(--display);fill:#FF4D64}
+
+@keyframes flow{to{stroke-dashoffset:-24}}
+@keyframes pulse{50%{opacity:.45}}
+@keyframes ringp{50%{stroke-opacity:.25}}
+@keyframes flick{50%{opacity:.15}}
+@keyframes smoke{from{transform:translateY(0);opacity:.9}to{transform:translateY(-34px);opacity:0}}
+@keyframes wave{from{opacity:1}to{opacity:.05}}
+@keyframes bob{50%{transform:translateY(-4px)}}
+@keyframes shake{20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+@keyframes popin{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){
+  .volty,.socket,.pad,.wend.idle,.ring,.sparks path,.smoke circle,.waves path{animation:none}
+  .flow{animation-duration:3s!important}
+  .wincard,.winbolts .bolt.on{animation:none}
+}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;gap:22px}
+  .talk .volty{width:54px;height:54px}
+  .bubble{font-size:1rem}
+  .part{width:118px}.part .icon{width:98px;height:78px}
+  .part.tool{width:150px}.part.tool .icon{width:130px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const app = $('#app');
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const clone = o => JSON.parse(JSON.stringify(o));
+
+/* ================= storage ================= */
+const Store = {
+  key: 'circuitQuest.v1',
+  get() { try { return JSON.parse(localStorage.getItem(this.key)) || {}; } catch (e) { return {}; } },
+  set(d) { try { localStorage.setItem(this.key, JSON.stringify(d)); } catch (e) {} }
+};
+const getStars = () => Store.get().stars || {};
+function saveStars(n, s) { const d = Store.get(); d.stars = d.stars || {}; d.stars[n] = Math.max(d.stars[n] || 0, s); Store.set(d); }
+
+/* ================= sound ================= */
+const Snd = {
+  ctx: null, muted: !!Store.get().muted,
+  ac() {
+    if (this.muted) return null;
+    if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    return this.ctx;
+  },
+  tone(f, d, { type = 'sine', v = .12, at = 0, to = null } = {}) {
+    const c = this.ac(); if (!c) return;
+    const t = c.currentTime + at, o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(to, t + d);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v, t + .015); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+    o.connect(g).connect(c.destination); o.start(t); o.stop(t + d + .05);
+  },
+  noise(d, v = .2) {
+    const c = this.ac(); if (!c) return;
+    const len = c.sampleRate * d | 0, buf = c.createBuffer(1, len, c.sampleRate), ch = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * (1 - i / len) ** 2;
+    const s = c.createBufferSource(), g = c.createGain(); s.buffer = buf; g.gain.value = v; s.connect(g).connect(c.destination); s.start();
+  }
+};
+function sfx(n) {
+  switch (n) {
+    case 'tap': Snd.tone(660, .08, { type: 'triangle', v: .08 }); break;
+    case 'pick': Snd.tone(520, .1, { type: 'triangle', v: .08, to: 780 }); break;
+    case 'drop': Snd.tone(320, .12, { type: 'triangle', v: .1, to: 190 }); break;
+    case 'click': Snd.tone(1400, .035, { type: 'square', v: .05 }); break;
+    case 'good': [523, 659, 784].forEach((f, i) => Snd.tone(f, .18, { type: 'triangle', v: .12, at: i * .09 })); break;
+    case 'bad': Snd.tone(220, .28, { type: 'sawtooth', v: .06, to: 140 }); break;
+    case 'on': Snd.tone(440, .22, { v: .1, to: 880 }); break;
+    case 'pop': Snd.noise(.4, .35); Snd.tone(170, .3, { type: 'square', v: .08, to: 50 }); break;
+    case 'zap': Snd.noise(.09, .12); break;
+    case 'buzz': for (let i = 0; i < 3; i++) Snd.tone(1150, .18, { type: 'square', v: .04, at: i * .28 }); break;
+    case 'win': [523, 659, 784, 1047].forEach((f, i) => Snd.tone(f, .3, { type: 'triangle', v: .13, at: i * .12 })); Snd.tone(1047, .6, { v: .08, at: .5 }); break;
+  }
+}
+
+/* ================= confetti ================= */
+function confetti() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv = $('#confetti'), c = cv.getContext('2d'), dpr = devicePixelRatio || 1, W = innerWidth, H = innerHeight;
+  cv.width = W * dpr; cv.height = H * dpr; c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const cols = ['#FFD23F', '#3BE0A1', '#5CC8FF', '#FF6B7A', '#FFFFFF'];
+  const ps = Array.from({ length: 160 }, () => ({ x: W / 2 + (Math.random() - .5) * 240, y: H * .4, vx: (Math.random() - .5) * 16, vy: -Math.random() * 15 - 5, r: Math.random() * 7 + 5, c: cols[Math.random() * 5 | 0], rot: Math.random() * 6, vr: (Math.random() - .5) * .3 }));
+  const t0 = performance.now();
+  (function f(t) {
+    c.clearRect(0, 0, W, H);
+    ps.forEach(p => { p.vy += .35; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr; c.save(); c.translate(p.x, p.y); c.rotate(p.rot); c.fillStyle = p.c; c.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); c.restore(); });
+    if (t - t0 < 3200) requestAnimationFrame(f); else c.clearRect(0, 0, W, H);
+  })(t0);
+}
+
+/* ================= icons & mascot ================= */
+const BOLT = on => `<svg viewBox="0 0 24 24" class="bolt${on ? ' on' : ''}" aria-hidden="true"><path d="M13.5 1.5 4 13.5h6.5L9 22.5l10-12.5h-6.6z"/></svg>`;
+const SPK_ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const SPK_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const soundBtn = () => `<button class="iconbtn" data-snd aria-label="${Snd.muted ? 'Turn sound on' : 'Turn sound off'}">${Snd.muted ? SPK_OFF : SPK_ON}</button>`;
+
+function volty(mood = 'happy') {
+  const mouth = {
+    happy: '<path d="M31 51 Q40 60 49 51" stroke="#3a2600" stroke-width="3.5" fill="none" stroke-linecap="round"/>',
+    think: '<path d="M34 54 H46" stroke="#3a2600" stroke-width="3.5" stroke-linecap="round"/>',
+    oops: '<path d="M30 56 q5 -5 10 0 t10 0" stroke="#3a2600" stroke-width="3.5" fill="none" stroke-linecap="round"/>',
+    wow: '<ellipse cx="40" cy="54" rx="6" ry="7" fill="#3a2600"/>'
+  }[mood] || '';
+  const eyeY = mood === 'think' ? 40 : 43;
+  return `<svg class="volty" viewBox="0 0 80 80" aria-hidden="true">
+    <path d="M47 1 L29 25 H40 L33 38 L55 13 H43 L50 1 Z" fill="#FFE68A"/>
+    <circle cx="40" cy="47" r="27" fill="#FFD23F"/>
+    <path d="M18 40 A24 24 0 0 1 40 22" stroke="#FFF1B3" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="31" cy="${eyeY}" rx="4" ry="5.5" fill="#2a1c00"/><ellipse cx="49" cy="${eyeY}" rx="4" ry="5.5" fill="#2a1c00"/>
+    <circle cx="32.5" cy="${eyeY - 2}" r="1.5" fill="#fff"/><circle cx="50.5" cy="${eyeY - 2}" r="1.5" fill="#fff"/>
+    <circle cx="23" cy="52" r="4.5" fill="#FF9A6B" opacity=".55"/><circle cx="57" cy="52" r="4.5" fill="#FF9A6B" opacity=".55"/>
+    ${mouth}</svg>`;
+}
+
+/* ================= SVG circuit parts ================= */
+const DEFS = `<defs>
+ <radialGradient id="gY"><stop offset="0" stop-color="#FFF7CF" stop-opacity=".95"/><stop offset=".35" stop-color="#FFD23F" stop-opacity=".5"/><stop offset="1" stop-color="#FFD23F" stop-opacity="0"/></radialGradient>
+ <radialGradient id="gR"><stop offset="0" stop-color="#FFE0E4" stop-opacity=".95"/><stop offset=".35" stop-color="#FF4D64" stop-opacity=".5"/><stop offset="1" stop-color="#FF4D64" stop-opacity="0"/></radialGradient>
+ <radialGradient id="gG"><stop offset="0" stop-color="#DDFFF1" stop-opacity=".95"/><stop offset=".35" stop-color="#3BE0A1" stop-opacity=".5"/><stop offset="1" stop-color="#3BE0A1" stop-opacity="0"/></radialGradient>
+</defs>`;
+const LEDC = {
+  red: { on: '#FF4D64', off: 'rgba(255,77,100,.28)', rim: '#B8324A', g: 'gR' },
+  green: { on: '#3BE0A1', off: 'rgba(59,224,161,.25)', rim: '#1F9E70', g: 'gG' },
+  yellow: { on: '#FFD23F', off: 'rgba(255,210,63,.25)', rim: '#B8921C', g: 'gY' }
+};
+const cut = (x1, x2, h = 20) => `<rect class="cut" x="${x1}" y="${-h / 2}" width="${x2 - x1}" height="${h}"/>`;
+// Content that stays upright however the part is rotated or flipped
+const upr = (x, y, inner, s) => `<g transform="translate(${x} ${y}) scale(${s.d || 1} 1) rotate(${-(s.a || 0)})">${inner}</g>`;
+const lbl = (x, y, t, cls, s) => upr(x, y, `<text class="${cls}" text-anchor="middle" dominant-baseline="central">${t}</text>`, s);
+const SMOKE = '<g class="smoke"><circle cx="-6" cy="-70" r="9"/><circle cx="8" cy="-78" r="12"/><circle cx="-2" cy="-90" r="14"/></g>';
+const SPARKS = '<g class="sparks"><path d="M-22 -8 l-6 -14 l9 3 l-5 -15"/><path d="M8 -8 l6 -13 l-9 1 l7 -15"/><path d="M-6 8 l-5 13 l9 -3 l-4 13"/></g>';
+const wirePath = d => `<path class="w-out" d="${d}"/><path class="w-in" d="${d}"/>`;
+
+const PART = {
+  wire: () => '',
+  battery(p, s) {
+    const v = p.volts || ({ 1: '3V', 2: '6V', 3: '9V' })[p.level || 1];
+    let x = '';
+    if (p.conn === 'looseNeg') x = cut(-76, -46) + wirePath('M-76 0 C-62 0 -62 24 -54 30') + '<circle cx="-54" cy="30" r="6" class="tip"/>';
+    if (p.conn === 'loosePos') x = cut(46, 76) + wirePath('M76 0 C62 0 62 24 54 30') + '<circle cx="54" cy="30" r="6" class="tip"/>';
+    if (p.conn === 'bothPos') x = cut(-76, -46) + wirePath('M-76 0 V44 H64 V6');
+    if (p.conn === 'bothNeg') x = cut(46, 76) + wirePath('M76 0 V44 H-64 V6');
+    return x + `<rect x="-46" y="-26" width="86" height="52" rx="12" class="bat-body"/>
+      <path d="M16 -26 H28 a12 12 0 0 1 12 12 V14 a12 12 0 0 1 -12 12 H16 Z" fill="#FFD23F"/>
+      <rect x="40" y="-11" width="8" height="22" rx="3" fill="#FFD23F"/>` +
+      lbl(28, 1, '+', 'bt-p', s) + lbl(-33, 1, '−', 'bt-m', s) + lbl(-8, 1, v, 'bt-v', s);
+  },
+  bulb(p, s) {
+    const on = s.on, b = s.bright ?? 1;
+    return cut(-20, 20) + (on ? `<circle cx="0" cy="-52" r="${46 + 40 * b}" fill="url(#gY)" opacity="${.3 + .7 * b}"/>` : '') +
+      `<rect x="-26" y="-12" width="52" height="22" rx="8" class="holder"/>
+       <circle cx="-18" cy="0" r="4" class="joint"/><circle cx="18" cy="0" r="4" class="joint"/>
+       <path d="M-13 -12 V-25 H13 V-12 Z" class="screw"/><path d="M-13 -16 H13 M-13 -21 H13" stroke="#8C90AE" stroke-width="1.5"/>
+       <path d="M-13 -25 C-13 -33 -28 -38 -28 -54 A28 28 0 1 1 28 -54 C28 -38 13 -33 13 -25 Z" class="glass${on ? ' lit' : ''}"${on ? ` style="fill:rgba(255,236,150,${.35 + .6 * b})"` : ''}/>
+       <path d="M-7 -25 L-6 -50 Q0 -60 6 -50 L7 -25" class="fil${on ? ' lit' : ''}"/>`;
+  },
+  bulbC(p, s) { // centred bulb used in the switch circuits
+    const on = s.on, b = s.bright ?? 1;
+    return cut(-30, 30) + (on ? `<circle r="${40 + 44 * b}" fill="url(#gY)" opacity="${.25 + .75 * b}"/>` : '') +
+      `<circle r="28" class="glass${on ? ' lit' : ''}"${on ? ` style="fill:rgba(255,236,150,${.3 + .65 * b})"` : ''}/>
+       <path d="M-30 0 H-13 M30 0 H13" stroke="#8C90AE" stroke-width="4"/>
+       <path d="M-13 0 q3 -10 6.5 0 t6.5 0 t6.5 0 t6.5 0" class="fil${on ? ' lit' : ''}"/>`;
+  },
+  led(p, s) {
+    const c = LEDC[p.color || 'red'], burnt = s.burnt, on = s.on && !burnt, b = s.bright ?? 1;
+    return cut(-10, 10) + (on ? `<circle cx="0" cy="-44" r="${34 + 50 * b}" fill="url(#${c.g})" opacity="${.2 + .8 * b}"/>` : '') +
+      `<path d="M-10 -26 V30 l-6 8" class="leg"/><path d="M10 -26 V13" class="leg"/>
+       <circle cx="-10" cy="0" r="5" class="joint"/><circle cx="10" cy="0" r="5" class="joint"/>
+       <rect x="-22" y="-32" width="44" height="8" rx="3" fill="${burnt ? '#3a3a48' : c.rim}"/>
+       <path d="M-17 -32 V-54 A17 17 0 0 1 17 -54 V-32 Z" fill="${burnt ? '#2f2f3a' : on ? c.on : c.off}" stroke="${burnt ? '#555' : on ? '#fff' : c.rim}" stroke-width="2.5"${on && b < .5 ? ` fill-opacity="${.35 + b}"` : ''}/>
+       <path d="M-9 -36 V-53 A9 9 0 0 1 -3 -61" stroke="rgba(255,255,255,.55)" stroke-width="3" fill="none" stroke-linecap="round"/>` +
+      (burnt ? '<path d="M-6 -62 l6 10 l-5 6 l7 9" stroke="#0b0b10" stroke-width="2.5" fill="none"/>' + SMOKE : '');
+  },
+  buzzer(p, s) {
+    const on = s.on;
+    return cut(-10, 10) + `<path d="M-10 0 V-22" stroke="#FF4D64" stroke-width="6" stroke-linecap="round"/>
+      <path d="M10 0 V-22" stroke="#0b0b10" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="-10" cy="0" r="5" class="joint"/><circle cx="10" cy="0" r="5" class="joint"/>
+      <circle cx="0" cy="-46" r="27" fill="#1d1d27" stroke="#4a4a5c" stroke-width="3"/><circle cx="0" cy="-46" r="7" fill="#07070b"/>` +
+      lbl(-15, -52, '+', 'plus-mark', s) +
+      (on ? '<g class="waves"><path d="M-18 -82 q18 -12 36 0"/><path d="M-26 -93 q26 -16 52 0"/><path d="M-34 -104 q34 -20 68 0"/></g>' : '');
+  },
+  resistor(p, s) {
+    const n = p.strength ?? 1; let sh = '';
+    for (let i = 0; i < n; i++) sh += `<path transform="translate(${(i - (n - 1) / 2) * 22} 0)" d="M0 -10 L9 -6.5 V1 C9 6.5 4.5 9.5 0 11 C-4.5 9.5 -9 6.5 -9 1 V-6.5 Z" class="shield"/>`;
+    return `<rect x="-32" y="-13" width="64" height="26" rx="13" class="res"/>
+      <rect x="-19" y="-13" width="6" height="26" fill="#7A4A21"/><rect x="-8" y="-13" width="6" height="26" fill="#1a1a1a"/>
+      <rect x="3" y="-13" width="6" height="26" fill="${['#1a1a1a', '#8B4513', '#E0433A', '#F08A24'][n] || '#E0433A'}"/><rect x="14" y="-13" width="5" height="26" fill="#D4AF37"/>` +
+      upr(0, -35, sh, s);
+  },
+  switch(p) {
+    return cut(-32, 32) + `<rect x="-44" y="-15" width="88" height="30" rx="15" class="sw-base"/>
+      <circle cx="-26" cy="0" r="7" class="joint"/><circle cx="26" cy="0" r="7" class="joint"/>` +
+      (p.closed ? '<path d="M-26 0 L26 0" class="lever"/><circle cx="26" cy="0" r="9" class="knob"/>'
+                : '<path d="M-26 0 L12 -34" class="lever"/><circle cx="12" cy="-34" r="9" class="knob"/>');
+  },
+  gap: () => cut(-34, 34) + '<rect x="-34" y="-6" width="10" height="12" rx="3" class="tip"/><rect x="24" y="-6" width="10" height="12" rx="3" class="tip"/>',
+  wood: () => cut(-44, 44) + `<rect x="-46" y="-14" width="92" height="28" rx="7" fill="#C98B4E" stroke="#8A5A2B" stroke-width="3"/>
+      <path d="M-36 -5 q20 -5 40 0 t30 0 M-38 6 q24 5 46 0 t26 -2" stroke="#8A5A2B" stroke-width="2" fill="none"/>`,
+  plastic: () => cut(-44, 44) + `<rect x="-46" y="-12" width="92" height="24" rx="12" fill="#7BD3F7" stroke="#3B9FD0" stroke-width="3"/>
+      <path d="M-28 -10 l-8 20 M-10 -10 l-8 20 M8 -10 l-8 20 M26 -10 l-8 20 M40 -8 l-6 16" stroke="#fff" stroke-opacity=".75" stroke-width="6"/>`,
+  eraser: () => cut(-42, 42) + `<rect x="-42" y="-14" width="84" height="28" rx="6" fill="#FF9BB3" stroke="#D86B88" stroke-width="3"/>
+      <path d="M-4 -14 H36 a6 6 0 0 1 6 6 V8 a6 6 0 0 1 -6 6 H-4 Z" fill="#4E7BFF"/>`,
+  patch: () => cut(-46, 46) + `<path d="M-40 0 H40" stroke="#060920" stroke-width="17" stroke-linecap="round"/>
+      <path d="M-40 0 H40" stroke="#8C9BFF" stroke-width="10" stroke-linecap="round"/>
+      <rect x="-50" y="-11" width="12" height="22" rx="4" fill="#B9BDD8"/><rect x="38" y="-11" width="12" height="22" rx="4" fill="#B9BDD8"/>`,
+  bare: (p, s) => cut(-38, 38) + `<rect x="-40" y="-5" width="80" height="10" rx="3" fill="#E4833F"/>
+      <path d="M-38 -2 H38 M-38 2 H38" stroke="#F7B27A" stroke-width="1.2"/>
+      <path d="M-38 -9 l-5 4 l5 3 l-5 3 l5 4 M38 -9 l5 4 l-5 3 l5 3 l-5 4" stroke="#6477FF" stroke-width="3" fill="none"/>` + (s.flowing ? SPARKS : ''),
+  taped: () => `<rect x="-34" y="-12" width="68" height="24" rx="5" fill="#1B1B24" stroke="#343444" stroke-width="2"/>
+      <path d="M-24 -12 l-6 24 M-10 -12 l-6 24 M4 -12 l-6 24 M18 -12 l-6 24 M32 -12 l-6 24" stroke="#343444" stroke-width="3"/>`,
+  empty: (p, s) => cut(-44, 44) + '<rect x="-50" y="-32" width="100" height="64" rx="16" class="socket"/>' + lbl(0, 1, '?', 'socket-q', s),
+  probe: (p, s) => cut(-36, 36) + '<circle r="34" class="socket"/>' + (p.item ? lbl(0, 3, p.item, 'probe-e', s) : lbl(0, 1, 'test', 'socket-q sm', s)),
+  wiggle(p, s) {
+    const d = 'M-100 0 C-80 0 -80 40 -60 40 S-40 -34 -20 -34 S0 40 20 40 S40 -34 60 -34 S80 0 100 0';
+    return cut(-100, 100) + wirePath(d) + (s.flowing ? `<path class="flow${s.rev ? ' rev' : ''}" d="${d}"/>` : '');
+  }
+};
+const TALL = ['bulb', 'led', 'buzzer'];
+
+/* ================= loop circuits: geometry, logic, drawing ================= */
+function geom(b) {
+  const { x0, y0, x1, y1 } = b, r = 28;
+  return {
+    path: `M${x0 + r} ${y0}H${x1 - r}A${r} ${r} 0 0 1 ${x1} ${y0 + r}V${y1 - r}A${r} ${r} 0 0 1 ${x1 - r} ${y1}H${x0 + r}A${r} ${r} 0 0 1 ${x0} ${y1 - r}V${y0 + r}A${r} ${r} 0 0 1 ${x0 + r} ${y0}Z`,
+    // edges are walked clockwise: top → right, right ↓, bottom ←, left ↑
+    at(e, f) {
+      if (e === 'T') return { x: x0 + (x1 - x0) * f, y: y0, a: 0 };
+      if (e === 'R') return { x: x1, y: y0 + (y1 - y0) * f, a: 90 };
+      if (e === 'B') return { x: x1 - (x1 - x0) * f, y: y1, a: 180 };
+      return { x: x0, y: y1 - (y1 - y0) * f, a: 270 };
+    }
+  };
+}
+const BAT = (o = {}) => Object.assign({ type: 'battery', edge: 'L', f: .5, dir: 1 }, o);
+const INSULATORS = ['wood', 'plastic', 'eraser'];
+
+// What happens when this loop is powered?  dir = +1 means current runs clockwise.
+function evalLoop(slots) {
+  const r = { status: 'works', culprit: -1, bright: 1, burnt: [], dir: 1 };
+  const bi = slots.findIndex(p => p.type === 'battery');
+  if (bi < 0) return { ...r, status: 'nopower' };
+  const bat = slots[bi]; r.dir = bat.dir || 1;
+  if (bat.conn && bat.conn !== 'both') return { ...r, status: 'open', culprit: bi };
+  for (let i = 0; i < slots.length; i++) {
+    const p = slots[i];
+    if (p.type === 'empty' || (p.type === 'probe' && !p.item)) return { ...r, status: 'empty', culprit: i };
+    if (p.type === 'gap') return { ...r, status: 'open', culprit: i };
+    if (p.type === 'switch' && !p.closed) return { ...r, status: 'switch', culprit: i };
+    if (INSULATORS.includes(p.type) || (p.type === 'probe' && !p.cond)) return { ...r, status: 'blocked', culprit: i };
+  }
+  for (let i = 0; i < slots.length; i++) {
+    const p = slots[i];
+    if ((p.type === 'led' || p.type === 'buzzer') && (p.dir || 1) !== r.dir) return { ...r, status: 'reversed', culprit: i };
+  }
+  const leds = []; slots.forEach((p, i) => { if (p.type === 'led') leds.push(i); });
+  if (leds.length) {
+    const str = slots.reduce((t, p) => t + (p.type === 'resistor' ? (p.strength ?? 1) : 0), 0), lv = bat.level || 1;
+    if (str < lv) return { ...r, status: 'burn', burnt: leds, culprit: leds[0] };
+    if (str > lv) return { ...r, status: 'dim', bright: str - lv === 1 ? .32 : .15 };
+  }
+  return r;
+}
+
+function loopSVG(o) {
+  const g = geom(o.box), res = o.res || evalLoop(o.slots), pw = o.powered !== false;
+  const flowing = pw && (res.status === 'works' || res.status === 'dim');
+  let s = `<svg class="board" viewBox="${o.vb || '0 0 1000 560'}" role="img" aria-label="${o.label || 'Electric circuit'}">${DEFS}` + wirePath(g.path);
+  if (flowing) s += `<path class="flow${res.dir < 0 ? ' rev' : ''}" style="animation-duration:${res.bright < .5 ? 1.9 : .8}s" d="${g.path}"/>`;
+  o.slots.forEach((p, i) => {
+    const { x, y, a } = g.at(p.edge, p.f), d = p.dir || 1;
+    const st = { a, d, on: flowing, bright: res.bright, flowing, rev: res.dir < 0, burnt: pw && res.status === 'burn' && res.burnt.includes(i) };
+    const tall = TALL.includes(p.type);
+    const hit = o.tap ? `<rect class="hit" x="-62" y="${tall ? -100 : -54}" width="124" height="${tall ? 144 : 108}" rx="18"/>` : '';
+    const badge = o.badges && p.flip ? `<g class="flipb" data-flip="${i}" transform="translate(0 60) rotate(${-a})"><title>Flip</title><circle r="18" class="flipc"/><path class="flipi" d="M-8 -4 H7 l-4 -4 M8 4 H-7 l4 4"/></g>` : '';
+    s += `<g class="slot${o.tap ? ' tap' : ''}" data-i="${i}" transform="translate(${x} ${y}) rotate(${a})">${hit}<g transform="scale(${d} 1)">${PART[p.type](p, st)}</g>${o.hl === i ? `<circle class="ring${o.ringGood ? ' good' : ''}" r="64"/>` : ''}${badge}</g>`;
+  });
+  return s + (o.extra || '') + '</svg>';
+}
+
+function partIcon(p) {
+  const d = p.dir || 1;
+  return `<svg viewBox="-70 -84 140 124" aria-hidden="true">${wirePath('M-66 0 H66')}<g transform="scale(${d} 1)">${PART[p.type](p, { a: 0, d })}</g></svg>`;
+}
+function toolIcon(id) {
+  return id === 'tape'
+    ? '<svg viewBox="-60 -40 120 80" aria-hidden="true"><path d="M6 18 H46 V32 H6 Z" fill="#1B1B24" stroke="#3a3a4c" stroke-width="2"/><circle r="30" fill="#1B1B24" stroke="#3a3a4c" stroke-width="3"/><circle r="12" fill="#121A4B" stroke="#3a3a4c" stroke-width="3"/><path d="M-20 -14 A24 24 0 0 1 14 -20" stroke="#55556e" stroke-width="3" fill="none"/></svg>'
+    : '<svg viewBox="-70 -40 140 80" aria-hidden="true"><path d="M-50 0 H50" stroke="#060920" stroke-width="17" stroke-linecap="round"/><path d="M-50 0 H50" stroke="#8C9BFF" stroke-width="10" stroke-linecap="round"/><rect x="-60" y="-11" width="12" height="22" rx="4" fill="#B9BDD8"/><rect x="48" y="-11" width="12" height="22" rx="4" fill="#B9BDD8"/></svg>';
+}
+
+function svgPt(svg, e) { return new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse()); }
+
+/* ================= drag or tap for tray items ================= */
+function pickTarget(list, x, y) {
+  let best = null, bd = Infinity;
+  for (const t of list) {
+    const r = t.getBoundingClientRect(), pad = 18;
+    if (x < r.left - pad || x > r.right + pad || y < r.top - pad || y > r.bottom + pad) continue;
+    const d = Math.hypot(x - (r.left + r.right) / 2, y - (r.top + r.bottom) / 2);
+    if (d < bd) { bd = d; best = t; }
+  }
+  return best;
+}
+function enableDrag(el, o) {
+  let st = null;
+  el.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    Snd.ac();
+    st = { x: e.clientX, y: e.clientY, id: e.pointerId, ghost: null, over: null };
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  el.addEventListener('pointermove', e => {
+    if (!st || e.pointerId !== st.id) return;
+    if (!st.ghost) {
+      if (Math.hypot(e.clientX - st.x, e.clientY - st.y) < 8) return;
+      const r = el.getBoundingClientRect(), gh = el.cloneNode(true);
+      gh.classList.add('drag-ghost'); gh.classList.remove('sel');
+      gh.style.width = r.width + 'px'; gh.style.height = r.height + 'px';
+      st.ox = st.x - r.left; st.oy = st.y - r.top; document.body.appendChild(gh); st.ghost = gh;
+      el.classList.add('lifted'); sfx('pick');
+    }
+    st.ghost.style.left = (e.clientX - st.ox) + 'px'; st.ghost.style.top = (e.clientY - st.oy) + 'px';
+    const t = pickTarget(o.targets(), e.clientX, e.clientY);
+    if (t !== st.over) { st.over && st.over.classList.remove('over'); st.over = t; t && t.classList.add('over'); }
+  });
+  const end = e => {
+    if (!st || e.pointerId !== st.id) return;
+    const s = st; st = null;
+    if (!s.ghost) return;
+    s.ghost.remove(); el.classList.remove('lifted'); s.over && s.over.classList.remove('over');
+    el._dragged = true; setTimeout(() => { el._dragged = false; }, 0);
+    if (s.over && e.type === 'pointerup') o.onDrop(s.over);
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+  el.addEventListener('click', () => { if (!el._dragged && o.onTap) o.onTap(); });
+}
+
+/* =====================================================================
+   MISSION 1 — Close the Loop
+   ===================================================================== */
+const MINI = { vb: '0 0 400 330', box: { x0: 60, y0: 95, x1: 340, y1: 295 } };
+const BULB_T = () => ({ type: 'bulb', edge: 'T', f: .5 });
+const L1K = {
+  ok:          { s: () => [BAT(), BULB_T()], why: 'Full loop from + to −.' },
+  wiggly:      { s: () => [BAT(), BULB_T(), { type: 'wiggle', edge: 'B', f: .5 }], why: 'A long, wiggly wire still makes a full loop!' },
+  switchOn:    { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }], why: 'The switch is closed, so the loop is complete.' },
+  switchOff:   { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: false }], why: 'The switch is open, so the loop is broken.' },
+  gapTop:      { s: () => [BAT(), BULB_T(), { type: 'gap', edge: 'R', f: .5 }], why: 'There is a gap in the wire.' },
+  gapBottom:   { s: () => [BAT(), BULB_T(), { type: 'gap', edge: 'B', f: .5 }], why: 'There is a gap in the wire.' },
+  twoGaps:     { s: () => [BAT(), BULB_T(), { type: 'gap', edge: 'R', f: .5 }, { type: 'gap', edge: 'B', f: .5 }], why: 'The wire is broken in two places.' },
+  loose:       { s: () => [BAT({ conn: 'looseNeg' }), BULB_T()], why: 'A wire is not touching the − side.' },
+  looseTop:    { s: () => [BAT({ conn: 'loosePos' }), BULB_T()], why: 'A wire is not touching the + side.' },
+  sameSide:    { s: () => [BAT({ conn: 'bothPos' }), BULB_T()], why: 'Both wires go to +. The − side needs a wire too!' },
+  sameSideNeg: { s: () => [BAT({ conn: 'bothNeg' }), BULB_T()], why: 'Both wires go to −. The + side needs a wire too!' },
+  wood:        { s: () => [BAT(), BULB_T(), { type: 'wood', edge: 'B', f: .5 }], why: 'Wood is an insulator. It blocks electricity.' }
+};
+function L1(ctx) {
+  const R = [
+    ['ok', 'gapTop', 'loose', 'switchOn'],
+    ['sameSide', 'ok', 'switchOff', 'gapBottom', 'wiggly', 'looseTop'],
+    ['wood', 'switchOn', 'sameSideNeg', 'twoGaps', 'wiggly', 'switchOff']
+  ];
+  ctx.stage.classList.add('bare');
+  let r = 0, kinds, picked, checked;
+  function start() {
+    kinds = shuffle(R[r]); picked = new Set(); checked = false;
+    ctx.dots(r); ctx.mood('');
+    ctx.goal('Tap <b>every</b> circuit where the bulb will light up. Then press <b>Check</b>.');
+    ctx.say(['Remember: electricity needs a full loop — out of the + side and back into the − side!',
+      'Trickier now. Look closely at both sides of each battery.',
+      'Last round! Look for anything that could block the road.'][r], 'think');
+    ctx.actions([{ label: 'Check', cls: 'primary', on: check }]);
+    draw();
+  }
+  function draw() {
+    ctx.stage.innerHTML = `<div class="cards${kinds.length > 4 ? ' six' : ''}">${kinds.map((k, i) => {
+      const sl = L1K[k].s(), res = evalLoop(sl), works = res.status === 'works', pk = picked.has(i);
+      let cls = '', cap = pk ? '<b>I think this one lights!</b>' : 'Tap to choose';
+      if (checked) {
+        if (pk && works) { cls = 'right'; cap = '<b>✓ Lights up!</b>'; }
+        else if (pk) { cls = 'wrong'; cap = `<b>✗ No light.</b> ${L1K[k].why}`; }
+        else if (works) { cls = 'missed'; cap = `<b>Missed!</b> ${L1K[k].why}`; }
+        else cap = `✓ ${L1K[k].why}`;
+      }
+      return `<button class="ccard${pk ? ' picked' : ''} ${cls}" data-i="${i}" aria-pressed="${pk}"${checked ? ' disabled' : ''}>
+        <span class="cnum">${'ABCDEF'[i]}</span>${loopSVG({ ...MINI, slots: sl, res, powered: checked, label: 'Circuit ' + 'ABCDEF'[i] })}
+        <span class="cap">${cap}</span></button>`;
+    }).join('')}</div>`;
+    $$('.ccard', ctx.stage).forEach(b => b.onclick = () => {
+      const i = +b.dataset.i; picked.has(i) ? picked.delete(i) : picked.add(i); sfx('tap'); draw();
+    });
+  }
+  function check() {
+    checked = true; let wrong = 0;
+    kinds.forEach((k, i) => { const w = evalLoop(L1K[k].s()).status === 'works'; if (w !== picked.has(i)) wrong++; });
+    for (let k = 0; k < wrong; k++) ctx.miss();
+    draw();
+    if (!wrong) { sfx('good'); ctx.mood('good'); ctx.say('Perfect! You found every complete loop.', 'wow', 'good'); }
+    else { sfx('bad'); ctx.mood('warn'); ctx.say(`${wrong} to look at again. Read the notes under each circuit to see why.`, 'oops', 'warn'); }
+    ctx.actions([{ label: r < R.length - 1 ? 'Next round ›' : 'Finish mission', cls: 'primary', on: () => { if (r < R.length - 1) { r++; start(); } else ctx.win(); } }]);
+  }
+  start();
+}
+
+/* =====================================================================
+   MISSION 2 — Conductor Detective
+   ===================================================================== */
+const ITEMS = [
+  { e: '🥄', n: 'Metal spoon', c: 1, f: 'Spoons are made of steel, and metals let electricity flow.' },
+  { e: '🔑', n: 'Key', c: 1, f: 'Keys are made of metal, so they conduct.' },
+  { e: '📎', n: 'Paper clip', c: 1, f: 'A paper clip is a bent piece of steel wire.' },
+  { e: '🔩', n: 'Steel bolt', c: 1, f: 'Steel is a metal, so it is a great conductor.' },
+  { e: '🔔', n: 'Brass bell', c: 1, f: 'Brass is a metal, so electricity passes through.' },
+  { e: '🥫', n: 'Tin can', c: 1, f: 'The can is made of metal, so it conducts.' },
+  { e: '🎈', n: 'Rubber balloon', c: 0, f: 'Rubber is an insulator. It blocks electricity.' },
+  { e: '🧦', n: 'Wool sock', c: 0, f: 'Cloth like wool does not let electricity through.' },
+  { e: '📄', n: 'Paper', c: 0, f: 'Dry paper is an insulator.' },
+  { e: '🥢', n: 'Wooden chopsticks', c: 0, f: 'Wood is an insulator.' },
+  { e: '📏', n: 'Plastic ruler', c: 0, f: 'Plastic is an insulator. That is why wires are covered in it!' },
+  { e: '🧸', n: 'Teddy bear', c: 0, f: 'Cloth and stuffing are insulators.' }
+];
+function L2(ctx) {
+  const q = shuffle(ITEMS); let idx = 0, tests = 3, busy = false, probe = null;
+  ctx.stage.classList.add('bare');
+  ctx.goal('Is it a <b>conductor</b> or an <b>insulator</b>? Drag each object into the right box, or tap a box.');
+  ctx.stage.innerHTML = `<div class="det">
+    <button class="bin cond" data-bin="1"><span class="bin-h">Conductor</span><span class="bin-s">lets electricity flow</span><span class="bin-items"></span></button>
+    <div class="det-mid"><div class="tester" id="tester"></div><button class="token" id="token" aria-label="Current object"></button><button class="btn small" id="testbtn"></button></div>
+    <button class="bin ins" data-bin="0"><span class="bin-h">Insulator</span><span class="bin-s">blocks electricity</span><span class="bin-items"></span></button></div>`;
+  const token = $('#token'), tester = $('#tester'), tb = $('#testbtn');
+  const lower = s => s.toLowerCase();
+  function drawTester() {
+    tester.innerHTML = loopSVG({ vb: '0 0 360 240', box: { x0: 40, y0: 95, x1: 320, y1: 205 }, label: 'Electricity tester',
+      slots: [BAT({ edge: 'B' }), BULB_T(), { type: 'probe', edge: 'R', f: .5, item: probe && probe.e, cond: probe && probe.c }] });
+  }
+  function testLabel() { tb.textContent = tests ? `Use a test token (${tests} left)` : 'No test tokens left'; tb.disabled = !tests; }
+  function show() {
+    const it = q[idx]; probe = null; drawTester();
+    token.style.visibility = ''; token.innerHTML = `<span class="te">${it.e}</span><span class="tn">${it.n}</span>`;
+    token.classList.remove('shake'); testLabel(); ctx.dots(idx); ctx.mood('');
+    ctx.say(idx === 0 ? 'Detective tip: you have 3 test tokens. Drop an object on the tester to see if the bulb lights!' : `Next object: the ${lower(it.n)}.`, 'think');
+  }
+  function test() {
+    if (!tests || busy) return;
+    const it = q[idx]; tests--; testLabel(); probe = it; drawTester(); sfx(it.c ? 'on' : 'bad');
+    ctx.say(it.c ? `The bulb lights up! Electricity passes through the ${lower(it.n)}.` : `The bulb stays dark. The ${lower(it.n)} blocks electricity.`, 'wow');
+  }
+  function sort(bin) {
+    if (busy) return;
+    const it = q[idx];
+    if (+bin === it.c) {
+      busy = true; sfx('good'); ctx.mood('good');
+      $(`.bin[data-bin="${bin}"] .bin-items`, ctx.stage).insertAdjacentHTML('beforeend', `<span title="${it.n}">${it.e}</span>`);
+      ctx.say(`Yes! ${it.f}`, 'happy', 'good'); probe = it; drawTester(); token.style.visibility = 'hidden';
+      ctx.later(() => { busy = false; idx++; if (idx >= q.length) { ctx.dots(idx); ctx.win(); } else show(); }, 1500);
+    } else {
+      ctx.miss(); sfx('bad'); ctx.mood('bad'); probe = it; drawTester();
+      token.classList.remove('shake'); void token.offsetWidth; token.classList.add('shake');
+      ctx.say(`Not quite! Look at the tester: the bulb ${it.c ? 'lights up' : 'stays dark'}. So the ${lower(it.n)} is ${it.c ? 'a conductor' : 'an insulator'}.`, 'oops', 'bad');
+    }
+  }
+  $$('.bin', ctx.stage).forEach(b => b.onclick = () => sort(b.dataset.bin));
+  tb.onclick = test;
+  enableDrag(token, {
+    targets: () => [...$$('.bin', ctx.stage), tester],
+    onDrop: t => t === tester ? test() : sort(t.dataset.bin),
+    onTap: () => ctx.say('Drag me into a box, or just tap the box you choose!', 'think')
+  });
+  show();
+}
+
+/* =====================================================================
+   MISSION 3 — Wire Repair Shop
+   ===================================================================== */
+function L3(ctx) {
+  const SEG = [['T', .22], ['T', .5], ['T', .78], ['B', .22], ['B', .5], ['B', .78]];
+  const R = [{ 1: 'bare' }, { 0: 'gap', 4: 'bare' }, { 2: 'wood', 3: 'bare', 5: 'gap', 0: 'bare' }];
+  const GOALS = [
+    'A wire lost its plastic cover! Make the circuit <b>work</b> and <b>safe to touch</b>.',
+    'Two problems this time. Find them both!',
+    'Big repair job! Find and fix <b>every</b> problem.'
+  ];
+  const TOOLS = [{ id: 'tape', name: 'Insulating tape', sub: 'covers bare copper' }, { id: 'patch', name: 'New wire', sub: 'copper inside, plastic outside' }];
+  const BOX = { x0: 150, y0: 120, x1: 830, y1: 440 };
+  let r = 0, slots, sel = null, done = false;
+  ctx.tray.innerHTML = TOOLS.map(t => `<button class="part tool" data-t="${t.id}"><span class="icon">${toolIcon(t.id)}</span><span class="pname">${t.name}<small>${t.sub}</small></span></button>`).join('');
+  const clearSel = () => { sel = null; $$('.tool', ctx.tray).forEach(x => x.classList.remove('sel')); };
+  $$('.tool', ctx.tray).forEach(b => enableDrag(b, {
+    targets: () => $$('.slot .hit', ctx.stage),
+    onDrop: h => apply(b.dataset.t, +h.closest('.slot').dataset.i),
+    onTap: () => {
+      sel = sel === b.dataset.t ? null : b.dataset.t;
+      $$('.tool', ctx.tray).forEach(x => x.classList.toggle('sel', x.dataset.t === sel));
+      if (sel) ctx.say('Now tap the part of the wire you want to fix.', 'think');
+    }
+  }));
+  ctx.stage.onclick = e => {
+    const g = e.target.closest('.slot'); if (!g) return;
+    if (sel) apply(sel, +g.dataset.i);
+    else ctx.say('First choose a tool: drag it onto the wire, or tap it and then tap the wire.', 'think');
+  };
+  function start() {
+    done = false; clearSel();
+    const d = R[r];
+    slots = [BAT(), { type: 'bulb', edge: 'R', f: .5 }, ...SEG.map(([e, f], k) => ({ type: d[k] || 'wire', edge: e, f, seg: true }))];
+    ctx.dots(r); ctx.goal(GOALS[r]); ctx.actions([]); ctx.mood('');
+    draw(); status(true);
+  }
+  function draw(hl = -1) { ctx.stage.innerHTML = loopSVG({ box: BOX, slots, powered: true, tap: true, hl }); }
+  function status(first) {
+    const res = evalLoop(slots), bare = slots.some(p => p.type === 'bare');
+    if (res.status !== 'works') {
+      ctx.mood('warn');
+      ctx.say(first ? 'The bulb is dark. Something is blocking the road for electricity. Can you find it?' : 'Still dark. Electricity needs a complete road made of conductors.', 'think', 'warn');
+    } else if (bare) {
+      ctx.mood('bad'); sfx('zap');
+      ctx.say('The bulb is on, but bare copper is sparking! That is dangerous to touch. Cover it up.', 'oops', 'bad');
+    } else {
+      done = true; ctx.mood('good'); sfx('good');
+      ctx.say(r < R.length - 1 ? 'Fixed! The circuit works and is safe to touch.' : 'All repairs done! Conductor inside, insulator outside: a perfect wire.', 'wow', 'good');
+      ctx.actions([{ label: r < R.length - 1 ? 'Next repair ›' : 'Finish mission', cls: 'primary', on: () => { if (r < R.length - 1) { r++; start(); } else ctx.win(); } }]);
+    }
+  }
+  function apply(tool, i) {
+    if (done) return;
+    const p = slots[i];
+    if (!p.seg) { ctx.say('Use your tools on the wires, not on the battery or the bulb.', 'think'); return; }
+    let ok = false, msg = '';
+    if (tool === 'tape') {
+      if (p.type === 'bare') { p.type = 'taped'; ok = true; }
+      else if (p.type === 'gap') msg = 'Tape is plastic, which is an insulator! Electricity can’t cross the gap on tape. Try a new wire.';
+      else if (p.type === 'wood') msg = 'Tape won’t help here. Wood blocks electricity, so replace it with a new wire.';
+      else msg = 'This part of the wire is already fine!';
+    } else {
+      if (p.type === 'gap' || p.type === 'wood') { p.type = 'patch'; ok = true; }
+      else if (p.type === 'bare') msg = 'This copper already carries electricity. The problem is that it has no cover. Use tape!';
+      else msg = 'This part of the wire is already fine!';
+    }
+    clearSel();
+    if (ok) { sfx('drop'); draw(); status(); }
+    else { ctx.miss(); sfx('bad'); draw(i); ctx.mood('bad'); ctx.say(msg, 'oops', 'bad'); }
+  }
+  start();
+}
+
+/* =====================================================================
+   MISSION 4 — Which Way? (polarity)
+   ===================================================================== */
+function bigLED(on, M, labels) {
+  return (on ? '<circle cx="760" cy="150" r="200" fill="url(#gR)"/>' : '') +
+    `<path class="leg big" d="M${M(740)} 222 V258 L${M(700)} 292 V430"/><path class="leg big" d="M${M(780)} 222 V258 L${M(820)} 292 V370"/>
+     <rect x="712" y="206" width="96" height="18" rx="6" fill="#B8324A"/>
+     <path d="M722 208 V150 A38 38 0 0 1 798 150 V208 Z" fill="${on ? '#FF4D64' : 'rgba(255,77,100,.3)'}" stroke="${on ? '#fff' : '#B8324A'}" stroke-width="4"/>
+     <path d="M738 196 V150 A22 22 0 0 1 752 128" stroke="rgba(255,255,255,.55)" stroke-width="6" fill="none" stroke-linecap="round"/>` +
+    (labels ? `<text class="legtxt" x="${M(700)}" y="478" text-anchor="middle">+ long leg</text><text class="legtxt" x="${M(820)}" y="418" text-anchor="middle">− short leg</text>` : '');
+}
+function bigBuzzer(on, M) {
+  return `<path d="M${M(735)} 206 V258 L${M(700)} 292 V400" stroke="#FF4D64" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M${M(785)} 206 V258 L${M(820)} 292 V400" stroke="#0b0b10" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="760" cy="150" r="62" fill="#1d1d27" stroke="#4a4a5c" stroke-width="4"/><circle cx="760" cy="150" r="12" fill="#07070b"/>
+    <text class="plus-mark" x="${M(722)}" y="128" text-anchor="middle" dominant-baseline="central">+</text>` +
+    (on ? '<g class="waves"><path d="M720 66 q40 -24 80 0"/><path d="M706 46 q54 -32 108 0"/><path d="M692 26 q68 -40 136 0"/></g>' : '');
+}
+function L4(ctx) {
+  const R = [
+    { k: 'led', flip: false, labels: true, goal: 'Drag the <b>red</b> and <b>blue</b> wire ends onto the LED’s legs. The long leg is the <b>+</b> leg!' },
+    { k: 'led', flip: true, goal: 'This LED is turned around and has no labels. Which leg is longer?' },
+    { k: 'buzzer', flip: Math.random() < .5, goal: 'Now a <b>buzzer</b>! Find its <b>+</b> side and connect it.' },
+    { k: 'loop1', goal: 'The wires are connected, but will the LED glow? Tap <b>⇄</b> to turn parts around, then press <b>Switch ON</b>.' },
+    { k: 'loop2', goal: 'Two LEDs! Every LED must face the same way as the battery. Flip parts, then <b>Switch ON</b>.' }
+  ];
+  const BOX = { x0: 160, y0: 130, x1: 840, y1: 430 };
+  let r = 0;
+  function nextBtn() { ctx.actions([{ label: r < R.length - 1 ? 'Next ›' : 'Finish mission', cls: 'primary', on: () => { if (r < R.length - 1) { r++; start(); } else ctx.win(); } }]); }
+  function start() {
+    const c = R[r]; ctx.dots(r); ctx.goal(c.goal); ctx.mood(''); ctx.actions([]); ctx.stage.onclick = null;
+    if (c.k === 'led' || c.k === 'buzzer') wireRound(c); else loopRound(c);
+  }
+  function wireRound(c) {
+    const M = x => c.flip ? 1520 - x : x;
+    const T = c.k === 'led' ? { plus: [M(700), 430], minus: [M(820), 370] } : { plus: [M(700), 400], minus: [M(820), 400] };
+    const W = { red: { x: 520, y: 215, hx: 520, hy: 215, at: null, ax: 470, ay: 150 }, blue: { x: 520, y: 395, hx: 520, hy: 395, at: null, ax: 470, ay: 440 } };
+    let counted = false, done = false, drag = null;
+    const fl = w => `M${w.ax} ${w.ay}C${w.ax + 110} ${w.ay} ${w.x - 110} ${w.y + 30} ${w.x} ${w.y}`;
+    ctx.say(r === 0 ? 'The red wire comes from the battery’s + side. The blue wire comes from the − side.' : r === 1 ? 'Look carefully at the two legs.' : 'Buzzers have a + side too, just like LEDs.', 'think');
+    function draw() {
+      const on = W.red.at === 'plus' && W.blue.at === 'minus';
+      let s = `<svg class="board drag" viewBox="0 0 1000 560" role="img" aria-label="Battery, resistor and ${c.k === 'led' ? 'LED' : 'buzzer'}">${DEFS}`;
+      s += '<path class="w-out" d="M150 228V150H470"/><path class="w-red" d="M150 228V150H470"/><path class="w-out" d="M150 369V440H470"/><path class="w-blue" d="M150 369V440H470"/>';
+      s += c.k === 'led' ? bigLED(on, M, c.labels) : bigBuzzer(on, M);
+      for (const k of ['plus', 'minus']) if (W.red.at !== k && W.blue.at !== k) s += `<circle class="pad" cx="${T[k][0]}" cy="${T[k][1]}" r="26"/>`;
+      s += `<path data-w="red" class="w-out" d="${fl(W.red)}"/><path data-w="red" class="w-red" d="${fl(W.red)}"/><path data-w="blue" class="w-out" d="${fl(W.blue)}"/><path data-w="blue" class="w-blue" d="${fl(W.blue)}"/>`;
+      if (on) s += `<path class="flow" d="M150 228V150H470${fl(W.red).replace(/^M\S+ \S+/, '')}"/><path class="flow rev" d="M150 369V440H470${fl(W.blue).replace(/^M\S+ \S+/, '')}"/>`;
+      s += `<g transform="translate(310 150) scale(1.25)">${PART.resistor({ strength: 1 }, { a: 0, d: 1 })}</g>`;
+      s += `<g transform="translate(150 300) rotate(270) scale(1.5)">${PART.battery({ level: 1 }, { a: 270, d: 1 })}</g>`;
+      s += `<circle data-e="red" class="wend red${W.red.at ? '' : ' idle'}" cx="${W.red.x}" cy="${W.red.y}" r="22"/><circle data-e="blue" class="wend blue${W.blue.at ? '' : ' idle'}" cx="${W.blue.x}" cy="${W.blue.y}" r="22"/></svg>`;
+      ctx.stage.innerHTML = s; bind(); return on;
+    }
+    function bind() {
+      const svg = $('svg', ctx.stage);
+      svg.addEventListener('pointerdown', e => {
+        if (done) return; Snd.ac();
+        const p = svgPt(svg, e); let best = null, bd = 60;
+        for (const k of ['red', 'blue']) { const d = Math.hypot(W[k].x - p.x, W[k].y - p.y); if (d < bd) { bd = d; best = k; } }
+        if (!best) return;
+        e.preventDefault(); drag = best; W[best].at = null; sfx('pick');
+        try { svg.setPointerCapture(e.pointerId); } catch (err) {}
+      });
+      svg.addEventListener('pointermove', e => {
+        if (!drag) return;
+        const p = svgPt(svg, e), w = W[drag];
+        w.x = Math.max(24, Math.min(976, p.x)); w.y = Math.max(24, Math.min(536, p.y));
+        $$(`path[data-w="${drag}"]`, svg).forEach(el => el.setAttribute('d', fl(w)));
+        const end = $(`circle[data-e="${drag}"]`, svg); end.setAttribute('cx', w.x); end.setAttribute('cy', w.y);
+      });
+      const up = () => {
+        if (!drag) return;
+        const w = W[drag]; drag = null; let snapped = null;
+        for (const t of ['plus', 'minus']) {
+          if (W.red.at === t || W.blue.at === t) continue;
+          if (Math.hypot(T[t][0] - w.x, T[t][1] - w.y) < 64) { snapped = t; break; }
+        }
+        if (snapped) { w.at = snapped; w.x = T[snapped][0]; w.y = T[snapped][1]; sfx('drop'); } else { w.x = w.hx; w.y = w.hy; }
+        judge(draw());
+      };
+      svg.addEventListener('pointerup', up); svg.addEventListener('pointercancel', up);
+    }
+    function judge(on) {
+      if (on) {
+        done = true; sfx(c.k === 'buzzer' ? 'buzz' : 'good'); ctx.mood('good');
+        ctx.say(c.k === 'buzzer' ? 'Beep beep! The buzzer’s + side is connected to the battery’s + side.' : 'It glows! The long leg is connected to the + side of the battery.', 'wow', 'good');
+        nextBtn();
+      } else if (W.red.at && W.blue.at) {
+        if (!counted) { ctx.miss(); counted = true; }
+        sfx('bad'); ctx.mood('bad');
+        ctx.say(c.k === 'buzzer' ? 'Silence… A buzzer only works one way round. Look for the + mark!' : 'Nothing happens! An LED only lets electricity flow one way. Swap the wires!', 'oops', 'bad');
+      } else if (W.red.at || W.blue.at) { ctx.mood('warn'); ctx.say('One wire is on. Now connect the other one to finish the loop.', 'think', 'warn'); }
+      else ctx.mood('');
+    }
+    draw();
+  }
+  function loopRound(c) {
+    const slots = c.k === 'loop1'
+      ? [BAT(), { type: 'resistor', edge: 'T', f: .5 }, { type: 'led', edge: 'R', f: .5, dir: -1, color: 'green', flip: true }]
+      : [BAT({ dir: -1, flip: true }), { type: 'resistor', edge: 'T', f: .3 }, { type: 'led', edge: 'T', f: .72, dir: 1, color: 'yellow', flip: true }, { type: 'led', edge: 'B', f: .5, dir: -1, color: 'red', flip: true }];
+    let powered = false, done = false, res = null;
+    const draw = (hl = -1) => { ctx.stage.innerHTML = loopSVG({ box: BOX, slots, res, powered, tap: true, badges: true, hl }); };
+    ctx.say(c.k === 'loop1' ? 'Check the LED’s legs: the long leg must face the + side of the battery.' : 'You can flip the battery too! Think before you switch on.', 'think');
+    ctx.stage.onclick = e => {
+      if (done) return;
+      const el = e.target.closest('.flipb') || e.target.closest('.slot'); if (!el) return;
+      const i = +(el.dataset.flip ?? el.dataset.i); if (!slots[i].flip) return;
+      slots[i].dir = -(slots[i].dir || 1); sfx('click'); powered = false; res = null; ctx.mood(''); draw();
+    };
+    ctx.actions([{ label: 'Switch ON', cls: 'primary', on: () => {
+      if (done) return;
+      res = evalLoop(slots); powered = true;
+      if (res.status === 'works') {
+        done = true; draw(); sfx('good'); ctx.mood('good');
+        ctx.say(c.k === 'loop1' ? 'Glowing! Now the long leg faces the + side.' : 'Both LEDs glow! They all face the same way as the battery.', 'wow', 'good'); nextBtn();
+      } else { ctx.miss(); sfx('bad'); ctx.mood('bad'); draw(res.culprit); ctx.say('Still dark! The circled part is facing the wrong way.', 'oops', 'bad'); }
+    } }]);
+    draw();
+  }
+  start();
+}
+
+/* =====================================================================
+   MISSION 5 — Resistor Bodyguard
+   ===================================================================== */
+function gauge(v) {
+  const cx = 500, cy = 385, r = 110, rad = a => a * Math.PI / 180;
+  const P = (a, rr = r) => [cx + rr * Math.cos(rad(a)), cy - rr * Math.sin(rad(a))];
+  const arc = (a1, a2, c) => { const [x1, y1] = P(a1), [x2, y2] = P(a2); return `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="${c}" stroke-width="24" fill="none"/>`; };
+  const txt = (x, y, t, c, anchor) => `<text class="g-l" x="${x}" y="${y}" fill="${c}" text-anchor="${anchor}" dominant-baseline="central">${t}</text>`;
+  let s = `<g>${arc(180, 122, '#5CC8FF')}${arc(118, 62, '#3BE0A1')}${arc(58, 0, '#FF6B7A')}
+    ${txt(cx - r - 22, cy - 6, 'too dim', '#5CC8FF', 'end')}${txt(cx, cy - r - 30, 'just right', '#3BE0A1', 'middle')}${txt(cx + r + 22, cy - 6, 'too much!', '#FF6B7A', 'start')}
+    <text class="g-t" x="${cx}" y="${cy + 30}" text-anchor="middle">LED power meter</text>`;
+  if (v != null) {
+    const ang = { '-3': 172, '-2': 160, '-1': 140, '0': 90, '1': 40, '2': 18, '3': 8 }[Math.max(-3, Math.min(3, v))];
+    const [nx, ny] = P(ang, r - 22);
+    s += `<line class="needle" x1="${cx}" y1="${cy}" x2="${nx.toFixed(1)}" y2="${ny.toFixed(1)}"/>`;
+  } else s += `<text class="socket-q" x="${cx}" y="${cy - 40}" text-anchor="middle" dominant-baseline="central">?</text>`;
+  return s + `<circle cx="${cx}" cy="${cy}" r="10" fill="#fff"/></g>`;
+}
+function L5(ctx) {
+  const R = [{ lv: 1, n: 1, cards: [1, 2, 3] }, { lv: 3, n: 1, cards: [1, 2, 3] }, { lv: 2, n: 1, cards: [3, 1, 2] }, { lv: 3, n: 2, cards: [0, 1, 2, 1] }, { lv: 2, n: 2, cards: [0, 1, 1, 3] }];
+  const NAMES = ['Plain wire', 'Small bodyguard', 'Medium bodyguard', 'Big bodyguard'];
+  const BOX = { x0: 160, y0: 140, x1: 840, y1: 430 };
+  let r = 0, place, sel, powered, done, color;
+  const fs = () => R[r].n === 1 ? [.5] : [.33, .67];
+  function slots() {
+    const c = R[r];
+    return [BAT({ level: c.lv }), ...fs().map((f, k) => {
+      const ci = place[k]; if (ci == null) return { type: 'empty', edge: 'T', f };
+      const st = c.cards[ci]; return st === 0 ? { type: 'patch', edge: 'T', f } : { type: 'resistor', edge: 'T', f, strength: st };
+    }), { type: 'led', edge: 'R', f: .5, color, dir: 1 }];
+  }
+  const strength = () => place.reduce((t, ci) => t + (ci == null ? 0 : R[r].cards[ci]), 0);
+  function start() {
+    const c = R[r]; place = Array(c.n).fill(null); sel = null; powered = false; done = false; color = ['red', 'green', 'yellow'][r % 3];
+    ctx.dots(r); ctx.mood('');
+    ctx.goal(c.n === 1 ? `This battery is <b>${c.lv * 3} volts</b>. Pick the resistor bodyguard that keeps the LED <b>bright</b> and <b>safe</b>.`
+      : `Two spots! Bodyguards in a row add up their shields. This battery is <b>${c.lv * 3} volts</b>.`);
+    ctx.say(r === 0 ? 'Each shield blocks some electricity. Too few shields: POP! Too many: the LED is too dim.' : r === 3 ? 'Fill both spots. A plain wire has zero shields.' : 'Choose carefully, then switch on!', 'think');
+    ctx.actions([{ label: 'Switch ON', cls: 'primary', on: test }]);
+    drawAll();
+  }
+  function drawBoard() {
+    const sl = slots();
+    ctx.stage.innerHTML = loopSVG({ box: BOX, slots: sl, powered, tap: true, extra: gauge(powered ? R[r].lv - strength() : null) });
+  }
+  function drawTray() {
+    const c = R[r];
+    ctx.tray.innerHTML = c.cards.map((st, i) => place.includes(i) ? '' :
+      `<button class="part${sel === i ? ' sel' : ''}" data-k="${i}"><span class="icon">${partIcon(st === 0 ? { type: 'patch' } : { type: 'resistor', strength: st })}</span><span class="pname">${NAMES[st]}<small>${st} shield${st === 1 ? '' : 's'}</small></span></button>`).join('') ||
+      '<p class="traynote">All cards are in the circuit. Tap one to take it back.</p>';
+    $$('.part', ctx.tray).forEach(b => { const i = +b.dataset.k; enableDrag(b, {
+      targets: () => $$('.slot .hit', ctx.stage).filter(h => { const k = +h.closest('.slot').dataset.i; return k >= 1 && k <= R[r].n; }),
+      onDrop: h => put(i, +h.closest('.slot').dataset.i - 1),
+      onTap: () => { sel = sel === i ? null : i; drawTray(); if (sel != null) ctx.say('Now tap a spot in the circuit.', 'think'); }
+    }); });
+  }
+  function drawAll() { drawBoard(); drawTray(); }
+  function put(i, k) {
+    if (done) return;
+    const prev = place.indexOf(i); if (prev >= 0) place[prev] = null;
+    place[k] = i; sel = null; powered = false; sfx('drop'); ctx.mood(''); drawAll();
+  }
+  ctx.stage.onclick = e => {
+    if (done) return;
+    const g = e.target.closest('.slot'); if (!g) return;
+    const k = +g.dataset.i - 1; if (k < 0 || k >= R[r].n) return;
+    if (sel != null) put(sel, k);
+    else if (place[k] != null) { place[k] = null; powered = false; sfx('pick'); ctx.mood(''); drawAll(); }
+    else ctx.say('Drag a bodyguard card here, or tap a card and then this spot.', 'think');
+  };
+  function test() {
+    if (done) return;
+    const c = R[r];
+    if (place.some(x => x == null)) { sfx('bad'); ctx.say('Fill every spot first. An empty spot breaks the loop!', 'think', 'warn'); return; }
+    const res = evalLoop(slots()), str = strength(), V = c.lv * 3; powered = true; drawBoard();
+    if (res.status === 'burn') {
+      sfx('pop'); ctx.miss(); ctx.mood('bad');
+      ctx.say(`POP! ${V} volts is too much for ${str} shield${str === 1 ? '' : 's'}. The LED burned out! Tip: every 3 volts needs 1 shield.`, 'oops', 'bad');
+    } else if (res.status === 'dim') {
+      sfx('bad'); ctx.miss(); ctx.mood('warn');
+      ctx.say(`The LED is safe but very dim. ${str} shields block too much for only ${V} volts.`, 'think', 'warn');
+    } else {
+      done = true; sfx('good'); ctx.mood('good');
+      ctx.say(`Perfect! ${V} volts with ${str} shield${str === 1 ? '' : 's'}: bright and safe.`, 'wow', 'good');
+      ctx.actions([{ label: r < R.length - 1 ? 'Next ›' : 'Finish mission', cls: 'primary', on: () => { if (r < R.length - 1) { r++; start(); } else ctx.win(); } }]);
+    }
+  }
+  start();
+}
+
+/* =====================================================================
+   MISSION 6 — Circuit Builder
+   ===================================================================== */
+function L6(ctx) {
+  const PC = {
+    battery: { type: 'battery', name: 'Battery', flip: true }, led: { type: 'led', name: 'LED', flip: true }, buzzer: { type: 'buzzer', name: 'Buzzer', flip: true },
+    resistor: { type: 'resistor', name: 'Resistor', strength: 1 }, patch: { type: 'patch', name: 'Wire piece' },
+    wood: { type: 'wood', name: 'Wooden stick' }, plastic: { type: 'plastic', name: 'Plastic straw' }, eraser: { type: 'eraser', name: 'Rubber eraser' }
+  };
+  const R = [
+    { slots: [['L', .5, 'battery'], ['T', .5], ['R', .5]], tray: ['led', 'resistor', 'wood'], color: 'green',
+      goal: 'The battery is ready. Add parts so the LED glows <b>safely</b>.' },
+    { slots: [['L', .5], ['T', .5], ['R', .5], ['B', .5]], tray: ['battery', 'led', 'resistor', 'patch', 'plastic', 'wood'], color: 'red',
+      goal: 'Build it all yourself! Make the LED glow. Careful: some parts in the box won’t work.' },
+    { slots: [['L', .5], ['T', .3], ['T', .7], ['R', .5], ['B', .5]], tray: ['battery', 'led', 'buzzer', 'resistor', 'patch', 'eraser', 'plastic'], color: 'yellow',
+      goal: 'Make the LED glow <b>and</b> the buzzer beep, all in one loop!' }
+  ];
+  const BOX = { x0: 160, y0: 130, x1: 840, y1: 430 };
+  let r = 0, items, place, fixed, sel, powered, res, done;
+  function start() {
+    const c = R[r];
+    items = shuffle(c.tray).map(k => {
+      const p = clone(PC[k]);
+      if (p.type === 'led') { p.color = c.color; p.dir = Math.random() < .5 ? 1 : -1; }
+      if (p.type === 'buzzer') p.dir = Math.random() < .5 ? 1 : -1;
+      if (p.type === 'battery') p.dir = 1;
+      return p;
+    });
+    place = c.slots.map(() => null);
+    fixed = c.slots.map(s => s[2] ? Object.assign(clone(PC[s[2]]), { dir: 1 }) : null);
+    sel = null; powered = false; res = null; done = false;
+    ctx.dots(r); ctx.goal(c.goal); ctx.mood('');
+    ctx.say(r === 0 ? 'Drag parts from the box into the empty spots. Tap ⇄ to turn a part around. Tap a part to put it back.' : 'Remember all three rules: a power source, a road of conductors, and protection!', 'think');
+    ctx.actions([{ label: 'Switch ON', cls: 'primary', on: test }]);
+    drawAll();
+  }
+  const slots = () => R[r].slots.map((s, k) => Object.assign({}, fixed[k] || (place[k] != null ? items[place[k]] : { type: 'empty' }), { edge: s[0], f: s[1] }));
+  function drawBoard(hl = -1) { ctx.stage.innerHTML = loopSVG({ box: BOX, slots: slots(), res: powered ? res : null, powered, tap: true, badges: true, hl }); }
+  function drawTray() {
+    ctx.tray.innerHTML = items.map((p, i) => place.includes(i) ? '' :
+      `<button class="part${sel === i ? ' sel' : ''}" data-k="${i}"><span class="icon">${partIcon(p)}</span><span class="pname">${p.name}</span></button>`).join('') ||
+      '<p class="traynote">The parts box is empty.</p>';
+    $$('.part', ctx.tray).forEach(b => { const i = +b.dataset.k; enableDrag(b, {
+      targets: () => $$('.slot .hit', ctx.stage),
+      onDrop: h => put(i, +h.closest('.slot').dataset.i),
+      onTap: () => { sel = sel === i ? null : i; drawTray(); if (sel != null) ctx.say(`Now tap a spot for the ${items[i].type === 'led' ? 'LED' : items[i].name.toLowerCase()}.`, 'think'); }
+    }); });
+  }
+  function drawAll() { drawBoard(); drawTray(); }
+  function reset() { powered = false; res = null; ctx.mood(''); }
+  function put(i, k) {
+    if (done) return;
+    if (fixed[k]) { ctx.say('The battery is fixed in place. Choose another spot.', 'think'); return; }
+    const prev = place.indexOf(i); if (prev >= 0) place[prev] = null;
+    place[k] = i; sel = null; reset(); sfx('drop'); drawAll();
+  }
+  ctx.stage.onclick = e => {
+    if (done) return;
+    const fb = e.target.closest('.flipb');
+    if (fb) { const k = +fb.dataset.flip, p = fixed[k] || items[place[k]]; p.dir = -(p.dir || 1); sfx('click'); reset(); drawAll(); return; }
+    const g = e.target.closest('.slot'); if (!g) return;
+    const k = +g.dataset.i;
+    if (sel != null) put(sel, k);
+    else if (place[k] != null) { place[k] = null; reset(); sfx('pick'); drawAll(); }
+    else if (fixed[k]) ctx.say('The battery is fixed in place. Tap ⇄ to turn it around.', 'think');
+    else ctx.say('This spot is empty. Drag a part here from the box.', 'think');
+  };
+  function test() {
+    if (done) return;
+    const sl = slots();
+    if (sl.some(p => p.type === 'empty')) { sfx('bad'); ctx.say('Fill every empty spot first. A gap breaks the loop!', 'think', 'warn'); return; }
+    res = evalLoop(sl); powered = true;
+    const nm = i => sl[i].type === 'led' ? 'LED' : sl[i].name.toLowerCase();
+    let msg = '';
+    switch (res.status) {
+      case 'works': {
+        done = true; drawBoard(); ctx.mood('good');
+        const bz = sl.some(p => p.type === 'buzzer'); sfx(bz ? 'buzz' : 'good');
+        ctx.say(bz ? 'Beep! Glow! You built a complete, safe circuit with two parts working together.' : 'It glows! Power source, conductor road and a resistor bodyguard. Great building!', 'wow', 'good');
+        ctx.actions([{ label: r < R.length - 1 ? 'Next build ›' : 'Finish mission', cls: 'primary', on: () => { if (r < R.length - 1) { r++; start(); } else ctx.win(); } }]);
+        return;
+      }
+      case 'nopower': msg = 'Nothing happens, because there is no battery! Every circuit needs a power source.'; break;
+      case 'blocked': msg = `The ${nm(res.culprit)} is an insulator. Electricity can’t pass through it. Swap it for a conductor!`; break;
+      case 'reversed': msg = `The ${nm(res.culprit)} is facing the wrong way. Its + side must face the battery’s + side. Tap ⇄ to flip it!`; break;
+      case 'burn': msg = 'POP! The LED burned out, because too much electricity reached it. It needs a resistor bodyguard!'; break;
+      default: msg = 'The loop is not complete yet.';
+    }
+    ctx.miss(); sfx(res.status === 'burn' ? 'pop' : 'bad'); ctx.mood('bad'); drawBoard(res.culprit); ctx.say(msg, 'oops', 'bad');
+  }
+  start();
+}
+
+/* =====================================================================
+   MISSION 7 — Switch Master
+   ===================================================================== */
+const TWO_BRANCH = { P: [160, 120], J1: [330, 120], m1: [600, 120], K1: [860, 120], J2: [330, 290], m2: [600, 290], K2: [860, 290], K3: [860, 440], N: [160, 440] };
+const CIR = {
+  A: { nodes: { P: [160, 120], a: [520, 120], b: [860, 120], c: [860, 440], N: [160, 440] },
+       edges: [['P', 'a', 'switch', 'S1'], ['a', 'b', 'bulb', 'A'], ['b', 'c', 'bulb', 'B'], ['c', 'N', 'wire']] },
+  B: { nodes: TWO_BRANCH, edges: [['P', 'J1', 'wire'], ['J1', 'm1', 'switch', 'S1'], ['m1', 'K1', 'bulb', 'A'], ['J1', 'J2', 'wire'], ['J2', 'm2', 'switch', 'S2'], ['m2', 'K2', 'bulb', 'B'], ['K1', 'K2', 'wire'], ['K2', 'K3', 'wire'], ['K3', 'N', 'wire']] },
+  C: { nodes: TWO_BRANCH, edges: [['P', 'J1', 'wire'], ['J1', 'm1', 'switch', 'S1'], ['m1', 'K1', 'bulb', 'A'], ['J1', 'J2', 'wire'], ['J2', 'm2', 'switch', 'S2'], ['m2', 'K2', 'bulb', 'B'], ['K1', 'K2', 'wire'], ['K2', 'K3', 'wire'], ['K3', 'N', 'switch', 'S0']] },
+  D: { nodes: TWO_BRANCH, edges: [['P', 'J1', 'wire'], ['J1', 'm1', 'switch', 'S1'], ['m1', 'K1', 'bulb', 'B'], ['J1', 'J2', 'wire'], ['J2', 'm2', 'switch', 'S2'], ['m2', 'K2', 'bulb', 'C'], ['K1', 'K2', 'wire'], ['K2', 'K3', 'wire'], ['K3', 'N', 'bulb', 'A']] }
+};
+const TAGC = { A: '#FFD23F', B: '#5CC8FF', C: '#3BE0A1' };
+const L7G = [
+  { c: 'A', t: { A: 1, B: 1 }, txt: 'Light up <b>both</b> bulbs.', why: 'Closing the switch completes the loop, so both bulbs light. They share one road, so each glows a bit less brightly.' },
+  { c: 'A', t: { A: 1, B: 0 }, imp: true, txt: 'Light bulb <b>A</b> but keep bulb <b>B</b> off.', why: 'Right, it’s impossible! In one single loop, electricity must pass through both bulbs, so they are on together or off together.' },
+  { c: 'B', t: { A: 0, B: 1 }, txt: 'Light <b>only</b> bulb <b>B</b>.', why: 'Each bulb has its own road and its own switch. Engineers call this a parallel circuit!' },
+  { c: 'C', t: { A: 1, B: 0 }, txt: 'Light bulb <b>A</b> but keep bulb <b>B</b> off.', why: 'Switch S0 is on the main road. It must be closed for anything to work, just like the main switch in a house.' },
+  { c: 'D', t: { A: 1, B: 0, C: 1 }, txt: 'Light bulbs <b>A</b> and <b>C</b>, but keep <b>B</b> off.', why: 'Bulb A is on the main road, so it lights whenever any branch is closed.' },
+  { c: 'D', t: { A: 0, B: 0, C: 1 }, imp: true, txt: 'Light <b>only</b> bulb <b>C</b>.', why: 'Right, it’s impossible! Bulb A sits on the main road. Any electricity that goes through C must also go through A.' }
+];
+// Find every simple path from + (P) to − (N); a bulb on any path lights up.
+function solve(C, sw) {
+  const adj = {};
+  C.edges.forEach(([u, v, t, id], k) => {
+    if (t === 'switch' && !sw[id]) return;
+    (adj[u] = adj[u] || []).push([v, k]); (adj[v] = adj[v] || []).push([u, k]);
+  });
+  const lit = {}, flows = [], seen = new Set(), stack = [];
+  (function dfs(n) {
+    if (n === 'N') {
+      const bulbs = stack.filter(([k]) => C.edges[k][2] === 'bulb'), b = bulbs.length ? 1 / bulbs.length : 0;
+      bulbs.forEach(([k]) => { const id = C.edges[k][3]; lit[id] = Math.max(lit[id] || 0, b); });
+      stack.forEach(s => flows.push(s)); return;
+    }
+    seen.add(n);
+    for (const [m, k] of adj[n] || []) { if (seen.has(m)) continue; stack.push([k, n]); dfs(m); stack.pop(); }
+    seen.delete(n);
+  })('P');
+  return { lit, flows };
+}
+function circuitSVG(C, sw, sol) {
+  const N = C.nodes, seg = (a, b) => `M${N[a][0]} ${N[a][1]}L${N[b][0]} ${N[b][1]}`;
+  let s = `<svg class="board" viewBox="0 0 1000 560" role="img" aria-label="Circuit with switches and bulbs">${DEFS}`;
+  let d = seg('N', 'P'); C.edges.forEach(([u, v]) => { d += seg(u, v); });
+  s += wirePath(d);
+  const done = new Set(); let fd = '';
+  sol.flows.forEach(([k, from]) => { const [u, v] = C.edges[k], to = from === u ? v : u, key = k + ':' + from; if (done.has(key)) return; done.add(key); fd += seg(from, to); });
+  if (fd) s += `<path class="flow" d="${seg('N', 'P')}${fd}"/>`;
+  const deg = {}; [['N', 'P'], ...C.edges].forEach(([u, v]) => { deg[u] = (deg[u] || 0) + 1; deg[v] = (deg[v] || 0) + 1; });
+  Object.keys(deg).forEach(n => { if (deg[n] >= 3) s += `<circle cx="${N[n][0]}" cy="${N[n][1]}" r="9" fill="#8C9BFF"/>`; });
+  C.edges.forEach(([u, v, t, id]) => {
+    if (t === 'wire') return;
+    const [x1, y1] = N[u], [x2, y2] = N[v], mx = (x1 + x2) / 2, my = (y1 + y2) / 2, a = Math.round(Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI);
+    const st = { a, d: 1, on: (sol.lit[id] || 0) > 0, bright: sol.lit[id] || 0 };
+    if (t === 'switch') {
+      s += `<g class="swg" data-sw="${id}" role="button" aria-label="Switch ${id}" transform="translate(${mx} ${my}) rotate(${a})"><rect class="hit" x="-58" y="-62" width="116" height="96" rx="16"/>${PART.switch({ closed: !!sw[id] })}</g>`;
+      s += `<text class="swl" x="${mx}" y="${my + 42}" text-anchor="middle">${id}</text>`;
+    } else {
+      s += `<g transform="translate(${mx} ${my}) rotate(${a})">${PART.bulbC({}, st)}</g>`;
+      s += `<g transform="translate(${mx} ${my - 52})"><circle r="16" fill="${TAGC[id]}"/><text class="tag-t" text-anchor="middle" dominant-baseline="central">${id}</text></g>`;
+    }
+  });
+  s += `<g transform="translate(${N.P[0]} ${(N.P[1] + N.N[1]) / 2}) rotate(270) scale(1.2)">${PART.battery({ level: 1 }, { a: 270, d: 1 })}</g>`;
+  return s + '</svg>';
+}
+function L7(ctx) {
+  let g = 0, sw = {}, done = false;
+  function start() {
+    const G = L7G[g];
+    if (g === 0 || L7G[g - 1].c !== G.c) sw = {};
+    done = false; ctx.dots(g); ctx.mood('');
+    ctx.goal(`${G.txt}<span class="goal-s">Tap the switches to open or close them. If you think it can’t be done, press “It’s impossible!”</span>`);
+    ctx.say(g === 0 ? 'Watch the little dots: they show where electricity travels.' : g === 2 ? 'A new circuit with two roads!' : 'New challenge. Think before you tap!', 'think');
+    ctx.actions([{ label: 'It’s impossible!', cls: 'ghost', on: imp }]);
+    draw();
+  }
+  function draw() { const C = CIR[L7G[g].c], sol = solve(C, sw); ctx.stage.innerHTML = circuitSVG(C, sw, sol); return sol; }
+  function win(G) {
+    done = true; sfx('good'); ctx.mood('good'); ctx.say(G.why, 'wow', 'good');
+    ctx.actions([{ label: g < L7G.length - 1 ? 'Next challenge ›' : 'Finish mission', cls: 'primary', on: () => { if (g < L7G.length - 1) { g++; start(); } else ctx.win(); } }]);
+  }
+  ctx.stage.onclick = e => {
+    const h = e.target.closest('[data-sw]'); if (!h || done) return;
+    const id = h.dataset.sw; sw[id] = !sw[id]; sfx('click');
+    const sol = draw(), G = L7G[g];
+    if (!G.imp && Object.keys(G.t).every(k => ((sol.lit[k] || 0) > 0) === !!G.t[k])) win(G);
+  };
+  function imp() {
+    if (done) return;
+    const G = L7G[g];
+    if (G.imp) win(G);
+    else { ctx.miss(); sfx('bad'); ctx.mood('bad'); ctx.say('It IS possible! Try other switch combinations.', 'oops', 'bad'); }
+  }
+  start();
+}
+
+/* =====================================================================
+   MISSION 8 — Circuit Doctor
+   ===================================================================== */
+const DX = [
+  { k: 'gap', sym: 'The LED stays dark.', culprit: 3,
+    slots: () => [BAT(), { type: 'resistor', edge: 'T', f: .5 }, { type: 'led', edge: 'R', f: .5, color: 'green' }, { type: 'gap', edge: 'B', f: .5 }],
+    fix: s => { s[3].type = 'patch'; }, hint: 'Follow the wire all the way around. Is the road complete?',
+    why: 'Yes! Electricity can’t jump across a gap. A new piece of wire fixes it.' },
+  { k: 'switch', sym: 'The bulb stays dark.', culprit: 2,
+    slots: () => [BAT(), { type: 'bulb', edge: 'R', f: .5 }, { type: 'switch', edge: 'B', f: .5, closed: false }],
+    fix: s => { s[2].closed = true; }, hint: 'Look at the switch lever.',
+    why: 'Yes! An open switch breaks the loop. Close it and the bulb lights.' },
+  { k: 'insulator', sym: 'The LED stays dark.', culprit: 3,
+    slots: () => [BAT(), { type: 'resistor', edge: 'T', f: .5 }, { type: 'led', edge: 'R', f: .5, color: 'yellow' }, { type: 'plastic', edge: 'B', f: .5 }],
+    fix: s => { s[3].type = 'patch'; }, hint: 'What is that striped blue thing made of?',
+    why: 'Yes! A plastic straw is an insulator. Swap in a conductor and electricity flows.' },
+  { k: 'reversed', sym: 'The LED stays dark.', culprit: 2,
+    slots: () => [BAT(), { type: 'resistor', edge: 'T', f: .5 }, { type: 'led', edge: 'R', f: .5, dir: -1, color: 'red' }],
+    fix: s => { s[2].dir = 1; }, hint: 'Check the LED’s legs. Which side is the long leg on?',
+    why: 'Yes! The LED’s long leg must face the + side. Flipped, now it glows!' },
+  { k: 'bare', sym: 'The bulb works… but something is sparking!', culprit: 2,
+    slots: () => [BAT(), { type: 'bulb', edge: 'R', f: .5 }, { type: 'bare', edge: 'T', f: .5 }],
+    fix: s => { s[2].type = 'taped'; }, hint: 'Look for orange copper showing.',
+    why: 'Yes! Bare copper can give you a shock. Insulating tape makes it safe.' },
+  { k: 'noResistor', sym: 'POP! The LED burned out.', culprit: 1,
+    slots: () => [BAT(), { type: 'wire', edge: 'T', f: .5 }, { type: 'led', edge: 'R', f: .5, color: 'green' }],
+    fix: s => { s[1].type = 'resistor'; s[1].strength = 1; }, hint: 'Every LED needs a helper to protect it. Is it there?',
+    why: 'Yes! Without a resistor, too much electricity hits the LED. A bodyguard protects it.' },
+  { k: 'tooStrong', sym: 'The LED is on, but it is very, very dim.', culprit: 1,
+    slots: () => [BAT(), { type: 'resistor', edge: 'T', f: .5, strength: 3 }, { type: 'led', edge: 'R', f: .5, color: 'red' }],
+    fix: s => { s[1].strength = 1; }, hint: 'Count the shields. How many does a 3 volt battery need?',
+    why: 'Yes! A 3 volt battery only needs a small bodyguard. Now the LED is bright.' }
+];
+const DXO = [
+  { k: 'gap', t: 'The wire is broken' }, { k: 'switch', t: 'The switch is open' }, { k: 'insulator', t: 'An insulator blocks the road' },
+  { k: 'reversed', t: 'The LED faces the wrong way' }, { k: 'bare', t: 'Bare wire: not safe!' }, { k: 'noResistor', t: 'The resistor is missing' },
+  { k: 'tooStrong', t: 'The resistor is too strong' }
+];
+function L8(ctx) {
+  const BOX = { x0: 160, y0: 130, x1: 840, y1: 430 };
+  let i = 0, tries = 0, done = false, slots;
+  function start() {
+    const D = DX[i]; slots = D.slots(); tries = 0; done = false;
+    ctx.dots(i); ctx.mood('warn');
+    ctx.goal(`Patient ${i + 1} of ${DX.length}: <b>${D.sym}</b> What is wrong?`);
+    ctx.say(i === 0 ? 'Welcome, Doctor! Look closely at the circuit, then pick your diagnosis.' : 'Next patient. Take your time and look at every part.', 'think');
+    draw(); ctx.actions([]);
+    ctx.tray.innerHTML = `<div class="opts">${DXO.map(o => `<button class="opt" data-k="${o.k}">${o.t}</button>`).join('')}</div>`;
+    $$('.opt', ctx.tray).forEach(b => b.onclick = () => pick(b));
+  }
+  function draw(hl = -1, good = false) { ctx.stage.innerHTML = loopSVG({ box: BOX, slots, powered: true, hl, ringGood: good }); }
+  function pick(b) {
+    if (done) return;
+    const D = DX[i];
+    if (b.dataset.k === D.k) {
+      done = true; b.classList.add('right'); $$('.opt', ctx.tray).forEach(x => { x.disabled = true; });
+      D.fix(slots); sfx('good'); draw(D.culprit, true); ctx.mood('good'); ctx.say(D.why, 'wow', 'good');
+      ctx.actions([{ label: i < DX.length - 1 ? 'Next patient ›' : 'Finish mission', cls: 'primary', on: () => { if (i < DX.length - 1) { i++; start(); } else ctx.win(); } }]);
+    } else {
+      ctx.miss(); tries++; b.classList.add('wrong'); b.disabled = true; sfx('bad'); ctx.mood('bad');
+      ctx.say(`Not this one. Hint: ${D.hint}${tries >= 2 ? ' Look at the circled spot!' : ''}`, 'oops', 'bad');
+      if (tries >= 2) draw(D.culprit);
+    }
+  }
+  start();
+}
+
+/* ================= missions list ================= */
+const DIFF = ['', 'Easy', 'Medium', 'Hard', 'Expert'];
+const DC = ['', 'var(--mint)', 'var(--sky)', 'var(--volt)', 'var(--coral)'];
+const LEVELS = [
+  { n: 1, name: 'Close the Loop', learn: 'Spot which circuits make a full loop from + to −.', diff: 1, rounds: 3, stars: [1, 3], play: L1 },
+  { n: 2, name: 'Conductor Detective', learn: 'Sort everyday objects into conductors and insulators.', diff: 1, rounds: 12, stars: [1, 3], play: L2 },
+  { n: 3, name: 'Wire Repair Shop', learn: 'Fix broken and unsafe wires with copper and tape.', diff: 2, rounds: 3, stars: [0, 2], play: L3 },
+  { n: 4, name: 'Which Way?', learn: 'Connect LEDs and buzzers the right way round.', diff: 2, rounds: 5, stars: [1, 3], play: L4 },
+  { n: 5, name: 'Resistor Bodyguard', learn: 'Pick the resistor that keeps an LED bright and safe.', diff: 3, rounds: 5, stars: [1, 3], play: L5 },
+  { n: 6, name: 'Circuit Builder', learn: 'Build complete circuits from a box of parts.', diff: 3, rounds: 3, stars: [1, 3], play: L6 },
+  { n: 7, name: 'Switch Master', learn: 'Use switches to control which bulbs light up.', diff: 4, rounds: 6, stars: [1, 3], play: L7 },
+  { n: 8, name: 'Circuit Doctor', learn: 'Find what is wrong in each broken circuit.', diff: 4, rounds: 7, stars: [1, 3], play: L8 }
+];
+const starsFor = (m, [a, b]) => m <= a ? 3 : m <= b ? 2 : 1;
+
+/* ================= screens ================= */
+let current = null;
+function stopCurrent() {
+  if (current) { current.timers.forEach(clearTimeout); current = null; }
+  $$('.overlay').forEach(o => o.remove());
+  $$('.drag-ghost').forEach(o => o.remove());
+}
+
+function showMap() {
+  const st = getStars(), total = Object.values(st).reduce((a, b) => a + b, 0);
+  const next = LEVELS.find(l => !st[l.n]) || LEVELS[0];
+  const dbat = n => `<span class="dbat">${[1, 2, 3, 4].map(k => `<i class="${k <= n ? 'on' : ''}"></i>`).join('')}</span>`;
+  app.innerHTML = `<div class="wrap">
+    <header class="maphead"><div class="logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 1.5 4 13.5h6.5L9 22.5l10-12.5h-6.6z"/></svg>Electricity Lab</div>${soundBtn()}</header>
+    <section class="hero">
+      <div>
+        <p class="kicker">Electricity missions · Grades 4–5</p>
+        <h1 class="brand">Circuit<br><span class="q">Quest</span></h1>
+        <p class="lede">Eight hands-on missions, from easy to expert. Close loops, hunt for conductors, fix wires, and become a real circuit doctor.</p>
+        <a class="btn primary" href="#m${next.n}">${total ? 'Continue' : 'Start'} with Mission ${next.n} ›</a>
+      </div>
+      <div class="labcell">
+        <div class="lc-top">${volty('happy')}<p>Hi, I’m <b>Volty</b>! Every mission earns up to 3 bolts to charge the lab battery. Can you fill it up?</p></div>
+        <div class="bigcell" role="img" aria-label="${total} of 24 bolts collected"><div class="bc-body"><div class="bc-fill" style="width:${total / 24 * 100}%"></div><div class="bc-ticks"></div></div><div class="bc-nub"></div></div>
+        <div class="bc-cap"><span>Lab battery</span><span><b>${total}</b> / 24 bolts</span></div>
+      </div>
+    </section>
+    <h2 class="sec">Missions</h2>
+    <div class="missions">${LEVELS.map(l => { const s = st[l.n] || 0; return `<a class="mcard${s ? ' done' : ''}" href="#m${l.n}" style="--dc:${DC[l.diff]}">
+      <div class="mtop"><span class="mnum">${l.n}</span><span class="diff">${dbat(l.diff)}${DIFF[l.diff]}</span></div>
+      <h3 class="mname">${l.name}</h3><p class="mdesc">${l.learn}</p>
+      <div class="mfoot"><span class="bolts" aria-label="${s} of 3 bolts">${[1, 2, 3].map(k => BOLT(k <= s)).join('')}</span><span class="play">${s ? 'Replay' : 'Play'} ›</span></div></a>`; }).join('')}</div>
+    <p class="foot">For teachers: open a mission directly by adding <code>#m1</code> to <code>#m8</code> to the page address. Progress is saved in this browser only.</p>
+  </div>`;
+}
+
+function openLevel(n) {
+  const L = LEVELS[n - 1];
+  app.innerHTML = `<div class="wrap">
+    <header class="lvhead">
+      <a class="btn ghost small" href="#map">‹ Missions</a>
+      <div class="lvtitle"><div class="eyebrow">Mission ${n} · ${DIFF[L.diff]}</div><h1>${L.name}</h1></div>
+      <div class="dots" id="dots" role="img" aria-label="Progress"></div>
+      ${soundBtn()}
+    </header>
+    <p class="goal" id="goal"></p>
+    <div class="stage" id="stage"></div>
+    <div class="talk"><div id="vbox">${volty()}</div><div class="bubble" id="bubble" aria-live="polite"></div></div>
+    <div class="tray" id="tray"></div>
+    <div class="actions" id="actions"></div>
+  </div>`;
+  const stage = $('#stage'), bubble = $('#bubble');
+  const ctx = current = {
+    n, L, mistakes: 0, timers: [], stage, tray: $('#tray'),
+    goal(h) { $('#goal').innerHTML = h; },
+    say(h, mood = 'happy', tone = '') { bubble.innerHTML = h; bubble.className = 'bubble ' + tone; $('#vbox').innerHTML = volty(mood); },
+    dots(i, total = L.rounds) {
+      $('#dots').innerHTML = Array.from({ length: total }, (_, k) => `<i class="${k < i ? 'done' : k === i ? 'now' : ''}"></i>`).join('');
+      $('#dots').setAttribute('aria-label', `Round ${Math.min(i + 1, total)} of ${total}`);
+    },
+    mood(c) { stage.classList.remove('good', 'bad', 'warn'); if (c) stage.classList.add(c); },
+    actions(list) {
+      const a = $('#actions'); a.innerHTML = '';
+      list.forEach(b => { const el = document.createElement('button'); el.className = 'btn ' + (b.cls || ''); el.innerHTML = b.label; el.onclick = () => { Snd.ac(); b.on(); }; a.appendChild(el); });
+    },
+    miss() { this.mistakes++; },
+    later(fn, ms) { this.timers.push(setTimeout(fn, ms)); },
+    win() {
+      const s = starsFor(this.mistakes, L.stars); saveStars(n, s); sfx('win'); confetti();
+      const ov = document.createElement('div'); ov.className = 'overlay';
+      ov.innerHTML = `<div class="wincard" role="dialog" aria-modal="true" aria-labelledby="wt">${volty('wow')}
+        <h2 id="wt">${['', 'Mission complete!', 'Great work!', 'Super engineer!'][s]}</h2>
+        <div class="winbolts">${[1, 2, 3].map(k => BOLT(k <= s)).join('')}</div>
+        <p>${s < 3 ? `You made ${this.mistakes} mistake${this.mistakes === 1 ? '' : 's'}. Play again to earn all 3 bolts!` : 'Perfect! You earned all 3 bolts.'}</p>
+        <div class="actions"><button class="btn ghost" data-a="again">Play again</button>${n < 8 ? `<a class="btn primary" href="#m${n + 1}">Next mission ›</a>` : '<a class="btn primary" href="#map">Back to missions</a>'}</div></div>`;
+      document.body.appendChild(ov);
+      $('[data-a="again"]', ov).onclick = () => { stopCurrent(); openLevel(n); };
+      $('.btn.primary', ov).focus();
+    }
+  };
+  L.play(ctx);
+}
+
+function route() {
+  stopCurrent();
+  const m = /^#m([1-8])$/.exec(location.hash);
+  if (m) openLevel(+m[1]); else showMap();
+  window.scrollTo(0, 0);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-snd]'); if (!b) return;
+  Snd.muted = !Snd.muted; const d = Store.get(); d.muted = Snd.muted; Store.set(d);
+  b.outerHTML = soundBtn(); if (!Snd.muted) sfx('tap');
+});
+window.addEventListener('hashchange', route);
+route();
+})();
+</script>
+</body>
+</html>
