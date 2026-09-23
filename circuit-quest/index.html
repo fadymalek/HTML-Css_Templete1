@@ -65,12 +65,12 @@ button{font:inherit}
 .bigcell{display:flex;align-items:center}
 .bc-body{flex:1;height:64px;border:4px solid var(--soft);border-radius:16px;padding:5px;position:relative;overflow:hidden;background:var(--ink2)}
 .bc-fill{height:100%;border-radius:9px;background:linear-gradient(90deg,var(--mint),var(--volt));box-shadow:0 0 22px rgba(255,210,63,.45);min-width:6px;transition:width .8s ease}
-.bc-ticks{position:absolute;inset:5px;background:repeating-linear-gradient(90deg,transparent 0 calc(100%/8 - 3px),var(--ink2) calc(100%/8 - 3px) calc(100%/8))}
+.bc-ticks{position:absolute;inset:5px;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 3px),var(--ink2) calc(10% - 3px) 10%)}
 .bc-nub{width:12px;height:28px;background:var(--soft);border-radius:0 6px 6px 0}
 .bc-cap{display:flex;justify-content:space-between;font-weight:800;color:var(--soft);font-size:.95rem}
 .bc-cap b{color:var(--volt);font-family:var(--display);font-size:1.3rem}
 .sec{font-family:var(--display);font-size:1.6rem;margin:0 0 14px}
-.missions{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.missions{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:16px}
 .mcard{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:24px;background:linear-gradient(180deg,var(--panel2),var(--panel));
   border:2px solid var(--line);text-decoration:none;transition:transform .15s ease,border-color .15s}
 .mcard:hover{transform:translateY(-4px);border-color:var(--volt)}
@@ -249,6 +249,23 @@ svg.board.drag{touch-action:none}
 .g-l{font:800 15px var(--display)}
 .needle{stroke:#fff;stroke-width:6;stroke-linecap:round}
 .plus-mark{font:800 34px var(--display);fill:#FF4D64}
+
+.chip{display:inline-flex;align-items:center;min-height:44px;padding:6px 16px;border-radius:999px;border:2px dashed var(--line);font-family:var(--display);font-weight:700;color:var(--soft)}
+.chip.on{border-style:solid;border-color:var(--mint);color:var(--mint);background:rgba(59,224,161,.12)}
+.part:disabled{opacity:.4;cursor:default;transform:none}
+.bb-hole{fill:#3A3F55}
+.bb-lbl{font:800 13px var(--display);fill:#8A90AE;text-anchor:middle;dominant-baseline:central}
+.bb-sign{font:800 22px var(--display);text-anchor:middle;dominant-baseline:central}
+.bb-mark{fill:none;stroke:#FF9F1C;stroke-width:4}
+.bb-mark.pick{stroke:#7B5CFF}
+.bb-mark.ok{stroke:#1FBF84;stroke-width:5}
+.bb-mark.bad{stroke:#FF4D64;stroke-width:5}
+.bb-mark.miss{stroke:#1FBF84;stroke-dasharray:4 4}
+.bb-mark.star{stroke:#FF9F1C;stroke-width:5}
+.bb-mark.pend{stroke:#FF9F1C;stroke-width:5;animation:pulse 1s ease-in-out infinite}
+.bb-leg{fill:none;stroke:#8C93B0;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.bb-plus{font:800 16px var(--display);fill:#E0334B;text-anchor:middle;dominant-baseline:central}
+.bbpart{cursor:pointer}
 
 @keyframes flow{to{stroke-dashoffset:-24}}
 @keyframes pulse{50%{opacity:.45}}
@@ -964,7 +981,7 @@ function L5(ctx) {
     ctx.dots(r); ctx.mood('');
     ctx.goal(c.n === 1 ? `This battery is <b>${c.lv * 3} volts</b>. Pick the resistor bodyguard that keeps the LED <b>bright</b> and <b>safe</b>.`
       : `Two spots! Bodyguards in a row add up their shields. This battery is <b>${c.lv * 3} volts</b>.`);
-    ctx.say(r === 0 ? 'Each shield blocks some electricity. Too few shields: POP! Too many: the LED is too dim.' : r === 3 ? 'Fill both spots. A plain wire has zero shields.' : 'Choose carefully, then switch on!', 'think');
+    ctx.say(r === 0 ? 'A resistor slows electricity down. Each shield blocks some of it. Too few shields: POP! Too many: the LED is too dim.' : r === 3 ? 'Fill both spots. A plain wire has zero shields.' : 'Choose carefully, then switch on!', 'think');
     ctx.actions([{ label: 'Switch ON', cls: 'primary', on: test }]);
     drawAll();
   }
@@ -1032,7 +1049,9 @@ function L6(ctx) {
     { slots: [['L', .5], ['T', .5], ['R', .5], ['B', .5]], tray: ['battery', 'led', 'resistor', 'patch', 'plastic', 'wood'], color: 'red',
       goal: 'Build it all yourself! Make the LED glow. Careful: some parts in the box won’t work.' },
     { slots: [['L', .5], ['T', .3], ['T', .7], ['R', .5], ['B', .5]], tray: ['battery', 'led', 'buzzer', 'resistor', 'patch', 'eraser', 'plastic'], color: 'yellow',
-      goal: 'Make the LED glow <b>and</b> the buzzer beep, all in one loop!' }
+      goal: 'Make the LED glow <b>and</b> the buzzer beep, all in one loop!' },
+    { slots: [['L', .5, 'battery'], ['T', .5, 'led'], ['R', .5], ['B', .5]], tray: ['resistor', 'patch', 'eraser'], color: 'green',
+      goal: 'This time the LED comes <b>first</b>. Can a resistor placed <b>after</b> the LED still protect it?' }
   ];
   const BOX = { x0: 160, y0: 130, x1: 840, y1: 430 };
   let r = 0, items, place, fixed, sel, powered, res, done;
@@ -1046,7 +1065,7 @@ function L6(ctx) {
       return p;
     });
     place = c.slots.map(() => null);
-    fixed = c.slots.map(s => s[2] ? Object.assign(clone(PC[s[2]]), { dir: 1 }) : null);
+    fixed = c.slots.map(s => s[2] ? Object.assign(clone(PC[s[2]]), { dir: 1, flip: false, color: c.color }) : null);
     sel = null; powered = false; res = null; done = false;
     ctx.dots(r); ctx.goal(c.goal); ctx.mood('');
     ctx.say(r === 0 ? 'Drag parts from the box into the empty spots. Tap ⇄ to turn a part around. Tap a part to put it back.' : 'Remember all three rules: a power source, a road of conductors, and protection!', 'think');
@@ -1069,7 +1088,7 @@ function L6(ctx) {
   function reset() { powered = false; res = null; ctx.mood(''); }
   function put(i, k) {
     if (done) return;
-    if (fixed[k]) { ctx.say('The battery is fixed in place. Choose another spot.', 'think'); return; }
+    if (fixed[k]) { ctx.say('That spot is already taken. Choose an empty spot.', 'think'); return; }
     const prev = place.indexOf(i); if (prev >= 0) place[prev] = null;
     place[k] = i; sel = null; reset(); sfx('drop'); drawAll();
   }
@@ -1081,7 +1100,7 @@ function L6(ctx) {
     const k = +g.dataset.i;
     if (sel != null) put(sel, k);
     else if (place[k] != null) { place[k] = null; reset(); sfx('pick'); drawAll(); }
-    else if (fixed[k]) ctx.say('The battery is fixed in place. Tap ⇄ to turn it around.', 'think');
+    else if (fixed[k]) ctx.say('This part is fixed in place for this round.', 'think');
     else ctx.say('This spot is empty. Drag a part here from the box.', 'think');
   };
   function test() {
@@ -1095,7 +1114,7 @@ function L6(ctx) {
       case 'works': {
         done = true; drawBoard(); ctx.mood('good');
         const bz = sl.some(p => p.type === 'buzzer'); sfx(bz ? 'buzz' : 'good');
-        ctx.say(bz ? 'Beep! Glow! You built a complete, safe circuit with two parts working together.' : 'It glows! Power source, conductor road and a resistor bodyguard. Great building!', 'wow', 'good');
+        ctx.say(bz ? 'Beep! Glow! You built a complete, safe circuit with two parts working together.' : r === 3 ? 'Yes! A resistor protects the LED from <b>anywhere</b> in the loop, before it or after it.' : 'It glows! Power source, conductor road and a resistor bodyguard. Great building!', 'wow', 'good');
         ctx.actions([{ label: r < R.length - 1 ? 'Next build ›' : 'Finish mission', cls: 'primary', on: () => { if (r < R.length - 1) { r++; start(); } else ctx.win(); } }]);
         return;
       }
@@ -1273,19 +1292,325 @@ function L8(ctx) {
   start();
 }
 
+/* =====================================================================
+   BREADBOARD — shared drawing and wiring logic
+   Columns 1–20; letter rows a–e (top half) and f–j (bottom half);
+   four power rails: tp / tn on top, bp / bn at the bottom.
+   ===================================================================== */
+const BB = {
+  x: c => 150 + (c - 1) * 40,
+  rows: { a: 146, b: 174, c: 202, d: 230, e: 258, f: 314, g: 342, h: 370, i: 398, j: 426 },
+  rails: { tp: 72, tn: 100, bp: 468, bn: 496 }
+};
+const HOLE_RE = /^(tp|tn|bp|bn|[a-j])(\d+)$/;
+const ALL_HOLES = ['tp', 'tn', 'bp', 'bn', ...'abcdefghij'].flatMap(r => Array.from({ length: 20 }, (_, k) => r + (k + 1)));
+function holeXY(id) { const m = HOLE_RE.exec(id); return [BB.x(+m[2]), BB.rails[m[1]] ?? BB.rows[m[1]]]; }
+// Every hole joined by the same hidden metal clip shares one "net"
+function netOf(id) { const m = HOLE_RE.exec(id); return m[1].length === 2 ? m[1] : ('abcde'.includes(m[1]) ? 'T' : 'B') + m[2]; }
+const isStrip = net => /^[TB]/.test(net);
+const NETC = net => isStrip(net) ? '#1FBF84' : net[1] === 'p' ? '#FF4D64' : '#2F8FE8';
+function holeName(id) {
+  const m = HOLE_RE.exec(id);
+  return { tp: 'the top + rail', tn: 'the top − rail', bp: 'the bottom + rail', bn: 'the bottom − rail' }[m[1]] || `hole <b>${m[1]}${m[2]}</b>`;
+}
+function nearestHole(x, y) {
+  let best = null, bd = 17;
+  for (const h of ALL_HOLES) { const [hx, hy] = holeXY(h), d = Math.hypot(hx - x, hy - y); if (d < bd) { bd = d; best = h; } }
+  return best;
+}
+function glowSVG(net, color = NETC(net)) {
+  let x1, y1, x2, y2;
+  if (isStrip(net)) {
+    const c = +net.slice(1), L = net[0] === 'T' ? ['a', 'e'] : ['f', 'j'];
+    x1 = x2 = BB.x(c); y1 = BB.rows[L[0]] - 14; y2 = BB.rows[L[1]] + 14;
+  } else { y1 = y2 = BB.rails[net]; x1 = BB.x(1) - 14; x2 = BB.x(20) + 14; }
+  return `<path d="M${x1} ${y1}L${x2} ${y2}" stroke="${color}" stroke-opacity=".3" stroke-width="30" stroke-linecap="round"/>
+    <path d="M${x1} ${y1}L${x2} ${y2}" stroke="${color}" stroke-width="8" stroke-linecap="round"/>`;
+}
+function boardSVG(o = {}) {
+  let s = `<svg class="board" viewBox="0 0 1000 560" role="img" aria-label="Breadboard">${DEFS}
+    <rect x="112" y="40" width="836" height="488" rx="20" fill="#ECEFF8" stroke="#C3C9E0" stroke-width="3"/>
+    <rect x="112" y="276" width="836" height="20" fill="#D3D8EA"/>`;
+  for (const [y, c] of [[56, '#FF4D64'], [116, '#2F8FE8'], [452, '#FF4D64'], [512, '#2F8FE8']]) s += `<path d="M${BB.x(1) - 14} ${y}H${BB.x(20) + 14}" stroke="${c}" stroke-width="3"/>`;
+  for (const [r, t, c] of [['tp', '+', '#E0334B'], ['tn', '−', '#1F7FD6'], ['bp', '+', '#E0334B'], ['bn', '−', '#1F7FD6']])
+    s += `<text class="bb-sign" x="128" y="${BB.rails[r]}" fill="${c}">${t}</text><text class="bb-sign" x="932" y="${BB.rails[r]}" fill="${c}">${t}</text>`;
+  for (const l of 'abcdefghij') s += `<text class="bb-lbl" x="128" y="${BB.rows[l]}">${l}</text><text class="bb-lbl" x="932" y="${BB.rows[l]}">${l}</text>`;
+  for (const c of [1, 5, 10, 15, 20]) s += `<text class="bb-lbl" x="${BB.x(c)}" y="131">${c}</text>`;
+  (o.glow || []).forEach(g => { s += glowSVG(g.net, g.color); });
+  ALL_HOLES.forEach(h => { const [x, y] = holeXY(h); s += `<rect x="${x - 6}" y="${y - 6}" width="12" height="12" rx="2.5" class="bb-hole"/>`; });
+  (o.marks || []).forEach(m => {
+    const [x, y] = holeXY(m.id);
+    s += `<circle cx="${x}" cy="${y}" r="13" class="bb-mark ${m.cls || ''}"/>` +
+      (m.label ? `<g transform="translate(${x + 17} ${y - 19})"><circle r="13" fill="#FF9F1C"/><text class="tag-t" text-anchor="middle" dominant-baseline="central">${m.label}</text></g>` : '');
+  });
+  return s + (o.parts || '') + (o.extra || '') + '</svg>';
+}
+
+/* =====================================================================
+   MISSION 7 — Breadboard X-Ray
+   ===================================================================== */
+function LBX(ctx) {
+  const KINDS = [['top', 'Top strip (a–e)'], ['bottom', 'Bottom strip (f–j)'], ['plus', '+ rail'], ['minus', '− rail']];
+  const kindOf = n => isStrip(n) ? (n[0] === 'T' ? 'top' : 'bottom') : n[1] === 'p' ? 'plus' : 'minus';
+  const Q = [
+    ['a5', 'd5', true, 'Same column, same half: one hidden metal clip joins all 5 holes a5 to e5.'],
+    ['c3', 'c9', false, 'Holes side by side in a letter row are NOT joined. Each column has its own clip.'],
+    ['tp2', 'tp18', true, 'The + rail is one long clip that runs along the whole board.'],
+    ['tp6', 'tn6', false, 'The + rail and the − rail are separate clips. Joining them would be a short circuit!'],
+    ['c12', 'h12', false, 'The gap in the middle splits the top half from the bottom half. c12 and h12 are not joined.'],
+    ['f14', 'j14', true, 'Same column in the bottom half: f14 to j14 share one clip.'],
+    ['tp4', 'bp4', false, 'The top rails and the bottom rails are separate. You need a wire to join them.']
+  ];
+  const TAP = [['b7', ['a7', 'c7', 'd7', 'e7']], ['h15', ['f15', 'g15', 'i15', 'j15']]];
+  let step = 0, found = new Set(), picked = new Set(), locked = false;
+  const total = 1 + Q.length + TAP.length;
+  const explain = h => {
+    const n = netOf(h), k = kindOf(n);
+    if (k === 'plus' || k === 'minus') return `That hole is on ${holeName(h)}. One long metal clip joins <b>every</b> hole in this line.`;
+    const c = n.slice(1), L = k === 'top' ? 'a–e' : 'f–j';
+    return `${holeName(h)}: a hidden clip joins the 5 holes in column ${c} (${L}). Parts plugged in there are connected!`;
+  };
+  function next() { step++; if (step >= total) { ctx.dots(total); ctx.win(); } else start(); }
+  function nextBtn() { ctx.actions([{ label: step < total - 1 ? 'Next ›' : 'Finish mission', cls: 'primary', on: next }]); }
+  function start() {
+    ctx.dots(step); ctx.mood(''); locked = false; picked = new Set(); ctx.tray.innerHTML = ''; ctx.actions([]);
+    if (step === 0) {
+      ctx.goal('Tap holes to X-ray the breadboard and see its hidden metal clips. Find all <b>4 kinds</b> of clip.');
+      ctx.say('A breadboard lets you build circuits without glue or tape. Tap a hole!', 'think');
+      ctx.stage.innerHTML = boardSVG(); drawChips();
+    } else if (step <= Q.length) {
+      const [a, b] = Q[step - 1];
+      ctx.goal(`Are holes <b>A</b> and <b>B</b> connected inside the breadboard?`);
+      ctx.say('Think about the hidden clips before you answer.', 'think');
+      ctx.stage.innerHTML = boardSVG({ marks: [{ id: a, label: 'A' }, { id: b, label: 'B' }] });
+      ctx.actions([{ label: 'Connected', cls: 'primary', on: () => answer(true) }, { label: 'Not connected', on: () => answer(false) }]);
+    } else {
+      const [star] = TAP[step - 1 - Q.length];
+      ctx.goal('Tap <b>every</b> hole that is connected to the star hole ★. Then press <b>Check</b>.');
+      ctx.say('Tap a hole again to un-choose it.', 'think');
+      drawTap();
+      ctx.actions([{ label: 'Check', cls: 'primary', on: checkTap }]);
+    }
+  }
+  function drawChips() {
+    ctx.tray.innerHTML = KINDS.map(([k, t]) => `<span class="chip${found.has(k) ? ' on' : ''}">${found.has(k) ? '✓ ' : ''}${t}</span>`).join('');
+  }
+  function answer(yes) {
+    if (locked) return; locked = true;
+    const [a, b, conn, why] = Q[step - 1], right = yes === conn;
+    const nets = [...new Set([netOf(a), netOf(b)])];
+    ctx.stage.innerHTML = boardSVG({ glow: nets.map(net => ({ net })), marks: [{ id: a, label: 'A' }, { id: b, label: 'B' }] });
+    if (right) { sfx('good'); ctx.mood('good'); ctx.say(`Correct! ${why}`, 'wow', 'good'); }
+    else { ctx.miss(); sfx('bad'); ctx.mood('bad'); ctx.say(`Not quite. ${why}`, 'oops', 'bad'); }
+    nextBtn();
+  }
+  function drawTap(show) {
+    const [star, ans] = TAP[step - 1 - Q.length];
+    const marks = [{ id: star, cls: 'star', label: '★' }, ...[...picked].map(id => ({ id, cls: show ? (ans.includes(id) ? 'ok' : 'bad') : 'pick' }))];
+    if (show) ans.filter(id => !picked.has(id)).forEach(id => marks.push({ id, cls: 'miss' }));
+    ctx.stage.innerHTML = boardSVG({ glow: show ? [{ net: netOf(star) }] : [], marks });
+  }
+  function checkTap() {
+    if (locked) return; locked = true;
+    const [, ans] = TAP[step - 1 - Q.length];
+    const ok = picked.size === ans.length && ans.every(id => picked.has(id));
+    drawTap(true);
+    if (ok) { sfx('good'); ctx.mood('good'); ctx.say('Perfect! Those 4 holes share one clip with the star hole.', 'wow', 'good'); }
+    else { ctx.miss(); sfx('bad'); ctx.mood('bad'); ctx.say('Look at the glowing clip: only the holes in the <b>same column</b> and the <b>same half</b> are connected.', 'oops', 'bad'); }
+    nextBtn();
+  }
+  ctx.stage.onclick = e => {
+    const svg = $('svg', ctx.stage); if (!svg) return;
+    const pt = svgPt(svg, e), h = nearestHole(pt.x, pt.y); if (!h) return;
+    if (step === 0) {
+      const n = netOf(h), k = kindOf(n), fresh = !found.has(k); found.add(k); sfx(fresh ? 'on' : 'click');
+      ctx.stage.innerHTML = boardSVG({ glow: [{ net: n }], marks: [{ id: h }] }); drawChips();
+      if (found.size === KINDS.length) { ctx.mood('good'); ctx.say(`${explain(h)} You found all 4 kinds of clip!`, 'wow', 'good'); nextBtn(); }
+      else ctx.say(explain(h), 'happy');
+    } else if (step > Q.length && !locked) {
+      const [star] = TAP[step - 1 - Q.length]; if (h === star) return;
+      picked.has(h) ? picked.delete(h) : picked.add(h); sfx('tap'); drawTap();
+    }
+  };
+  start();
+}
+
+/* =====================================================================
+   MISSION 10 — Breadboard Builder
+   ===================================================================== */
+function evalBB(parts) {
+  const par = {}, f = x => { if (!(x in par)) par[x] = x; while (par[x] !== x) { par[x] = par[par[x]]; x = par[x]; } return x; };
+  parts.forEach(p => { if (p.type === 'wire') { const a = f(netOf(p.a)), b = f(netOf(p.b)); if (a !== b) par[a] = b; } });
+  const P = f('tp'), N = f('tn'), out = { status: 'open', lit: new Set(), burnt: new Set(), roots: new Set(), f };
+  if (P === N) { out.status = 'short'; return out; }
+  const comps = []; parts.forEach((p, i) => { if (p.type !== 'wire') comps.push({ i, type: p.type, na: f(netOf(p.a)), nb: f(netOf(p.b)) }); });
+  let reversed = false, resOnly = false;
+  const seen = new Set([P]), path = [];
+  (function dfs(n, rev) {
+    if (n === N) {
+      const leds = path.filter(c => c.type === 'led'), hasR = path.some(c => c.type === 'res');
+      if (rev) { reversed = true; return; }
+      if (!leds.length) { resOnly = true; return; }
+      if (hasR) { leds.forEach(c => out.lit.add(c.i)); path.forEach(c => { out.roots.add(c.na); out.roots.add(c.nb); }); }
+      else leds.forEach(c => out.burnt.add(c.i));
+      return;
+    }
+    for (const c of comps) {
+      if (path.includes(c) || c.na === c.nb) continue;
+      let nx, r = false;
+      if (c.na === n) nx = c.nb; else if (c.nb === n) { nx = c.na; r = c.type === 'led'; } else continue;
+      if (seen.has(nx)) continue;
+      seen.add(nx); path.push(c); dfs(nx, rev || r); path.pop(); seen.delete(nx);
+    }
+  })(P, false);
+  if (out.burnt.size) { out.status = 'burn'; out.lit.clear(); out.roots.clear(); }
+  else if (out.lit.size) out.status = 'works';
+  else if (comps.some(c => c.type === 'led' && c.na === c.nb)) out.status = 'bypass';
+  else if (reversed) out.status = 'reversed';
+  else if (resOnly) out.status = 'resonly';
+  return out;
+}
+function bbPartSVG(p, i, st) {
+  const [x1, y1] = holeXY(p.a), [x2, y2] = holeXY(p.b), mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+  const grab = d => `<path d="${d}" stroke="transparent" stroke-width="24" fill="none"/>`;
+  if (p.type === 'wire') {
+    const na = netOf(p.a), nb = netOf(p.b);
+    const col = [na, nb].some(n => n === 'tp' || n === 'bp') ? '#FF4D64' : [na, nb].some(n => n === 'tn' || n === 'bn') ? '#2F8FE8' : '#1FBF84';
+    const d = `M${x1} ${y1}Q${mx} ${my - Math.max(28, Math.hypot(x2 - x1, y2 - y1) * .3)} ${x2} ${y2}`;
+    return `<g class="bbpart" data-p="${i}">${grab(d)}<path d="${d}" stroke="#1a1d2e" stroke-width="10" fill="none" stroke-linecap="round"/><path d="${d}" stroke="${col}" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="${x1}" cy="${y1}" r="4" fill="#C9CCE0"/><circle cx="${x2}" cy="${y2}" r="4" fill="#C9CCE0"/></g>`;
+  }
+  if (p.type === 'res') {
+    const a = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI, d = `M${x1} ${y1}L${x2} ${y2}`;
+    return `<g class="bbpart" data-p="${i}">${grab(d)}<path d="${d}" class="bb-leg"/><g transform="translate(${mx} ${my}) rotate(${a})"><rect x="-24" y="-9" width="48" height="18" rx="9" class="res"/><rect x="-14" y="-9" width="5" height="18" fill="#7A4A21"/><rect x="-4" y="-9" width="5" height="18" fill="#1a1a1a"/><rect x="6" y="-9" width="5" height="18" fill="#8B4513"/><rect x="15" y="-9" width="4" height="18" fill="#D4AF37"/></g></g>`;
+  }
+  const c = LEDC[p.color || 'red'], cy = Math.min(y1, y2) - 44, sg = x1 <= x2 ? -1 : 1, ax = mx + sg * 7, kx = mx - sg * 7;
+  const da = `M${ax} ${cy + 15}V${cy + 24}l${sg * 6} 6L${x1} ${y1}`, dk = `M${kx} ${cy + 15}L${x2} ${y2}`;
+  return `<g class="bbpart" data-p="${i}">${st.on ? `<circle cx="${mx}" cy="${cy}" r="80" fill="url(#${c.g})"/>` : ''}${grab(da)}${grab(dk)}
+    <path d="${da}" class="bb-leg"/><path d="${dk}" class="bb-leg"/>
+    <rect x="${mx - 18}" y="${cy + 8}" width="36" height="7" rx="2" fill="${st.burnt ? '#3a3a48' : c.rim}"/>
+    <path d="M${mx - 14} ${cy + 9}V${cy - 6}A14 14 0 0 1 ${mx + 14} ${cy - 6}V${cy + 9}Z" fill="${st.burnt ? '#2f2f3a' : st.on ? c.on : c.off}" stroke="${st.burnt ? '#555' : st.on ? '#fff' : c.rim}" stroke-width="2.5"/>
+    <text class="bb-plus" x="${ax + sg * 13}" y="${cy + 26}">+</text>${st.burnt ? `<g transform="translate(${mx} ${cy + 62})">${SMOKE}</g>` : ''}</g>`;
+}
+function LBB(ctx) {
+  const R = [
+    { pre: [{ type: 'led', a: 'c10', b: 'c11', color: 'red' }, { type: 'res', a: 'a11', b: 'a15' }], tray: { wire: 2 }, need: 1,
+      goal: 'Add two <b>jumper wires</b>: one from the <b>+ rail</b> to the LED’s long-leg column, and one from the resistor’s far end to the <b>− rail</b>.' },
+    { pre: [{ type: 'wire', a: 'tp8', b: 'a8' }, { type: 'res', a: 'b14', b: 'b18' }, { type: 'wire', a: 'e18', b: 'tn18' }], tray: { led: 1 }, need: 1,
+      goal: 'Place the <b>LED</b> so it joins column 8 to column 14. Tap where the <b>long leg</b> goes first!' },
+    { pre: [], tray: { led: 1, res: 1, wire: 3 }, need: 1,
+      goal: 'Build the whole circuit yourself, just like in TinkerCad: <b>+ rail → LED → resistor → − rail</b>.' },
+    { pre: [], tray: { led: 2, res: 1, wire: 4 }, need: 2,
+      goal: 'Final challenge: make <b>two LEDs</b> glow at the same time!' }
+  ];
+  const NAME = { led: 'LED', res: 'Resistor', wire: 'Jumper wire' };
+  const ICON = {
+    led: partIcon({ type: 'led', color: 'green' }), res: partIcon({ type: 'resistor', strength: 1 }),
+    wire: '<svg viewBox="-70 -50 140 90" aria-hidden="true"><path d="M-50 20 Q0 -50 50 20" stroke="#060920" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M-50 20 Q0 -50 50 20" stroke="#1FBF84" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="-50" cy="20" r="5" fill="#C9CCE0"/><circle cx="50" cy="20" r="5" fill="#C9CCE0"/></svg>'
+  };
+  const BAT_SVG = `<path class="w-out" d="M60 252V72H150"/><path class="w-red" d="M60 252V72H150"/><path class="w-out" d="M60 348V372H96V100H150"/><path class="w-blue" d="M60 348V372H96V100H150"/>
+    <g transform="translate(60 300) rotate(270)">${PART.battery({ level: 1 }, { a: 270, d: 1 })}</g>`;
+  let r = 0, parts, mode, pendingA, res, powered, done, peek;
+  const colors = ['green', 'yellow'];
+  function start() {
+    const c = R[r]; parts = c.pre.map(p => Object.assign({ lock: true }, p));
+    mode = null; pendingA = null; res = null; powered = false; done = false; peek = null;
+    ctx.dots(r); ctx.goal(c.goal); ctx.mood('');
+    ctx.say(r === 0 ? 'The battery is already plugged into the top rails. Choose a part, then tap two holes to plug it in.' : r === 2 ? 'Tip: tap any hole to X-ray its hidden clip.' : 'Choose a part from the box, then tap two holes.', 'think');
+    ctx.actions([{ label: 'Switch ON', cls: 'primary', on: test }, { label: 'Clear my parts', cls: 'ghost', on: clear }]);
+    draw(); drawTray();
+  }
+  const left = k => R[r].tray[k] - parts.filter(p => !p.lock && p.type === k).length;
+  const occupied = h => h === 'tp1' || h === 'tn1' || parts.some(p => p.a === h || p.b === h);
+  function draw() {
+    const glow = [];
+    if (powered && res && res.status === 'works') {
+      const seen = new Set();
+      ALL_HOLES.forEach(h => { const n = netOf(h); if (!seen.has(n) && res.roots.has(res.f(n))) { seen.add(n); glow.push({ net: n, color: '#FFB400' }); } });
+    } else if (peek) glow.push({ net: peek });
+    const marks = pendingA ? [{ id: pendingA, cls: 'pend' }] : [];
+    const partsSVG = parts.map((p, i) => bbPartSVG(p, i, { on: powered && res && res.lit.has(i), burnt: powered && res && res.burnt.has(i) })).join('');
+    ctx.stage.innerHTML = boardSVG({ glow, marks, parts: partsSVG, extra: BAT_SVG });
+  }
+  function drawTray() {
+    ctx.tray.innerHTML = Object.keys(R[r].tray).map(k => `<button class="part${mode === k ? ' sel' : ''}" data-k="${k}"${left(k) <= 0 ? ' disabled' : ''}><span class="icon">${ICON[k]}</span><span class="pname">${NAME[k]}<small>${left(k)} left</small></span></button>`).join('');
+    $$('.part', ctx.tray).forEach(b => b.onclick = () => {
+      if (done) return;
+      const k = b.dataset.k; mode = mode === k ? null : k; pendingA = null; peek = null; sfx('tap'); prompt(); draw(); drawTray();
+    });
+  }
+  function prompt() {
+    if (!mode) { ctx.say('Choose a part from the box. Tap a part on the board to take it out.', 'think'); return; }
+    const t = {
+      led: ['Tap a hole for the LED’s <b>long leg (+)</b>.', 'Now tap a hole for the <b>short leg (−)</b>.'],
+      res: ['Tap a hole for one end of the resistor.', 'Now tap a hole for the other end.'],
+      wire: ['Tap the hole where the wire starts.', 'Now tap the hole where the wire ends.']
+    }[mode];
+    ctx.say(t[pendingA ? 1 : 0], 'think');
+  }
+  function reset() { powered = false; res = null; ctx.mood(''); }
+  function clear() { if (done) return; parts = parts.filter(p => p.lock); mode = null; pendingA = null; reset(); sfx('pick'); draw(); drawTray(); prompt(); }
+  ctx.stage.onclick = e => {
+    if (done) return;
+    const svg = $('svg', ctx.stage); if (!svg) return;
+    const partEl = e.target.closest('.bbpart');
+    if (!mode && partEl) {
+      const i = +partEl.dataset.p;
+      if (parts[i].lock) { ctx.say('That part is already fixed in place for this round.', 'think'); return; }
+      parts.splice(i, 1); sfx('pick'); reset(); draw(); drawTray(); ctx.say('Part taken out and back in the box.', 'think'); return;
+    }
+    const pt = svgPt(svg, e), h = nearestHole(pt.x, pt.y); if (!h) return;
+    if (!mode) { peek = netOf(h); reset(); draw(); ctx.say(`X-ray: ${holeName(h)}. The glowing clip shows every hole it is connected to.`, 'happy'); return; }
+    if (h === pendingA) { pendingA = null; sfx('click'); draw(); prompt(); return; }
+    if (occupied(h)) { sfx('bad'); ctx.say('That hole already has a leg in it. Pick an empty hole.', 'oops', 'warn'); return; }
+    if (!pendingA) { pendingA = h; sfx('click'); draw(); prompt(); return; }
+    const p = { type: mode, a: pendingA, b: h };
+    if (mode === 'led') p.color = colors[parts.filter(q => q.type === 'led').length % 2];
+    parts.push(p); pendingA = null; mode = null;
+    sfx('drop'); reset(); draw(); drawTray();
+    ctx.say(`${NAME[p.type]} plugged in! Choose the next part, or press <b>Switch ON</b> to test.`, 'happy');
+  };
+  function test() {
+    if (done) return;
+    mode = null; pendingA = null; peek = null; drawTray();
+    res = evalBB(parts); powered = true; draw();
+    const need = R[r].need, usesBottom = parts.some(p => [p.a, p.b].some(h => /^b[pn]/.test(h)));
+    if (res.status === 'works' && res.lit.size >= need) {
+      done = true; sfx('good'); ctx.mood('good');
+      ctx.say(need > 1 ? 'Two LEDs glowing! You solved the challenge. The yellow glow shows the path electricity takes.' : 'It glows! The yellow glow shows the path: + rail → LED → resistor → − rail.', 'wow', 'good');
+      ctx.actions([{ label: r < R.length - 1 ? 'Next build ›' : 'Finish mission', cls: 'primary', on: () => { if (r < R.length - 1) { r++; start(); } else ctx.win(); } }]);
+      return;
+    }
+    const msg = {
+      works: 'One LED glows! Now get the second LED glowing too.',
+      short: 'Short circuit! A wire joins the + rail straight to the − rail, so the battery gets hot. Take that wire out!',
+      burn: 'POP! An LED burned out because there is no resistor on its road. Add the resistor bodyguard!',
+      bypass: 'Both LED legs are in the same column strip, so electricity skips around the LED. Put its legs in different columns.',
+      reversed: 'The loop is complete, but the LED is backwards. Its long leg must connect toward the + rail.',
+      resonly: 'Electricity goes through the resistor, but it never passes through the LED.',
+      open: 'The loop is not complete yet. Tap holes to X-ray the clips, and trace the road from the + rail to the − rail.'
+    }[res.status] + (res.status === 'open' && usesBottom ? ' Remember: the battery is only plugged into the <b>top</b> rails.' : '');
+    ctx.miss(); sfx(res.status === 'burn' || res.status === 'short' ? 'pop' : 'bad'); ctx.mood(res.status === 'works' ? 'warn' : 'bad');
+    ctx.say(msg, 'oops', res.status === 'works' ? 'warn' : 'bad');
+  }
+  start();
+}
+
 /* ================= missions list ================= */
 const DIFF = ['', 'Easy', 'Medium', 'Hard', 'Expert'];
 const DC = ['', 'var(--mint)', 'var(--sky)', 'var(--volt)', 'var(--coral)'];
 const LEVELS = [
-  { n: 1, name: 'Close the Loop', learn: 'Spot which circuits make a full loop from + to −.', diff: 1, rounds: 3, stars: [1, 3], play: L1 },
-  { n: 2, name: 'Conductor Detective', learn: 'Sort everyday objects into conductors and insulators.', diff: 1, rounds: 12, stars: [1, 3], play: L2 },
-  { n: 3, name: 'Wire Repair Shop', learn: 'Fix broken and unsafe wires with copper and tape.', diff: 2, rounds: 3, stars: [0, 2], play: L3 },
-  { n: 4, name: 'Which Way?', learn: 'Connect LEDs and buzzers the right way round.', diff: 2, rounds: 5, stars: [1, 3], play: L4 },
-  { n: 5, name: 'Resistor Bodyguard', learn: 'Pick the resistor that keeps an LED bright and safe.', diff: 3, rounds: 5, stars: [1, 3], play: L5 },
-  { n: 6, name: 'Circuit Builder', learn: 'Build complete circuits from a box of parts.', diff: 3, rounds: 3, stars: [1, 3], play: L6 },
-  { n: 7, name: 'Switch Master', learn: 'Use switches to control which bulbs light up.', diff: 4, rounds: 6, stars: [1, 3], play: L7 },
-  { n: 8, name: 'Circuit Doctor', learn: 'Find what is wrong in each broken circuit.', diff: 4, rounds: 7, stars: [1, 3], play: L8 }
-];
+  { name: 'Close the Loop', learn: 'Spot which circuits make a full loop from + to −.', diff: 1, rounds: 3, stars: [1, 3], play: L1 },
+  { name: 'Conductor Detective', learn: 'Sort everyday objects into conductors and insulators.', diff: 1, rounds: 12, stars: [1, 3], play: L2 },
+  { name: 'Wire Repair Shop', learn: 'Fix broken and unsafe wires with copper and tape.', diff: 2, rounds: 3, stars: [0, 2], play: L3 },
+  { name: 'Which Way?', learn: 'Connect LEDs and buzzers the right way round.', diff: 2, rounds: 5, stars: [1, 3], play: L4 },
+  { name: 'Resistor Bodyguard', learn: 'Pick the resistor that keeps an LED bright and safe.', diff: 3, rounds: 5, stars: [1, 3], play: L5 },
+  { name: 'Circuit Builder', learn: 'Build complete circuits from a box of parts.', diff: 3, rounds: 4, stars: [1, 3], play: L6 },
+  { name: 'Breadboard X-Ray', learn: 'Discover which breadboard holes are secretly connected.', diff: 3, rounds: 10, stars: [1, 3], play: LBX },
+  { name: 'Switch Master', learn: 'Use switches to control which bulbs light up.', diff: 4, rounds: 6, stars: [1, 3], play: L7 },
+  { name: 'Circuit Doctor', learn: 'Find what is wrong in each broken circuit.', diff: 4, rounds: 7, stars: [1, 3], play: L8 },
+  { name: 'Breadboard Builder', learn: 'Plug in LEDs, resistors and wires to build real circuits.', diff: 4, rounds: 4, stars: [1, 3], play: LBB }
+].map((l, i) => ({ ...l, n: i + 1 }));
+const MAX_BOLTS = LEVELS.length * 3;
 const starsFor = (m, [a, b]) => m <= a ? 3 : m <= b ? 2 : 1;
 
 /* ================= screens ================= */
@@ -1306,13 +1631,13 @@ function showMap() {
       <div>
         <p class="kicker">Electricity missions · Grades 4–5</p>
         <h1 class="brand">Circuit<br><span class="q">Quest</span></h1>
-        <p class="lede">Eight hands-on missions, from easy to expert. Close loops, hunt for conductors, fix wires, and become a real circuit doctor.</p>
+        <p class="lede">Ten hands-on missions, from easy to expert. Close loops, hunt for conductors, fix wires, master the breadboard, and become a real circuit doctor.</p>
         <a class="btn primary" href="#m${next.n}">${total ? 'Continue' : 'Start'} with Mission ${next.n} ›</a>
       </div>
       <div class="labcell">
         <div class="lc-top">${volty('happy')}<p>Hi, I’m <b>Volty</b>! Every mission earns up to 3 bolts to charge the lab battery. Can you fill it up?</p></div>
-        <div class="bigcell" role="img" aria-label="${total} of 24 bolts collected"><div class="bc-body"><div class="bc-fill" style="width:${total / 24 * 100}%"></div><div class="bc-ticks"></div></div><div class="bc-nub"></div></div>
-        <div class="bc-cap"><span>Lab battery</span><span><b>${total}</b> / 24 bolts</span></div>
+        <div class="bigcell" role="img" aria-label="${total} of ${MAX_BOLTS} bolts collected"><div class="bc-body"><div class="bc-fill" style="width:${total / MAX_BOLTS * 100}%"></div><div class="bc-ticks"></div></div><div class="bc-nub"></div></div>
+        <div class="bc-cap"><span>Lab battery</span><span><b>${total}</b> / ${MAX_BOLTS} bolts</span></div>
       </div>
     </section>
     <h2 class="sec">Missions</h2>
@@ -1320,7 +1645,7 @@ function showMap() {
       <div class="mtop"><span class="mnum">${l.n}</span><span class="diff">${dbat(l.diff)}${DIFF[l.diff]}</span></div>
       <h3 class="mname">${l.name}</h3><p class="mdesc">${l.learn}</p>
       <div class="mfoot"><span class="bolts" aria-label="${s} of 3 bolts">${[1, 2, 3].map(k => BOLT(k <= s)).join('')}</span><span class="play">${s ? 'Replay' : 'Play'} ›</span></div></a>`; }).join('')}</div>
-    <p class="foot">For teachers: open a mission directly by adding <code>#m1</code> to <code>#m8</code> to the page address. Progress is saved in this browser only.</p>
+    <p class="foot">For teachers: open a mission directly by adding <code>#m1</code> to <code>#m${LEVELS.length}</code> to the page address. Progress is saved in this browser only.</p>
   </div>`;
 }
 
@@ -1343,7 +1668,7 @@ function openLevel(n) {
   const ctx = current = {
     n, L, mistakes: 0, timers: [], stage, tray: $('#tray'),
     goal(h) { $('#goal').innerHTML = h; },
-    say(h, mood = 'happy', tone = '') { bubble.innerHTML = h; bubble.className = 'bubble ' + tone; $('#vbox').innerHTML = volty(mood); },
+    say(h, mood = 'happy', tone = '') { bubble.innerHTML = `<span>${h}</span>`; bubble.className = 'bubble ' + tone; $('#vbox').innerHTML = volty(mood); },
     dots(i, total = L.rounds) {
       $('#dots').innerHTML = Array.from({ length: total }, (_, k) => `<i class="${k < i ? 'done' : k === i ? 'now' : ''}"></i>`).join('');
       $('#dots').setAttribute('aria-label', `Round ${Math.min(i + 1, total)} of ${total}`);
@@ -1361,8 +1686,8 @@ function openLevel(n) {
       ov.innerHTML = `<div class="wincard" role="dialog" aria-modal="true" aria-labelledby="wt">${volty('wow')}
         <h2 id="wt">${['', 'Mission complete!', 'Great work!', 'Super engineer!'][s]}</h2>
         <div class="winbolts">${[1, 2, 3].map(k => BOLT(k <= s)).join('')}</div>
-        <p>${s < 3 ? `You made ${this.mistakes} mistake${this.mistakes === 1 ? '' : 's'}. Play again to earn all 3 bolts!` : 'Perfect! You earned all 3 bolts.'}</p>
-        <div class="actions"><button class="btn ghost" data-a="again">Play again</button>${n < 8 ? `<a class="btn primary" href="#m${n + 1}">Next mission ›</a>` : '<a class="btn primary" href="#map">Back to missions</a>'}</div></div>`;
+        <p>${s < 3 ? `You made ${this.mistakes} mistakes. Play again to earn all 3 bolts!` : this.mistakes ? `Only ${this.mistakes} mistake${this.mistakes === 1 ? '' : 's'}: you earned all 3 bolts!` : 'Perfect! No mistakes, and all 3 bolts are yours.'}</p>
+        <div class="actions"><button class="btn ghost" data-a="again">Play again</button>${n < LEVELS.length ? `<a class="btn primary" href="#m${n + 1}">Next mission ›</a>` : '<a class="btn primary" href="#map">Back to missions</a>'}</div></div>`;
       document.body.appendChild(ov);
       $('[data-a="again"]', ov).onclick = () => { stopCurrent(); openLevel(n); };
       $('.btn.primary', ov).focus();
@@ -1373,8 +1698,8 @@ function openLevel(n) {
 
 function route() {
   stopCurrent();
-  const m = /^#m([1-8])$/.exec(location.hash);
-  if (m) openLevel(+m[1]); else showMap();
+  const m = /^#m(\d+)$/.exec(location.hash);
+  if (m && LEVELS[+m[1] - 1]) openLevel(+m[1]); else showMap();
   window.scrollTo(0, 0);
 }
 document.addEventListener('click', e => {
