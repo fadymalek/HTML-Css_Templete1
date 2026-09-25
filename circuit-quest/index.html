@@ -108,12 +108,12 @@ button{font:inherit}
 .goal b{color:var(--volt)}
 .goal-s{display:block;font-family:var(--body);font-size:.85rem;color:var(--soft);font-weight:700;margin-top:2px}
 .stagebox{flex:1;min-height:0;display:flex;gap:clamp(8px,1.4vw,18px)}
-.stagecell{flex:1;min-width:0;container-type:size;display:grid;place-items:center}
+.stagecell{flex:1;min-width:0;container-type:size;display:grid;grid-template:minmax(0,1fr)/minmax(0,1fr);place-items:center}
 .stage{width:min(100%, calc((100vh - 17rem) * 1000 / 560));width:min(100cqw, calc(100cqh * 1000 / 560));aspect-ratio:1000/560;
   background:var(--stage);border:3px solid var(--line);border-radius:clamp(14px,2vh,26px);overflow:hidden;position:relative;
   box-shadow:0 22px 50px rgba(0,0,0,.35);transition:border-color .25s}
 .stage.good{border-color:var(--mint)} .stage.bad{border-color:var(--coral)} .stage.warn{border-color:var(--volt)}
-.stage.bare{width:100%;height:100%;aspect-ratio:auto;background:none;border:0;box-shadow:none;overflow:visible;border-radius:0}
+.stage.bare{width:100%;height:100%;min-height:0;aspect-ratio:auto;background:none;border:0;box-shadow:none;overflow:visible;border-radius:0}
 .stage.enter>*{animation:fadein .3s ease both}
 svg.board{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}
 .stage>svg.board{height:100%}
@@ -627,7 +627,7 @@ const PART = {
   empty: (p, s) => cut(-44, 44) + '<rect x="-50" y="-32" width="100" height="64" rx="16" class="socket"/>' + lbl(0, 1, '?', 'socket-q', s),
   probe: (p, s) => cut(-36, 36) + '<circle r="34" class="socket"/>' + (p.item ? lbl(0, 3, p.item, 'probe-e', s) : lbl(0, 1, 'test', 'socket-q sm', s)),
   wiggle(p, s) {
-    const d = 'M-100 0 C-80 0 -80 40 -60 40 S-40 -34 -20 -34 S0 40 20 40 S40 -34 60 -34 S80 0 100 0';
+    const d = 'M-100 0 C-80 0 -80 46 -60 46 S-40 -12 -20 -12 S0 46 20 46 S40 -12 60 -12 S80 0 100 0';
     return cut(-100, 100) + wirePath(d) + (s.flowing ? `<path class="flow${s.rev ? ' rev' : ''}" d="${d}"/>` : '');
   }
 };
@@ -1022,7 +1022,7 @@ function learnBattery(ctx) {
 }
 
 /* ── TOPIC 1 · SOLVE — Close the Loop ──────────────────────────── */
-const MINI = { vb: '22 4 356 318', box: { x0: 60, y0: 95, x1: 340, y1: 295 } };
+const MINI = { vb: '22 4 356 326', box: { x0: 60, y0: 95, x1: 340, y1: 295 } };
 const BULB_T = () => ({ type: 'bulb', edge: 'T', f: .5 });
 const L1K = {
   ok:          { s: () => [BAT(), BULB_T()], why: 'Full loop from + to −.' },
@@ -1040,14 +1040,19 @@ const L1K = {
   switchGap:   { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'gap', edge: 'R', f: .5 }], why: 'The switch is closed, but there is still a gap.' },
   woodSwitch:  { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'wood', edge: 'R', f: .5 }], why: 'The switch is closed, but wood still blocks the road.' },
   bareOK:      { s: () => [BAT(), BULB_T(), { type: 'bare', edge: 'B', f: .5 }], why: 'It lights, but that bare copper is not safe to touch!' },
-  patchOK:     { s: () => [BAT(), BULB_T(), { type: 'patch', edge: 'R', f: .5 }], why: 'The repaired wire piece carries electricity fine.' }
+  patchOK:     { s: () => [BAT(), BULB_T(), { type: 'patch', edge: 'R', f: .5 }], why: 'The repaired wire piece carries electricity fine.' },
+  twoSwitch:   { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'switch', edge: 'R', f: .5, closed: true }], why: 'Both switches are closed, so the loop is complete.' },
+  oneSwitchOpen: { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'switch', edge: 'R', f: .5, closed: false }], why: 'One switch is still open. Every switch on the road must be closed.' },
+  eraserR:     { s: () => [BAT(), BULB_T(), { type: 'eraser', edge: 'R', f: .5 }], why: 'A rubber eraser is an insulator. It blocks the road.' },
+  patchSwitchOff: { s: () => [BAT(), BULB_T(), { type: 'patch', edge: 'R', f: .5 }, { type: 'switch', edge: 'B', f: .5, closed: false }], why: 'The wire is repaired, but the switch is open.' }
 };
 function solveLoop(ctx) {
   const R = [
     ['ok', 'gapTop', 'loose', 'switchOn'],
     ['sameSide', 'ok', 'switchOff', 'gapBottom', 'wiggly', 'looseTop'],
     ['wood', 'switchOn', 'sameSideNeg', 'twoGaps', 'wiggly', 'switchOff'],
-    ['switchGap', 'bareOK', 'sameSideNeg', 'patchOK', 'woodSwitch', 'looseTop']
+    ['switchGap', 'bareOK', 'sameSideNeg', 'patchOK', 'woodSwitch', 'looseTop'],
+    ['twoSwitch', 'oneSwitchOpen', 'eraserR', 'bareOK', 'sameSide', 'patchSwitchOff']
   ];
   ctx.stage.classList.add('bare');
   let r = 0, kinds, picked, checked;
@@ -1057,7 +1062,7 @@ function solveLoop(ctx) {
     ctx.goal('Tap <b>every</b> circuit where the bulb will light up. Then press <b>Check</b>.');
     ctx.say(['Remember: electricity needs a full loop — out of the + side and back into the − side!',
       'Trickier now. Look closely at both sides of each battery.',
-      'Look for anything that could block the road.', 'Expert round! Some of these are sneaky: check every part.'][r], 'think');
+      'Look for anything that could block the road.', 'Expert round! Some of these are sneaky: check every part.', 'Master round! Count every switch and check every material.'][r], 'think');
     ctx.actions([{ label: 'Check', cls: 'primary', on: check }]);
     draw();
   }
@@ -1154,7 +1159,9 @@ const ITEMS = [
   { e: '✏️', n: 'Pencil lead', c: 1, hard: 1, f: 'Surprise! Pencil “lead” is graphite, and graphite conducts electricity.' },
   { e: '💍', n: 'Gold ring', c: 1, hard: 1, f: 'Gold is a metal, and one of the best conductors.' },
   { e: '🧤', n: 'Rubber gloves', c: 0, hard: 1, f: 'Rubber is an insulator. Electricians wear rubber gloves to stay safe.' },
-  { e: '🖍️', n: 'Wax crayon', c: 0, hard: 1, f: 'Wax is an insulator, even though a crayon looks like a pencil.' }
+  { e: '🖍️', n: 'Wax crayon', c: 0, hard: 1, f: 'Wax is an insulator, even though a crayon looks like a pencil.' },
+  { e: '🧲', n: 'Magnet', c: 1, hard: 1, f: 'Magnets are made of metal, so they conduct electricity.' },
+  { e: '🧽', n: 'Dry sponge', c: 0, hard: 1, f: 'A dry sponge is an insulator. (Wet things can be dangerous, though!)' }
 ];
 function solveConductors(ctx) {
   const q = shuffle([...ITEMS.filter(i => i.hard), ...shuffle(ITEMS.filter(i => !i.hard)).slice(0, 8)]); let idx = 0, tests = 2, busy = false, probe = null;
@@ -1259,12 +1266,13 @@ function learnWire(ctx) {
 /* ── TOPIC 3 · SOLVE — Wire Repair Shop ──────────────────────────── */
 function solveWire(ctx) {
   const SEG = [['T', .22], ['T', .5], ['T', .78], ['B', .22], ['B', .5], ['B', .78]];
-  const R = [{ 1: 'bare' }, { 0: 'gap', 4: 'bare' }, { 2: 'wood', 3: 'bare', 5: 'gap', 0: 'bare' }, { 0: 'bare', 1: 'plastic', 2: 'gap', 3: 'wood', 5: 'bare' }];
+  const R = [{ 1: 'bare' }, { 0: 'gap', 4: 'bare' }, { 2: 'wood', 3: 'bare', 5: 'gap', 0: 'bare' }, { 0: 'bare', 1: 'plastic', 2: 'gap', 3: 'wood', 5: 'bare' }, { 0: 'plastic', 1: 'bare', 2: 'wood', 3: 'gap', 4: 'bare', 5: 'plastic' }];
   const GOALS = [
     'A wire lost its plastic cover! Make the circuit <b>work</b> and <b>safe to touch</b>.',
     'Two problems this time. Find them both!',
     'Big repair job! Find and fix <b>every</b> problem.',
-    'Expert repair: five problems, and one is a material you haven’t fixed yet!'
+    'Expert repair: five problems, and one is a material you haven’t fixed yet!',
+    'Master repair: <b>every</b> piece of wire is damaged. Use the right tool for each one!'
   ];
   const TOOLS = [{ id: 'tape', name: 'Insulating tape', sub: 'covers bare copper' }, { id: 'patch', name: 'New wire', sub: 'copper inside, plastic outside' }];
   const BOX = { x0: 150, y0: 120, x1: 830, y1: 440 };
@@ -1395,7 +1403,13 @@ function solveDanger(ctx) {
     { s: [BAT({ level: 1 }), RES(.5, 3), LED({ color: 'green' })], why: '3 shields for only 3 volts: too much protection, so the LED is dim.' },
     { s: [BAT({ level: 3 }), RES(.3, 1), RES(.7, 2), LED()], why: '1 + 2 = 3 shields for 9 volts: perfect.' },
     { s: [BAT({ level: 2 }), RES(.5, 2), LED({ dir: -1, color: 'yellow' })], why: 'The resistor is right, but the LED is backwards, so nothing flows.' },
-    { s: [BAT({ level: 2 }), RES(.3, 1), RES(.7, 1), LED({ color: 'green' }), { type: 'switch', edge: 'B', f: .5, closed: true }], why: '6 volts with 1 + 1 = 2 shields, and the switch is closed.' }
+    { s: [BAT({ level: 2 }), RES(.3, 1), RES(.7, 1), LED({ color: 'green' }), { type: 'switch', edge: 'B', f: .5, closed: true }], why: '6 volts with 1 + 1 = 2 shields, and the switch is closed.' },
+    { s: [BAT({ level: 3 }), RES(.3, 1), RES(.7, 1), LED()], why: '9 volts needs 3 shields, but 1 + 1 is only 2.' },
+    { s: [BAT({ level: 2 }), RES(.5, 3), LED({ color: 'green' })], why: '6 volts needs 2 shields. 3 shields is too many, so the LED is dim.' },
+    { s: [BAT({ level: 1 }), RES(.5, 1), LED(), { type: 'switch', edge: 'B', f: .5, closed: false }], why: 'Everything else is right, but the switch is open.' },
+    { s: [BAT({ level: 3 }), RES(.22, 1), RES(.5, 1), RES(.78, 1), LED({ color: 'yellow' })], why: '1 + 1 + 1 = 3 shields for 9 volts: perfect.' },
+    { s: [BAT({ level: 2 }), RES(.5, 2), LED(), { type: 'bare', edge: 'B', f: .5 }], why: 'It glows: bare copper still conducts. But that bare wire is not safe to touch!' },
+    { s: [BAT({ level: 3, dir: -1 }), RES(.3, 1), RES(.7, 2), LED({ color: 'green' })], why: 'The shields are right, but the battery is turned around, so the LED is backwards.' }
   ];
   const OUT = [['glow', 'Glows safely'], ['dim', 'Glows, but very dim'], ['burn', 'POP! It burns out'], ['nothing', 'Nothing happens']];
   const outcome = s => ({ works: 'glow', dim: 'dim', burn: 'burn' })[evalLoop(s).status] || 'nothing';
@@ -1491,7 +1505,7 @@ function gauge(v) {
   return s + `<circle cx="${cx}" cy="${cy}" r="10" fill="#fff"/></g>`;
 }
 function solveResistors(ctx) {
-  const R = [{ lv: 1, n: 1, cards: [1, 2, 3] }, { lv: 3, n: 1, cards: [1, 2, 3] }, { lv: 2, n: 1, cards: [3, 1, 2] }, { lv: 3, n: 2, cards: [0, 1, 2, 1] }, { lv: 2, n: 2, cards: [0, 1, 1, 3] }, { lv: 3, n: 3, cards: [1, 2, 0, 1, 1] }];
+  const R = [{ lv: 1, n: 1, cards: [1, 2, 3] }, { lv: 3, n: 1, cards: [1, 2, 3] }, { lv: 2, n: 1, cards: [3, 1, 2] }, { lv: 3, n: 2, cards: [0, 1, 2, 1] }, { lv: 2, n: 2, cards: [0, 1, 1, 3] }, { lv: 3, n: 3, cards: [1, 2, 0, 1, 1] }, { lv: 2, n: 3, cards: [0, 0, 1, 1, 3] }, { lv: 3, n: 3, cards: [2, 2, 0, 3, 0] }];
   const NAMES = ['Plain wire', 'Small bodyguard', 'Medium bodyguard', 'Big bodyguard'];
   const BOX = { x0: 160, y0: 140, x1: 840, y1: 430 };
   let r = 0, place, sel, powered, done, color;
@@ -1509,7 +1523,7 @@ function solveResistors(ctx) {
     ctx.dots(r); ctx.mood('');
     ctx.goal(c.n === 1 ? `This battery is <b>${c.lv * 3} volts</b>. Pick the resistor bodyguard that keeps the LED <b>bright</b> and <b>safe</b>.`
       : `${c.n === 2 ? 'Two' : 'Three'} spots! Bodyguards in a row add up their shields. This battery is <b>${c.lv * 3} volts</b>.`);
-    ctx.say(r === 0 ? 'A resistor slows electricity down. Each shield blocks some of it. Too few shields: POP! Too many: the LED is too dim.' : r === 3 ? 'Fill both spots. A plain wire has zero shields.' : r === 5 ? 'Three spots to fill. There is more than one right answer!' : 'Choose carefully, then switch on!', 'think');
+    ctx.say(r === 0 ? 'A resistor slows electricity down. Each shield blocks some of it. Too few shields: POP! Too many: the LED is too dim.' : r === 3 ? 'Fill both spots. A plain wire has zero shields.' : r === 5 ? 'Three spots to fill. There is more than one right answer!' : r >= 6 ? 'Tricky! Only one mix of cards is exactly right.' : 'Choose carefully, then switch on!', 'think');
     ctx.actions([{ label: 'Switch ON', cls: 'primary', on: test }]);
     drawAll();
   }
@@ -1625,14 +1639,16 @@ function solveBuilder(ctx) {
     { slots: [['L', .5], ['T', .3], ['T', .7], ['R', .5], ['B', .5]], tray: ['battery', 'led', 'buzzer', 'resistor', 'patch', 'eraser', 'plastic'], color: 'yellow',
       goal: 'Make the LED glow <b>and</b> the buzzer beep, all in one loop!' },
     { slots: [['L', .5, 'battery'], ['T', .5, 'led'], ['R', .5], ['B', .5]], tray: ['resistor', 'patch', 'eraser'], color: 'green',
-      goal: 'This time the LED comes <b>first</b>. Can a resistor placed <b>after</b> the LED still protect it?' }
+      goal: 'This time the LED comes <b>first</b>. Can a resistor placed <b>after</b> the LED still protect it?' },
+    { slots: [['L', .5], ['T', .28], ['T', .72], ['R', .5], ['B', .3], ['B', .7]], tray: ['battery', 'led', 'led2', 'resistor', 'patch', 'patch2', 'plastic', 'eraser'], color: 'red',
+      goal: 'Expert build: make <b>two LEDs</b> glow in one loop. Every LED must face the right way!' }
   ];
   const BOX = { x0: 160, y0: 130, x1: 840, y1: 430 };
   let r = 0, items, place, fixed, sel, powered, res, done;
   function start() {
     const c = R[r];
     items = shuffle(c.tray).map(k => {
-      const p = clone(PC[k]);
+      const p = clone(PC[k.replace(/\d$/, '')]);
       if (p.type === 'led') { p.color = c.color; p.dir = Math.random() < .5 ? 1 : -1; }
       if (p.type === 'buzzer') p.dir = Math.random() < .5 ? 1 : -1;
       if (p.type === 'battery') p.dir = 1;
@@ -1766,9 +1782,13 @@ function solveBreadboard(ctx) {
     ['tp6', 'tn6', false, 'The + rail and the − rail are separate clips. Joining them would be a short circuit!'],
     ['c12', 'h12', false, 'The gap in the middle splits the top half from the bottom half. c12 and h12 are not joined.'],
     ['f14', 'j14', true, 'Same column in the bottom half: f14 to j14 share one clip.'],
-    ['tp4', 'bp4', false, 'The top rails and the bottom rails are separate. You need a wire to join them.']
+    ['tp4', 'bp4', false, 'The top rails and the bottom rails are separate. You need a wire to join them.'],
+    ['tn1', 'tn20', true, 'The − rail runs the whole length of the board: hole 1 and hole 20 are joined.'],
+    ['e8', 'f8', false, 'e8 and f8 look very close, but the middle gap separates them.'],
+    ['a17', 'e17', true, 'a17 and e17 are the two ends of the same clip.'],
+    ['d11', 'd12', false, 'Next-door columns have different clips, so d11 and d12 are not joined.']
   ];
-  const TAP = [['b7', ['a7', 'c7', 'd7', 'e7']], ['h15', ['f15', 'g15', 'i15', 'j15']]];
+  const TAP = [['b7', ['a7', 'c7', 'd7', 'e7']], ['h15', ['f15', 'g15', 'i15', 'j15']], ['j3', ['f3', 'g3', 'h3', 'i3']]];
   let step = 0, found = new Set(), picked = new Set(), locked = false;
   const total = 1 + Q.length + TAP.length;
   function next() { step++; if (step >= total) { ctx.dots(total); ctx.win(); } else start(); }
@@ -1892,7 +1912,8 @@ function solvePolarity(ctx) {
     { k: 'buzzer', flip: Math.random() < .5, goal: 'Now a <b>buzzer</b>! Find its <b>+</b> side and connect it.' },
     { k: 'loop1', goal: 'The wires are connected, but will the LED glow? Tap <b>⇄</b> to turn parts around, then press <b>Switch ON</b>.' },
     { k: 'loop2', goal: 'Two LEDs! Every LED must face the same way as the battery. Flip parts, then <b>Switch ON</b>.' },
-    { k: 'loop3', goal: 'Three LEDs, all dark. Find the <b>one</b> flip that makes them <b>all</b> glow!' }
+    { k: 'loop3', goal: 'Three LEDs, all dark. Find the <b>one</b> flip that makes them <b>all</b> glow!' },
+    { k: 'loop4', goal: 'Two LEDs and a buzzer. Make everything work. Can you do it with only <b>two</b> flips?' }
   ];
   const BOX = { x0: 160, y0: 130, x1: 840, y1: 430 };
   let r = 0;
@@ -1928,11 +1949,12 @@ function solvePolarity(ctx) {
     const slots = {
       loop1: [BAT(), { type: 'resistor', edge: 'T', f: .5 }, { type: 'led', edge: 'R', f: .5, dir: -1, color: 'green', flip: true }],
       loop2: [BAT({ dir: -1, flip: true }), { type: 'resistor', edge: 'T', f: .3 }, { type: 'led', edge: 'T', f: .72, dir: 1, color: 'yellow', flip: true }, { type: 'led', edge: 'B', f: .5, dir: -1, color: 'red', flip: true }],
-      loop3: [BAT({ dir: -1, flip: true }), { type: 'led', edge: 'T', f: .25, dir: 1, color: 'green', flip: true }, { type: 'resistor', edge: 'T', f: .62 }, { type: 'led', edge: 'R', f: .5, dir: 1, color: 'yellow', flip: true }, { type: 'led', edge: 'B', f: .5, dir: 1, color: 'red', flip: true }]
+      loop3: [BAT({ dir: -1, flip: true }), { type: 'led', edge: 'T', f: .25, dir: 1, color: 'green', flip: true }, { type: 'resistor', edge: 'T', f: .62 }, { type: 'led', edge: 'R', f: .5, dir: 1, color: 'yellow', flip: true }, { type: 'led', edge: 'B', f: .5, dir: 1, color: 'red', flip: true }],
+      loop4: [BAT({ dir: -1, flip: true }), { type: 'led', edge: 'T', f: .25, dir: 1, color: 'green', flip: true }, { type: 'resistor', edge: 'T', f: .62 }, { type: 'buzzer', edge: 'R', f: .5, dir: -1, flip: true }, { type: 'led', edge: 'B', f: .5, dir: 1, color: 'red', flip: true }]
     }[c.k];
     let powered = false, done = false, res = null;
     const draw = (hl = -1) => { ctx.stage.innerHTML = loopSVG({ box: BOX, slots, res, powered, tap: true, badges: true, hl }); };
-    ctx.say({ loop1: 'Check the LED’s legs: the long leg must face the + side of the battery.', loop2: 'You can flip the battery too! Think before you switch on.', loop3: 'Hint: every LED must agree with one special part. Which one?' }[c.k], 'think');
+    ctx.say({ loop1: 'Check the LED’s legs: the long leg must face the + side of the battery.', loop2: 'You can flip the battery too! Think before you switch on.', loop3: 'Hint: every LED must agree with one special part. Which one?', loop4: 'The buzzer has a + side too! Think about which parts disagree with the battery.' }[c.k], 'think');
     ctx.stage.onclick = e => {
       if (done) return;
       const el = e.target.closest('.flipb') || e.target.closest('.slot'); if (!el) return;
@@ -1944,7 +1966,7 @@ function solvePolarity(ctx) {
       res = evalLoop(slots); powered = true;
       if (res.status === 'works') {
         done = true; draw(); sfx('good'); ctx.mood('good');
-        ctx.say({ loop1: 'Glowing! Now the long leg faces the + side.', loop2: 'Both LEDs glow! They all face the same way as the battery.', loop3: 'All three glow! Every LED now agrees with the battery. Flipping just the battery was the one-flip trick.' }[c.k], 'wow', 'good'); nextBtn();
+        ctx.say({ loop1: 'Glowing! Now the long leg faces the + side.', loop2: 'Both LEDs glow! They all face the same way as the battery.', loop3: 'All three glow! Every LED now agrees with the battery. Flipping just the battery was the one-flip trick.', loop4: 'Glow and beep! Every part now faces the same way as the battery.' }[c.k], 'wow', 'good'); nextBtn();
       } else { ctx.miss(); sfx('bad'); ctx.mood('bad'); draw(res.culprit); ctx.say('Still dark! The circled part is facing the wrong way.', 'oops', 'bad'); }
     } }]);
     draw();
@@ -1970,7 +1992,9 @@ const L7G = [
   { c: 'A', t: { A: 1, B: 0 }, imp: true, txt: 'Light bulb <b>A</b> but keep bulb <b>B</b> off.', why: 'Right, it’s impossible! In one single loop, electricity must pass through both bulbs, so they are on together or off together.' },
   { c: 'B', t: { A: 0, B: 1 }, txt: 'Light <b>only</b> bulb <b>B</b>.', why: 'Each bulb has its own road and its own switch. Engineers call this a parallel circuit!' },
   { c: 'C', t: { A: 1, B: 0 }, txt: 'Light bulb <b>A</b> but keep bulb <b>B</b> off.', why: 'Switch S0 is on the main road. It must be closed for anything to work, just like the main switch in a house.' },
+  { c: 'C', t: { A: 0, B: 1 }, txt: 'Light <b>only</b> bulb <b>B</b>.', why: 'Close S0 on the main road and S2 on bulb B’s branch, and keep S1 open.' },
   { c: 'D', t: { A: 1, B: 0, C: 1 }, txt: 'Light bulbs <b>A</b> and <b>C</b>, but keep <b>B</b> off.', why: 'Bulb A is on the main road, so it lights whenever any branch is closed.' },
+  { c: 'D', t: { A: 1, B: 1, C: 0 }, txt: 'Light <b>A</b> and <b>B</b>, but keep <b>C</b> off.', why: 'Close S1 for bulb B’s branch. Bulb A is on the main road, so it lights too.' },
   { c: 'D', t: { A: 0, B: 0, C: 1 }, imp: true, txt: 'Light <b>only</b> bulb <b>C</b>.', why: 'Right, it’s impossible! Bulb A sits on the main road. Any electricity that goes through C must also go through A.' }
 ];
 // Find every simple path from + (P) to − (N); a bulb on any path lights up.
@@ -2078,12 +2102,24 @@ const DX = [
   { k: 'tooStrong', sym: 'The LED is on, but it is very, very dim.', culprit: 1,
     slots: () => [BAT(), { type: 'resistor', edge: 'T', f: .5, strength: 3 }, { type: 'led', edge: 'R', f: .5, color: 'red' }],
     fix: s => { s[1].strength = 1; }, hint: 'Count the shields. How many does a 3 volt battery need?',
-    why: 'Yes! A 3 volt battery only needs a small bodyguard. Now the LED is bright.' }
+    why: 'Yes! A 3 volt battery only needs a small bodyguard. Now the LED is bright.' },
+  { k: 'tooWeak', sym: 'POP! The LED burned out, even though it has a resistor.', culprit: 1,
+    slots: () => [BAT({ level: 3 }), { type: 'resistor', edge: 'T', f: .5, strength: 1 }, { type: 'led', edge: 'R', f: .5, color: 'yellow' }],
+    fix: s => { s[1].strength = 3; }, hint: 'Look at the battery. How many shields does 9 volts need?',
+    why: 'Yes! 9 volts needs 3 shields. One small bodyguard was too weak.' },
+  { k: 'reversed', sym: 'The LED stays dark, and the LED itself looks fine!', culprit: 0,
+    slots: () => [BAT({ dir: -1 }), { type: 'resistor', edge: 'T', f: .5 }, { type: 'led', edge: 'R', f: .5, color: 'green' }],
+    fix: s => { s[0].dir = 1; }, hint: 'Compare the battery’s + side with the LED’s long leg.',
+    why: 'Yes! The battery is turned around, so the LED faces the wrong way compared with it. Flip the battery and it glows.' },
+  { k: 'gap', sym: 'The bulb stays dark.', culprit: 0,
+    slots: () => [BAT({ conn: 'looseNeg' }), { type: 'bulb', edge: 'R', f: .5 }, { type: 'switch', edge: 'B', f: .5, closed: true }],
+    fix: s => { s[0].conn = 'both'; }, hint: 'The switch is closed. Now check where the wires meet the battery.',
+    why: 'Yes! A wire slipped off the − side of the battery. Reconnect it and the loop is complete.' }
 ];
 const DXO = [
   { k: 'gap', t: 'The wire is broken' }, { k: 'switch', t: 'The switch is open' }, { k: 'insulator', t: 'An insulator blocks the road' },
   { k: 'reversed', t: 'The LED faces the wrong way' }, { k: 'bare', t: 'Bare wire: not safe!' }, { k: 'noResistor', t: 'The resistor is missing' },
-  { k: 'tooStrong', t: 'The resistor is too strong' }
+  { k: 'tooStrong', t: 'The resistor is too strong' }, { k: 'tooWeak', t: 'The resistor is too weak' }
 ];
 function challengeDoctor(ctx) {
   const BOX = { x0: 160, y0: 130, x1: 840, y1: 430 };
@@ -2223,18 +2259,18 @@ function challengeBreadboard(ctx) {
    Addresses: #t3-learn, #t3-solve, #c1 (final challenge 1), #map
    ═════════════════════════════════════════════════════════════════════ */
 const TOPICS = [
-  { name: 'Battery Connection', idea: 'Close the loop from + to −.', learn: learnBattery, solve: { name: 'Close the Loop', play: solveLoop, rounds: 4, stars: [1, 3] } },
-  { name: 'Conductors & Insulators', idea: 'Which materials let electricity pass?', learn: learnConductors, solve: { name: 'Conductor Detective', play: solveConductors, rounds: 12, stars: [1, 3] } },
-  { name: 'The Electric Wire', idea: 'Copper inside, plastic outside.', learn: learnWire, solve: { name: 'Wire Repair Shop', play: solveWire, rounds: 4, stars: [1, 3] } },
-  { name: 'The Dangerous Battery', idea: 'Too much power destroys parts.', learn: learnDanger, solve: { name: 'Safe or Boom?', play: solveDanger, rounds: 8, stars: [1, 3] } },
-  { name: 'Resistors', idea: 'A bodyguard that slows electricity.', learn: learnResistors, solve: { name: 'Resistor Bodyguard', play: solveResistors, rounds: 6, stars: [1, 3] } },
-  { name: 'The Full Circuit', idea: 'Power + road + protection.', learn: learnFull, solve: { name: 'Circuit Builder', play: solveBuilder, rounds: 4, stars: [1, 3] } },
-  { name: 'Breadboards', idea: 'Hidden clips join the holes.', learn: learnBreadboard, solve: { name: 'Breadboard X-Ray', play: solveBreadboard, rounds: 10, stars: [1, 3] } },
-  { name: 'Polarity', idea: 'The long leg goes to +.', learn: learnPolarity, solve: { name: 'Which Way?', play: solvePolarity, rounds: 6, stars: [1, 3] } }
+  { name: 'Battery Connection', idea: 'Close the loop from + to −.', learn: learnBattery, solve: { name: 'Close the Loop', play: solveLoop, rounds: 5, stars: [1, 3] } },
+  { name: 'Conductors & Insulators', idea: 'Which materials let electricity pass?', learn: learnConductors, solve: { name: 'Conductor Detective', play: solveConductors, rounds: 14, stars: [1, 3] } },
+  { name: 'The Electric Wire', idea: 'Copper inside, plastic outside.', learn: learnWire, solve: { name: 'Wire Repair Shop', play: solveWire, rounds: 5, stars: [1, 3] } },
+  { name: 'The Dangerous Battery', idea: 'Too much power destroys parts.', learn: learnDanger, solve: { name: 'Safe or Boom?', play: solveDanger, rounds: 14, stars: [1, 3] } },
+  { name: 'Resistors', idea: 'A bodyguard that slows electricity.', learn: learnResistors, solve: { name: 'Resistor Bodyguard', play: solveResistors, rounds: 8, stars: [1, 3] } },
+  { name: 'The Full Circuit', idea: 'Power + road + protection.', learn: learnFull, solve: { name: 'Circuit Builder', play: solveBuilder, rounds: 5, stars: [1, 3] } },
+  { name: 'Breadboards', idea: 'Hidden clips join the holes.', learn: learnBreadboard, solve: { name: 'Breadboard X-Ray', play: solveBreadboard, rounds: 15, stars: [1, 3] } },
+  { name: 'Polarity', idea: 'The long leg goes to +.', learn: learnPolarity, solve: { name: 'Which Way?', play: solvePolarity, rounds: 7, stars: [1, 3] } }
 ].map((t, i) => ({ ...t, n: i + 1 }));
 const CHALLENGES = [
-  { name: 'Switch Master', idea: 'Series and parallel switches', play: challengeSwitches, rounds: 6, stars: [1, 3] },
-  { name: 'Circuit Doctor', idea: 'Find what is broken', play: challengeDoctor, rounds: 7, stars: [1, 3] },
+  { name: 'Switch Master', idea: 'Series and parallel switches', play: challengeSwitches, rounds: 8, stars: [1, 3] },
+  { name: 'Circuit Doctor', idea: 'Find what is broken', play: challengeDoctor, rounds: 10, stars: [1, 3] },
   { name: 'Breadboard Builder', idea: 'Build real circuits', play: challengeBreadboard, rounds: 4, stars: [1, 3] }
 ].map((c, i) => ({ ...c, n: i + 1 }));
 const MAX_BOLTS = (TOPICS.length + CHALLENGES.length) * 3;
