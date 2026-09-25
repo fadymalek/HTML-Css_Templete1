@@ -70,7 +70,7 @@ button{font:inherit}
 .bigcell{display:flex;align-items:center}
 .bc-body{flex:1;height:3rem;border:4px solid var(--soft);border-radius:14px;padding:4px;position:relative;overflow:hidden;background:var(--ink2)}
 .bc-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--mint),var(--volt));box-shadow:0 0 22px rgba(255,210,63,.45);min-width:6px;transition:width .8s ease}
-.bc-ticks{position:absolute;inset:4px;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 3px),var(--ink2) calc(10% - 3px) 10%)}
+.bc-ticks{position:absolute;inset:4px;background:repeating-linear-gradient(90deg,transparent 0 calc(100% / 11 - 3px),var(--ink2) calc(100% / 11 - 3px) calc(100% / 11))}
 .bc-nub{width:10px;height:1.5rem;background:var(--soft);border-radius:0 6px 6px 0}
 .bc-cap{display:flex;justify-content:space-between;align-items:baseline;font-weight:800;color:var(--soft);font-size:.9rem}
 .bc-cap b{color:var(--volt);font-family:var(--display);font-size:1.25rem}
@@ -107,7 +107,8 @@ button{font:inherit}
 .goal{flex:none;min-height:2.5em;display:flex;flex-direction:column;justify-content:center;font-family:var(--display);font-size:clamp(1rem,3vh,1.5rem);font-weight:700;line-height:1.25;margin:0;text-wrap:balance}
 .goal b{color:var(--volt)}
 .goal-s{display:block;font-family:var(--body);font-size:.85rem;color:var(--soft);font-weight:700;margin-top:2px}
-.stagebox{flex:1;min-height:0;container-type:size;display:grid;place-items:center}
+.stagebox{flex:1;min-height:0;display:flex;gap:clamp(8px,1.4vw,18px)}
+.stagecell{flex:1;min-width:0;container-type:size;display:grid;place-items:center}
 .stage{width:min(100%, calc((100vh - 17rem) * 1000 / 560));width:min(100cqw, calc(100cqh * 1000 / 560));aspect-ratio:1000/560;
   background:var(--stage);border:3px solid var(--line);border-radius:clamp(14px,2vh,26px);overflow:hidden;position:relative;
   box-shadow:0 22px 50px rgba(0,0,0,.35);transition:border-color .25s}
@@ -133,7 +134,7 @@ svg.board.drag{touch-action:none}
 .part:hover{transform:translateY(-2px);border-color:var(--soft)}
 .part.sel{border-color:var(--volt);box-shadow:0 0 0 3px rgba(255,210,63,.3)}
 .part.lifted{opacity:.3}
-.part .icon{display:block;width:100%;flex:1;min-height:0;background:var(--stage);border-radius:.7rem}
+.part .icon{display:block;width:100%;flex:1;min-height:0;overflow:hidden;background:var(--stage);border-radius:.7rem}
 .part .icon svg{width:100%;height:100%;display:block}
 .pname{font-family:var(--display);font-weight:800;font-size:.85rem;line-height:1.05;text-align:center}
 .pname small{display:block;font-family:var(--body);font-size:.68rem;color:var(--soft);font-weight:700;margin-top:1px}
@@ -191,7 +192,11 @@ svg.board.drag{touch-action:none}
   .screen{height:auto;min-height:100dvh}
   .hero{grid-template-columns:1fr}
   .missions{flex:none;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}
-  .stagebox{flex:none;container-type:normal;display:block}
+  .stagebox{flex:none;flex-direction:column}
+  .stagecell{flex:none;container-type:normal;display:block}
+  .ideas{width:auto}
+  .topics{flex:none;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}
+  .finals{grid-template-columns:1fr}
   .stage{width:100%}
   .stage.bare{height:auto}
   .cards,.cards.six{height:auto;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}
@@ -300,19 +305,91 @@ svg.board.drag{touch-action:none}
 .bb-plus{font:800 16px var(--display);fill:#E0334B;text-anchor:middle;dominant-baseline:central}
 .bbpart{cursor:pointer}
 
+
+/* ---------- Learn / Solve additions ---------- */
+.mode{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.68rem;margin-right:.45rem;vertical-align:1px;letter-spacing:.1em}
+.mode.learn{background:var(--mint);color:#062a1d}
+.mode.solve{background:var(--volt);color:#211a00}
+.mode.challenge{background:var(--coral);color:#2a0008}
+.lvhead .btn svg,.tbtn svg,.lede svg{width:1.1em;height:1.1em;flex:none}
+.ideas{flex:none;width:clamp(15rem,23vw,22rem);display:flex;flex-direction:column;gap:.55rem;background:var(--panel);border:2px solid var(--line);border-radius:1.3rem;padding:clamp(10px,1.6vh,16px);overflow:auto}
+.ideas h2{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--display);font-size:1.05rem;margin:0;color:var(--mint);letter-spacing:.06em;text-transform:uppercase}
+.ideas h2 span{color:var(--soft);font-size:.9rem}
+.ideas ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+.idea{width:100%;display:flex;gap:.6rem;align-items:flex-start;padding:.55rem .65rem;border-radius:.9rem;border:2px dashed var(--line);background:none;color:var(--dim);font-family:var(--body);font-weight:700;font-size:.98rem;line-height:1.3;text-align:left;cursor:pointer}
+.idea:hover:not(:disabled){border-color:var(--soft);color:var(--soft)}
+.idea:disabled{cursor:default}
+.idea .inum{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;display:grid;place-items:center;background:var(--panel2);font-family:var(--display);font-weight:800;color:var(--text)}
+.idea.on{border-style:solid;border-color:var(--mint);color:var(--text);background:rgba(59,224,161,.08)}
+.idea.on b{color:var(--volt)}
+.idea.on .inum{background:var(--mint);color:#062a1d}
+.idea.fresh{animation:popin .5s both}
+.ideas .ready{margin-top:auto;align-self:stretch}
+.chipbtn{flex:none;align-self:center;min-height:2.9rem;padding:.3rem 1.1rem;border-radius:999px;border:2px solid var(--line);background:var(--panel);color:var(--text);font-family:var(--display);font-weight:800;font-size:.98rem;cursor:pointer}
+.chipbtn:hover{border-color:var(--soft)}
+.chipbtn.on{border-color:var(--volt);background:rgba(255,210,63,.14);color:var(--volt)}
+.tray:has(.chipbtn){flex-wrap:wrap;align-content:center}
+.part .icon.emoji{display:grid;place-items:center;font-size:clamp(1.5rem,4.2vh,2.3rem);overflow:hidden}
+.part .pname{max-width:100%}
+.part.tested{border-color:var(--soft)}
+.part.used{opacity:.4}
+.opts.two{grid-template-columns:repeat(2,minmax(0,1fr));width:min(30rem,42vw)}
+.opts.two .opt{font-size:1rem;text-align:center}
+.bat-body.danger{fill:#5A1424;stroke:#FF4D64}
+.bt-v.sm{font-size:12px}
+.rec-h{font:800 26px var(--display)}
+.rec-e{font-size:40px}
+.sec-l{font:800 18px var(--display)}
+.spin-arrow{font:800 48px var(--display);fill:var(--volt)}
+.rotor.spin{animation:spin .45s linear infinite}
+.rotor.spin.rev{animation-direction:reverse}
+.boom>*{transform-box:fill-box;transform-origin:center;animation:boom .9s ease-out both}
+.boom>*:nth-child(2){animation-delay:.08s}.boom>*:nth-child(3){animation-delay:.16s}
+.stage.shake{animation:shake .45s}
+/* map */
+.hero2{display:flex;align-items:center;gap:clamp(12px,2vw,32px);flex-wrap:wrap}
+.hero2 .lede{flex:1 1 20rem;margin:0}
+.lede .lg,.lede .sv{display:inline-flex;align-items:center;gap:.25em;font-weight:800}
+.lede .lg{color:var(--mint)} .lede .sv{color:var(--volt)}
+.labmini{flex:0 1 20rem;display:flex;flex-direction:column;gap:.35rem}
+.topics{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:clamp(8px,1.4vh,16px)}
+.tcard{min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:.3rem;padding:clamp(10px,1.6vh,16px);border-radius:1.4rem;background:linear-gradient(180deg,var(--panel2),var(--panel));border:2px solid var(--line)}
+.tcard.next{border-color:var(--volt);box-shadow:0 0 0 3px rgba(255,210,63,.18),0 0 30px rgba(255,210,63,.12)}
+.tcard.done .mnum{background:var(--volt);color:#211a00;border-color:var(--volt)}
+.tag-l{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mint)}
+.tbtns{margin-top:auto;display:grid;grid-template-columns:1fr 1.3fr;gap:.45rem}
+.tbtn{display:flex;align-items:center;justify-content:center;gap:.35rem;min-height:2.7rem;border-radius:.9rem;font-family:var(--display);font-weight:800;font-size:.98rem;text-decoration:none;border:2px solid;transition:transform .12s}
+.tbtn:hover{transform:translateY(-2px)}
+.tbtn span{display:inline-flex;align-items:center;gap:.35rem}
+.tbtn.learn{border-color:var(--mint);color:var(--mint);background:rgba(59,224,161,.08)}
+.tbtn.solve{border-color:var(--volt);background:var(--volt);color:#211a00;justify-content:space-between;padding:0 .55rem}
+.tbtn.solve .bolt{width:1rem;height:1rem;fill:rgba(0,0,0,.18);filter:none}
+.tbtn.solve .bolt.on{fill:#211a00}
+.finals{flex:none;display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:clamp(8px,1.4vh,16px);align-items:stretch}
+.finals-h{align-self:center;font-family:var(--display);font-size:1.05rem;line-height:1.05;margin:0;color:var(--coral);text-transform:uppercase;letter-spacing:.06em}
+.fcard{display:flex;align-items:center;gap:.7rem;padding:.55rem .8rem;border-radius:1.1rem;border:2px solid var(--line);background:var(--panel);text-decoration:none;transition:border-color .15s,transform .12s}
+.fcard:hover{border-color:var(--coral);transform:translateY(-2px)}
+.fcard .mnum{background:rgba(255,107,122,.15);border-color:var(--coral);color:var(--coral)}
+.fcard b{display:block;font-family:var(--display);font-size:1.05rem;line-height:1.1}
+.fcard small{color:var(--soft);font-weight:700;font-size:.8rem}
+.fcard .bolts{margin-left:auto}
+
 @keyframes flow{to{stroke-dashoffset:-24}}
 @keyframes pulse{50%{opacity:.45}}
 @keyframes ringp{50%{stroke-opacity:.25}}
 @keyframes flick{50%{opacity:.15}}
 @keyframes smoke{from{transform:translateY(0);opacity:.9}to{transform:translateY(-34px);opacity:0}}
 @keyframes wave{from{opacity:1}to{opacity:.05}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes boom{from{transform:scale(.1);opacity:1}to{transform:scale(1.9);opacity:0}}
 @keyframes bob{50%{transform:translateY(-4px)}}
 @keyframes shake{20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
 @keyframes popin{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
 @media (prefers-reduced-motion: reduce){
   .volty,.socket,.pad,.wend.idle,.ring,.sparks path,.smoke circle,.waves path{animation:none}
   .flow{animation-duration:3s!important}
-  .wincard,.winbolts .bolt.on,.screen,.stage.enter>*{animation:none}
+  .wincard,.winbolts .bolt.on,.screen,.stage.enter>*,.rotor.spin,.idea.fresh,.stage.shake{animation:none}
+  .boom>*{animation-duration:.01s}
 }
 </style>
 </head>
@@ -322,6 +399,20 @@ svg.board.drag{touch-action:none}
 <script>
 (() => {
 'use strict';
+/* Circuit Quest — Session 2 · Electricity (grades 4–5)
+
+   HOW THIS FILE IS ORGANISED
+     Part 1  Core: helpers, storage, sound, confetti, mascot
+     Part 2  Drawing kit: circuit parts, loop circuits, breadboard
+     Part 3  Interaction kit: drag-or-tap, the wire bench
+     Part 4  Topics 1–8, each with its LEARN lab, then its SOLVE mission
+     Part 5  Final challenges
+     Part 6  Course map, screens and router
+*/
+
+/* ═════════════════════════════════════════════════════════════════════
+   PART 1 · CORE
+   ═════════════════════════════════════════════════════════════════════ */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const app = $('#app');
@@ -330,12 +421,14 @@ const clone = o => JSON.parse(JSON.stringify(o));
 
 /* ================= storage ================= */
 const Store = {
-  key: 'circuitQuest.v1',
+  key: 'circuitQuest.v2',
   get() { try { return JSON.parse(localStorage.getItem(this.key)) || {}; } catch (e) { return {}; } },
   set(d) { try { localStorage.setItem(this.key, JSON.stringify(d)); } catch (e) {} }
 };
 const getStars = () => Store.get().stars || {};
-function saveStars(n, s) { const d = Store.get(); d.stars = d.stars || {}; d.stars[n] = Math.max(d.stars[n] || 0, s); Store.set(d); }
+function saveStars(k, s) { const d = Store.get(); d.stars = d.stars || {}; d.stars[k] = Math.max(d.stars[k] || 0, s); Store.set(d); }
+const getLearned = () => Store.get().learned || {};
+function setLearned(n) { const d = Store.get(); d.learned = d.learned || {}; d.learned[n] = true; Store.set(d); }
 
 /* ================= sound ================= */
 const Snd = {
@@ -373,6 +466,8 @@ function sfx(n) {
     case 'pop': Snd.noise(.4, .35); Snd.tone(170, .3, { type: 'square', v: .08, to: 50 }); break;
     case 'zap': Snd.noise(.09, .12); break;
     case 'buzz': for (let i = 0; i < 3; i++) Snd.tone(1150, .18, { type: 'square', v: .04, at: i * .28 }); break;
+    case 'motor': Snd.tone(70, .9, { type: 'sawtooth', v: .05, to: 90 }); break;
+    case 'idea': Snd.tone(988, .12, { type: 'triangle', v: .07 }); Snd.tone(1319, .18, { type: 'triangle', v: .07, at: .09 }); break;
     case 'win': [523, 659, 784, 1047].forEach((f, i) => Snd.tone(f, .3, { type: 'triangle', v: .13, at: i * .12 })); Snd.tone(1047, .6, { v: .08, at: .5 }); break;
   }
 }
@@ -419,6 +514,9 @@ function volty(mood = 'happy') {
     ${mouth}</svg>`;
 }
 
+/* ═════════════════════════════════════════════════════════════════════
+   PART 2 · DRAWING KIT
+   ═════════════════════════════════════════════════════════════════════ */
 /* ================= SVG circuit parts ================= */
 const DEFS = `<defs>
  <radialGradient id="gY"><stop offset="0" stop-color="#FFF7CF" stop-opacity=".95"/><stop offset=".35" stop-color="#FFD23F" stop-opacity=".5"/><stop offset="1" stop-color="#FFD23F" stop-opacity="0"/></radialGradient>
@@ -447,19 +545,20 @@ const PART = {
     if (p.conn === 'loosePos') x = cut(46, 76) + wirePath('M76 0 C62 0 62 24 54 30') + '<circle cx="54" cy="30" r="6" class="tip"/>';
     if (p.conn === 'bothPos') x = cut(-76, -46) + wirePath('M-76 0 V44 H64 V6');
     if (p.conn === 'bothNeg') x = cut(46, 76) + wirePath('M76 0 V44 H-64 V6');
-    return x + `<rect x="-46" y="-26" width="86" height="52" rx="12" class="bat-body"/>
+    return x + `<rect x="-46" y="-26" width="86" height="52" rx="12" class="bat-body${p.danger ? ' danger' : ''}"/>
       <path d="M16 -26 H28 a12 12 0 0 1 12 12 V14 a12 12 0 0 1 -12 12 H16 Z" fill="#FFD23F"/>
       <rect x="40" y="-11" width="8" height="22" rx="3" fill="#FFD23F"/>` +
-      lbl(28, 1, '+', 'bt-p', s) + lbl(-33, 1, '−', 'bt-m', s) + lbl(-8, 1, v, 'bt-v', s);
+      lbl(28, 1, '+', 'bt-p', s) + lbl(-33, 1, '−', 'bt-m', s) + lbl(-8, 1, v, v.length > 4 ? 'bt-v sm' : 'bt-v', s);
   },
   bulb(p, s) {
-    const on = s.on, b = s.bright ?? 1;
+    const burnt = s.burnt || p.burnt, on = s.on && !burnt, b = s.bright ?? 1;
     return cut(-20, 20) + (on ? `<circle cx="0" cy="-52" r="${46 + 40 * b}" fill="url(#gY)" opacity="${.3 + .7 * b}"/>` : '') +
       `<rect x="-26" y="-12" width="52" height="22" rx="8" class="holder"/>
        <circle cx="-18" cy="0" r="4" class="joint"/><circle cx="18" cy="0" r="4" class="joint"/>
        <path d="M-13 -12 V-25 H13 V-12 Z" class="screw"/><path d="M-13 -16 H13 M-13 -21 H13" stroke="#8C90AE" stroke-width="1.5"/>
-       <path d="M-13 -25 C-13 -33 -28 -38 -28 -54 A28 28 0 1 1 28 -54 C28 -38 13 -33 13 -25 Z" class="glass${on ? ' lit' : ''}"${on ? ` style="fill:rgba(255,236,150,${.35 + .6 * b})"` : ''}/>
-       <path d="M-7 -25 L-6 -50 Q0 -60 6 -50 L7 -25" class="fil${on ? ' lit' : ''}"/>`;
+       <path d="M-13 -25 C-13 -33 -28 -38 -28 -54 A28 28 0 1 1 28 -54 C28 -38 13 -33 13 -25 Z" class="glass${on ? ' lit' : ''}"${on ? ` style="fill:rgba(255,236,150,${.35 + .6 * b})"` : burnt ? ' style="fill:#2B2B36;stroke:#55556a"' : ''}/>` +
+      (burnt ? '<path d="M-7 -25 L-6 -44 M7 -25 L6 -40" class="fil"/><path d="M-10 -70 l8 12 l-6 6 l9 10" stroke="#0b0b10" stroke-width="2.5" fill="none"/>' + SMOKE
+             : `<path d="M-7 -25 L-6 -50 Q0 -60 6 -50 L7 -25" class="fil${on ? ' lit' : ''}"/>`);
   },
   bulbC(p, s) { // centred bulb used in the switch circuits
     const on = s.on, b = s.bright ?? 1;
@@ -500,6 +599,15 @@ const PART = {
       <circle cx="-26" cy="0" r="7" class="joint"/><circle cx="26" cy="0" r="7" class="joint"/>` +
       (p.closed ? '<path d="M-26 0 L26 0" class="lever"/><circle cx="26" cy="0" r="9" class="knob"/>'
                 : '<path d="M-26 0 L12 -34" class="lever"/><circle cx="12" cy="-34" r="9" class="knob"/>');
+  },
+  build(p, s) { // the wire kids assemble in Learn 3: copper core and/or plastic jacket
+    const w = 150;
+    let x = cut(-w - 12, w + 12, 44);
+    if (!p.copper && !p.jacket) x += `<rect x="${-w}" y="-28" width="${2 * w}" height="56" rx="18" class="socket"/>` + lbl(0, 1, 'build the wire here', 'socket-q sm', s);
+    if (p.copper) x += `<rect x="${-w - 12}" y="-8" width="${2 * w + 24}" height="16" rx="8" fill="#E4833F" stroke="#9C4F1C" stroke-width="2.5"/><path d="M${-w} -2H${w}M${-w} 3H${w}" stroke="#F7B27A" stroke-width="1.5"/>`;
+    if (p.jacket) x += `<rect x="${-w}" y="-21" width="${2 * w}" height="42" rx="21" fill="rgba(255,77,100,.55)" stroke="#E0334B" stroke-width="3"/><rect x="${-w + 16}" y="-16" width="${2 * w - 32}" height="8" rx="4" fill="rgba(255,255,255,.35)"/>`;
+    if (p.copper && !p.jacket && s.flowing) x += [-95, 0, 95].map(dx => `<g transform="translate(${dx} 0)">${SPARKS}</g>`).join('');
+    return x;
   },
   gap: () => cut(-34, 34) + '<rect x="-34" y="-6" width="10" height="12" rx="3" class="tip"/><rect x="24" y="-6" width="10" height="12" rx="3" class="tip"/>',
   wood: () => cut(-44, 44) + `<rect x="-46" y="-14" width="92" height="28" rx="7" fill="#C98B4E" stroke="#8A5A2B" stroke-width="3"/>
@@ -573,12 +681,13 @@ function loopSVG(o) {
   const g = geom(o.box), res = o.res || evalLoop(o.slots), pw = o.powered !== false;
   const flowing = pw && (res.status === 'works' || res.status === 'dim');
   let s = `<svg class="board" viewBox="${o.vb || '0 0 1000 560'}" role="img" aria-label="${o.label || 'Electric circuit'}">${DEFS}` + wirePath(g.path);
-  if (flowing) s += `<path class="flow${res.dir < 0 ? ' rev' : ''}" style="animation-duration:${res.bright < .5 ? 1.9 : .8}s" d="${g.path}"/>`;
+  if (flowing) s += `<path class="flow${res.dir < 0 ? ' rev' : ''}" style="animation-duration:${o.speed || (res.bright < .5 ? 1.9 : .8)}s" d="${g.path}"/>`;
   o.slots.forEach((p, i) => {
     const { x, y, a } = g.at(p.edge, p.f), d = p.dir || 1;
     const st = { a, d, on: flowing, bright: res.bright, flowing, rev: res.dir < 0, burnt: pw && res.status === 'burn' && res.burnt.includes(i) };
     const tall = TALL.includes(p.type);
-    const hit = o.tap ? `<rect class="hit" x="-62" y="${tall ? -100 : -54}" width="124" height="${tall ? 144 : 108}" rx="18"/>` : '';
+    const hw = p.type === 'build' ? 175 : 62;
+    const hit = o.tap ? `<rect class="hit" x="${-hw}" y="${tall ? -100 : -54}" width="${2 * hw}" height="${tall ? 144 : 108}" rx="18"/>` : '';
     const badge = o.badges && p.flip ? `<g class="flipb" data-flip="${i}" transform="translate(0 60) rotate(${-a})"><title>Flip</title><circle r="18" class="flipc"/><path class="flipi" d="M-8 -4 H7 l-4 -4 M8 4 H-7 l4 4"/></g>` : '';
     s += `<g class="slot${o.tap ? ' tap' : ''}" data-i="${i}" transform="translate(${x} ${y}) rotate(${a})">${hit}<g transform="scale(${d} 1)">${PART[p.type](p, st)}</g>${o.hl === i ? `<circle class="ring${o.ringGood ? ' good' : ''}" r="64"/>` : ''}${badge}</g>`;
   });
@@ -597,6 +706,125 @@ function toolIcon(id) {
 
 function svgPt(svg, e) { return new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse()); }
 
+/* ================= breadboard ================= */
+const BB = {
+  x: c => 150 + (c - 1) * 40,
+  rows: { a: 146, b: 174, c: 202, d: 230, e: 258, f: 314, g: 342, h: 370, i: 398, j: 426 },
+  rails: { tp: 72, tn: 100, bp: 468, bn: 496 }
+};
+const HOLE_RE = /^(tp|tn|bp|bn|[a-j])(\d+)$/;
+const ALL_HOLES = ['tp', 'tn', 'bp', 'bn', ...'abcdefghij'].flatMap(r => Array.from({ length: 20 }, (_, k) => r + (k + 1)));
+function holeXY(id) { const m = HOLE_RE.exec(id); return [BB.x(+m[2]), BB.rails[m[1]] ?? BB.rows[m[1]]]; }
+// Every hole joined by the same hidden metal clip shares one "net"
+function netOf(id) { const m = HOLE_RE.exec(id); return m[1].length === 2 ? m[1] : ('abcde'.includes(m[1]) ? 'T' : 'B') + m[2]; }
+const isStrip = net => /^[TB]/.test(net);
+const NETC = net => isStrip(net) ? '#1FBF84' : net[1] === 'p' ? '#FF4D64' : '#2F8FE8';
+function holeName(id) {
+  const m = HOLE_RE.exec(id);
+  return { tp: 'the top + rail', tn: 'the top − rail', bp: 'the bottom + rail', bn: 'the bottom − rail' }[m[1]] || `hole <b>${m[1]}${m[2]}</b>`;
+}
+function nearestHole(x, y) {
+  let best = null, bd = 17;
+  for (const h of ALL_HOLES) { const [hx, hy] = holeXY(h), d = Math.hypot(hx - x, hy - y); if (d < bd) { bd = d; best = h; } }
+  return best;
+}
+function glowSVG(net, color = NETC(net)) {
+  let x1, y1, x2, y2;
+  if (isStrip(net)) {
+    const c = +net.slice(1), L = net[0] === 'T' ? ['a', 'e'] : ['f', 'j'];
+    x1 = x2 = BB.x(c); y1 = BB.rows[L[0]] - 14; y2 = BB.rows[L[1]] + 14;
+  } else { y1 = y2 = BB.rails[net]; x1 = BB.x(1) - 14; x2 = BB.x(20) + 14; }
+  return `<path d="M${x1} ${y1}L${x2} ${y2}" stroke="${color}" stroke-opacity=".3" stroke-width="30" stroke-linecap="round"/>
+    <path d="M${x1} ${y1}L${x2} ${y2}" stroke="${color}" stroke-width="8" stroke-linecap="round"/>`;
+}
+function boardSVG(o = {}) {
+  let s = `<svg class="board" viewBox="0 0 1000 560" role="img" aria-label="Breadboard">${DEFS}
+    <rect x="112" y="40" width="836" height="488" rx="20" fill="#ECEFF8" stroke="#C3C9E0" stroke-width="3"/>
+    <rect x="112" y="276" width="836" height="20" fill="#D3D8EA"/>`;
+  for (const [y, c] of [[56, '#FF4D64'], [116, '#2F8FE8'], [452, '#FF4D64'], [512, '#2F8FE8']]) s += `<path d="M${BB.x(1) - 14} ${y}H${BB.x(20) + 14}" stroke="${c}" stroke-width="3"/>`;
+  for (const [r, t, c] of [['tp', '+', '#E0334B'], ['tn', '−', '#1F7FD6'], ['bp', '+', '#E0334B'], ['bn', '−', '#1F7FD6']])
+    s += `<text class="bb-sign" x="128" y="${BB.rails[r]}" fill="${c}">${t}</text><text class="bb-sign" x="932" y="${BB.rails[r]}" fill="${c}">${t}</text>`;
+  for (const l of 'abcdefghij') s += `<text class="bb-lbl" x="128" y="${BB.rows[l]}">${l}</text><text class="bb-lbl" x="932" y="${BB.rows[l]}">${l}</text>`;
+  for (const c of [1, 5, 10, 15, 20]) s += `<text class="bb-lbl" x="${BB.x(c)}" y="131">${c}</text>`;
+  (o.glow || []).forEach(g => { s += glowSVG(g.net, g.color); });
+  ALL_HOLES.forEach(h => { const [x, y] = holeXY(h); s += `<rect x="${x - 6}" y="${y - 6}" width="12" height="12" rx="2.5" class="bb-hole"/>`; });
+  (o.marks || []).forEach(m => {
+    const [x, y] = holeXY(m.id);
+    s += `<circle cx="${x}" cy="${y}" r="13" class="bb-mark ${m.cls || ''}"/>` +
+      (m.label ? `<g transform="translate(${x + 17} ${y - 19})"><circle r="13" fill="#FF9F1C"/><text class="tag-t" text-anchor="middle" dominant-baseline="central">${m.label}</text></g>` : '');
+  });
+  return s + (o.parts || '') + (o.extra || '') + '</svg>';
+}
+
+// What kind of clip a net is, and a kid-friendly sentence about a hole
+const bbKind = n => isStrip(n) ? (n[0] === 'T' ? 'top' : 'bottom') : n[1] === 'p' ? 'plus' : 'minus';
+function bbExplain(h) {
+  const n = netOf(h), k = bbKind(n);
+  if (k === 'plus' || k === 'minus') return `That hole is on ${holeName(h)}. One long metal clip joins <b>every</b> hole in this line.`;
+  const c = n.slice(1), L = k === 'top' ? 'a–e' : 'f–j';
+  return `${holeName(h).replace(/^hole/, 'Hole')}: a hidden clip joins the 5 holes in column ${c} (${L}). Parts plugged in there are connected!`;
+}
+// A 3 V battery plugged into the top rails (used by the breadboard screens)
+const BB_BATTERY = `<path class="w-out" d="M60 252V72H150"/><path class="w-red" d="M60 252V72H150"/><path class="w-out" d="M60 348V372H96V100H150"/><path class="w-blue" d="M60 348V372H96V100H150"/>
+  <g transform="translate(60 300) rotate(270)">${PART.battery({ level: 1 }, { a: 270, d: 1 })}</g>`;
+// Which LEDs light, burn or stay dark on a breadboard build
+function evalBB(parts) {
+  const par = {}, f = x => { if (!(x in par)) par[x] = x; while (par[x] !== x) { par[x] = par[par[x]]; x = par[x]; } return x; };
+  parts.forEach(p => { if (p.type === 'wire') { const a = f(netOf(p.a)), b = f(netOf(p.b)); if (a !== b) par[a] = b; } });
+  const P = f('tp'), N = f('tn'), out = { status: 'open', lit: new Set(), burnt: new Set(), roots: new Set(), f };
+  if (P === N) { out.status = 'short'; return out; }
+  const comps = []; parts.forEach((p, i) => { if (p.type !== 'wire') comps.push({ i, type: p.type, na: f(netOf(p.a)), nb: f(netOf(p.b)) }); });
+  let reversed = false, resOnly = false;
+  const seen = new Set([P]), path = [];
+  (function dfs(n, rev) {
+    if (n === N) {
+      const leds = path.filter(c => c.type === 'led'), hasR = path.some(c => c.type === 'res');
+      if (rev) { reversed = true; return; }
+      if (!leds.length) { resOnly = true; return; }
+      if (hasR) { leds.forEach(c => out.lit.add(c.i)); path.forEach(c => { out.roots.add(c.na); out.roots.add(c.nb); }); }
+      else leds.forEach(c => out.burnt.add(c.i));
+      return;
+    }
+    for (const c of comps) {
+      if (path.includes(c) || c.na === c.nb) continue;
+      let nx, r = false;
+      if (c.na === n) nx = c.nb; else if (c.nb === n) { nx = c.na; r = c.type === 'led'; } else continue;
+      if (seen.has(nx)) continue;
+      seen.add(nx); path.push(c); dfs(nx, rev || r); path.pop(); seen.delete(nx);
+    }
+  })(P, false);
+  if (out.burnt.size) { out.status = 'burn'; out.lit.clear(); out.roots.clear(); }
+  else if (out.lit.size) out.status = 'works';
+  else if (comps.some(c => c.type === 'led' && c.na === c.nb)) out.status = 'bypass';
+  else if (reversed) out.status = 'reversed';
+  else if (resOnly) out.status = 'resonly';
+  return out;
+}
+function bbPartSVG(p, i, st) {
+  const [x1, y1] = holeXY(p.a), [x2, y2] = holeXY(p.b), mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+  const grab = d => `<path d="${d}" stroke="transparent" stroke-width="24" fill="none"/>`;
+  if (p.type === 'wire') {
+    const na = netOf(p.a), nb = netOf(p.b);
+    const col = [na, nb].some(n => n === 'tp' || n === 'bp') ? '#FF4D64' : [na, nb].some(n => n === 'tn' || n === 'bn') ? '#2F8FE8' : '#1FBF84';
+    const d = `M${x1} ${y1}Q${mx} ${my - Math.max(28, Math.hypot(x2 - x1, y2 - y1) * .3)} ${x2} ${y2}`;
+    return `<g class="bbpart" data-p="${i}">${grab(d)}<path d="${d}" stroke="#1a1d2e" stroke-width="10" fill="none" stroke-linecap="round"/><path d="${d}" stroke="${col}" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="${x1}" cy="${y1}" r="4" fill="#C9CCE0"/><circle cx="${x2}" cy="${y2}" r="4" fill="#C9CCE0"/></g>`;
+  }
+  if (p.type === 'res') {
+    const a = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI, d = `M${x1} ${y1}L${x2} ${y2}`;
+    return `<g class="bbpart" data-p="${i}">${grab(d)}<path d="${d}" class="bb-leg"/><g transform="translate(${mx} ${my}) rotate(${a})"><rect x="-24" y="-9" width="48" height="18" rx="9" class="res"/><rect x="-14" y="-9" width="5" height="18" fill="#7A4A21"/><rect x="-4" y="-9" width="5" height="18" fill="#1a1a1a"/><rect x="6" y="-9" width="5" height="18" fill="#8B4513"/><rect x="15" y="-9" width="4" height="18" fill="#D4AF37"/></g></g>`;
+  }
+  const c = LEDC[p.color || 'red'], cy = Math.min(y1, y2) - 44, sg = x1 <= x2 ? -1 : 1, ax = mx + sg * 7, kx = mx - sg * 7;
+  const da = `M${ax} ${cy + 15}V${cy + 24}l${sg * 6} 6L${x1} ${y1}`, dk = `M${kx} ${cy + 15}L${x2} ${y2}`;
+  return `<g class="bbpart" data-p="${i}">${st.on ? `<circle cx="${mx}" cy="${cy}" r="80" fill="url(#${c.g})"/>` : ''}${grab(da)}${grab(dk)}
+    <path d="${da}" class="bb-leg"/><path d="${dk}" class="bb-leg"/>
+    <rect x="${mx - 18}" y="${cy + 8}" width="36" height="7" rx="2" fill="${st.burnt ? '#3a3a48' : c.rim}"/>
+    <path d="M${mx - 14} ${cy + 9}V${cy - 6}A14 14 0 0 1 ${mx + 14} ${cy - 6}V${cy + 9}Z" fill="${st.burnt ? '#2f2f3a' : st.on ? c.on : c.off}" stroke="${st.burnt ? '#555' : st.on ? '#fff' : c.rim}" stroke-width="2.5"/>
+    <text class="bb-plus" x="${ax + sg * 13}" y="${cy + 26}">+</text>${st.burnt ? `<g transform="translate(${mx} ${cy + 62})">${SMOKE}</g>` : ''}</g>`;
+}
+
+/* ═════════════════════════════════════════════════════════════════════
+   PART 3 · INTERACTION KIT
+   ═════════════════════════════════════════════════════════════════════ */
 /* ================= drag or tap for tray items ================= */
 function pickTarget(list, x, y) {
   let best = null, bd = Infinity;
@@ -643,9 +871,157 @@ function enableDrag(el, o) {
   el.addEventListener('click', () => { if (!el._dragged && o.onTap) o.onTap(); });
 }
 
-/* =====================================================================
-   MISSION 1 — Close the Loop
-   ===================================================================== */
+/* ── Wire bench ───────────────────────────────────────────────────────
+   A battery (with an optional resistor on the red wire) and two floppy
+   wires. The player drags each wire end onto one of the component's
+   terminals. Used by Learn 1, Learn 8 and Solve 8.
+     o.terms()        → { id: [x, y] } free spots a wire end can snap to
+     o.comp(W, on)    → SVG for the component, drawn under the wires
+     o.flowing(W)     → true when electricity runs round the loop
+     o.onChange(W,on) → called after every drop
+     o.onGrab(k)      → called when a wire end is picked up (optional)
+     o.locked()       → true to stop dragging (optional)            */
+function wireBench(ctx, o) {
+  const HOME = { red: [520, 215], blue: [520, 395] };
+  const W = { red: { ax: 470, ay: 150 }, blue: { ax: 470, ay: 440 } };
+  const home = k => { W[k].x = HOME[k][0]; W[k].y = HOME[k][1]; W[k].at = null; };
+  home('red'); home('blue');
+  const fl = w => `M${w.ax} ${w.ay}C${w.ax + 110} ${w.ay} ${w.x - 110} ${w.y + 30} ${w.x} ${w.y}`;
+  const tail = w => fl(w).replace(/^M\S+ \S+/, '');
+  let drag = null;
+  function draw() {
+    const T = o.terms(), on = o.flowing(W);
+    let s = `<svg class="board drag" viewBox="0 0 1000 560" role="img" aria-label="${o.label || 'Battery with two wires'}">${DEFS}`;
+    s += '<path class="w-out" d="M150 228V150H470"/><path class="w-red" d="M150 228V150H470"/><path class="w-out" d="M150 369V440H470"/><path class="w-blue" d="M150 369V440H470"/>';
+    s += o.comp(W, on);
+    for (const k in T) if (W.red.at !== k && W.blue.at !== k) s += `<circle class="pad" cx="${T[k][0]}" cy="${T[k][1]}" r="26"/>`;
+    for (const k of ['red', 'blue']) s += `<path data-w="${k}" class="w-out" d="${fl(W[k])}"/><path data-w="${k}" class="w-${k}" d="${fl(W[k])}"/>`;
+    if (on) s += `<path class="flow" d="M150 228V150H470${tail(W.red)}"/><path class="flow rev" d="M150 369V440H470${tail(W.blue)}"/>`;
+    if (o.resistor) s += `<g transform="translate(310 150) scale(1.25)">${PART.resistor({ strength: 1 }, { a: 0, d: 1 })}</g>`;
+    s += `<g transform="translate(150 300) rotate(270) scale(1.5)">${PART.battery({ level: 1 }, { a: 270, d: 1 })}</g>`;
+    for (const k of ['red', 'blue']) s += `<circle data-e="${k}" class="wend ${k}${W[k].at ? '' : ' idle'}" cx="${W[k].x}" cy="${W[k].y}" r="22"/>`;
+    ctx.stage.innerHTML = s + '</svg>';
+    bind();
+    return on;
+  }
+  function bind() {
+    const svg = $('svg', ctx.stage);
+    svg.addEventListener('pointerdown', e => {
+      if (o.locked && o.locked()) return;
+      Snd.ac();
+      const p = svgPt(svg, e); let best = null, bd = 60;
+      for (const k of ['red', 'blue']) { const d = Math.hypot(W[k].x - p.x, W[k].y - p.y); if (d < bd) { bd = d; best = k; } }
+      if (!best) return;
+      e.preventDefault(); drag = best; W[best].at = null; sfx('pick');
+      if (o.onGrab) o.onGrab(best);
+      try { svg.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    svg.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const p = svgPt(svg, e), w = W[drag];
+      w.x = Math.max(24, Math.min(976, p.x)); w.y = Math.max(24, Math.min(536, p.y));
+      $$(`path[data-w="${drag}"]`, svg).forEach(el => el.setAttribute('d', fl(w)));
+      const end = $(`circle[data-e="${drag}"]`, svg); end.setAttribute('cx', w.x); end.setAttribute('cy', w.y);
+    });
+    const up = () => {
+      if (!drag) return;
+      const w = W[drag], T = o.terms(); drag = null; let snapped = null;
+      for (const t in T) {
+        if (W.red.at === t || W.blue.at === t) continue;
+        if (Math.hypot(T[t][0] - w.x, T[t][1] - w.y) < 64) { snapped = t; break; }
+      }
+      if (snapped) { w.at = snapped; w.x = T[snapped][0]; w.y = T[snapped][1]; sfx('drop'); } else { w.x = HOME[w === W.red ? 'red' : 'blue'][0]; w.y = HOME[w === W.red ? 'red' : 'blue'][1]; }
+      const on = draw();
+      o.onChange(W, on);
+    };
+    svg.addEventListener('pointerup', up); svg.addEventListener('pointercancel', up);
+  }
+  return { W, draw, reset() { home('red'); home('blue'); return draw(); } };
+}
+
+// Two big components used on the wire bench (M flips them left↔right)
+function bigLED(on, M, labels) {
+  return (on ? '<circle cx="760" cy="150" r="200" fill="url(#gR)"/>' : '') +
+    `<path class="leg big" d="M${M(740)} 222 V258 L${M(700)} 292 V430"/><path class="leg big" d="M${M(780)} 222 V258 L${M(820)} 292 V370"/>
+     <rect x="712" y="206" width="96" height="18" rx="6" fill="#B8324A"/>
+     <path d="M722 208 V150 A38 38 0 0 1 798 150 V208 Z" fill="${on ? '#FF4D64' : 'rgba(255,77,100,.3)'}" stroke="${on ? '#fff' : '#B8324A'}" stroke-width="4"/>
+     <path d="M738 196 V150 A22 22 0 0 1 752 128" stroke="rgba(255,255,255,.55)" stroke-width="6" fill="none" stroke-linecap="round"/>` +
+    (labels ? `<text class="legtxt" x="${M(700)}" y="478" text-anchor="middle">+ long leg</text><text class="legtxt" x="${M(820)}" y="418" text-anchor="middle">− short leg</text>` : '');
+}
+function bigBuzzer(on, M) {
+  return `<path d="M${M(735)} 206 V258 L${M(700)} 292 V400" stroke="#FF4D64" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M${M(785)} 206 V258 L${M(820)} 292 V400" stroke="#0b0b10" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="760" cy="150" r="62" fill="#1d1d27" stroke="#4a4a5c" stroke-width="4"/><circle cx="760" cy="150" r="12" fill="#07070b"/>
+    <text class="plus-mark" x="${M(722)}" y="128" text-anchor="middle" dominant-baseline="central">+</text>` +
+    (on ? '<g class="waves"><path d="M720 66 q40 -24 80 0"/><path d="M706 46 q54 -32 108 0"/><path d="M692 26 q68 -40 136 0"/></g>' : '');
+}
+
+/* ═════════════════════════════════════════════════════════════════════
+   PART 4 · TOPICS
+   Each topic: LEARN (explain and demo) first, then SOLVE (students' turn).
+   ═════════════════════════════════════════════════════════════════════ */
+
+/* ═════════════════════════════════════════════════════════════════════
+   TOPIC 1 · BATTERY CONNECTION
+   Learn: the teacher's demo lab.  Solve: the students' mission.
+   ═════════════════════════════════════════════════════════════════════ */
+/* ── TOPIC 1 · LEARN — Battery Connection ─────────────────────────── */
+function learnBattery(ctx) {
+  let dev = 'bulb', lastDir = null;
+  const T = { a: [690, 430], b: [830, 430] };
+  ctx.ideas([
+    'Every battery has <b>two sides</b>: + and −.',
+    'One wire is not enough: <b>both sides</b> must be connected.',
+    'Electricity leaves the <b>+</b> side, powers the device and comes back to the <b>−</b> side. That full circle is a <b>loop</b>.',
+    'Swap the wires and a motor spins the <b>other way</b>.'
+  ]);
+  ctx.goal('Drag the <b>red</b> wire (from +) and the <b>blue</b> wire (from −) onto the gray circles of the device.');
+  ctx.say('This battery has a <b>+</b> side (red wire) and a <b>−</b> side (blue wire). Let’s make the device work!', 'think');
+  function comp(W, on) {
+    if (dev === 'bulb') {
+      return '<path class="leg big" d="M719 300C719 360 690 380 690 430"/><path class="leg big" d="M801 300C801 360 830 380 830 430"/>' +
+        `<g transform="translate(760 300) scale(2.3)">${PART.bulb({}, { a: 0, d: 1, on, bright: 1 })}</g>`;
+    }
+    const rev = W.red.at === 'b';
+    return `<path class="leg big" d="M730 300C730 360 690 380 690 430"/><path class="leg big" d="M790 300C790 360 830 380 830 430"/>
+      <rect x="670" y="120" width="180" height="180" rx="34" fill="#E07B39" stroke="#F3A56B" stroke-width="5"/>
+      <circle cx="760" cy="210" r="66" fill="#2A2F55"/>
+      <g class="rotor${on ? ' spin' + (rev ? ' rev' : '') : ''}" style="transform-origin:760px 210px">
+        ${[0, 120, 240].map(a => `<rect x="750" y="150" width="20" height="56" rx="8" fill="#ECF0F1" transform="rotate(${a} 760 210)"/>`).join('')}
+        <circle cx="760" cy="210" r="12" fill="#7F8C8D"/></g>` +
+      (on ? `<text class="spin-arrow" x="760" y="94" text-anchor="middle" dominant-baseline="central">${rev ? '↺' : '↻'}</text>` : '');
+  }
+  const bench = wireBench(ctx, {
+    label: 'Battery and a device', terms: () => T, comp,
+    flowing: W => !!(W.red.at && W.blue.at),
+    onGrab: () => ctx.learn(0),
+    onChange(W, on) {
+      if (on) {
+        ctx.learn(2); ctx.mood('good');
+        if (dev === 'bulb') {
+          sfx('on');
+          ctx.say('It lights up! Electricity leaves the <b>+</b> side, goes through the bulb, and comes back to the <b>−</b> side. The yellow dots show the loop.', 'wow', 'good');
+        } else {
+          sfx('motor');
+          if (lastDir && lastDir !== W.red.at) { ctx.learn(3); ctx.say('It spins the <b>other way</b>! Swapping the wires changes the direction electricity travels through the motor.', 'wow', 'good'); }
+          else ctx.say('The motor spins! Now swap the two wires. What do you think will happen?', 'happy', 'good');
+          lastDir = W.red.at;
+        }
+      } else if (W.red.at || W.blue.at) {
+        ctx.learn(1); ctx.mood('warn');
+        ctx.say('Almost! Only one side is connected. Electricity needs a <b>full loop</b>, so connect the other wire too.', 'think', 'warn');
+      } else { ctx.mood(''); ctx.say('Both wires are free. Connect them to the device to make a loop.', 'think'); }
+    }
+  });
+  function drawTray() {
+    ctx.tray.innerHTML = [['bulb', 'Light bulb'], ['motor', 'Motor']].map(([k, t]) => `<button class="chipbtn${dev === k ? ' on' : ''}" data-dev="${k}">${t}</button>`).join('');
+    $$('[data-dev]', ctx.tray).forEach(b => b.onclick = () => { dev = b.dataset.dev; lastDir = null; sfx('tap'); ctx.mood(''); drawTray(); bench.reset(); ctx.say(dev === 'motor' ? 'A motor! Connect both wires and watch which way it spins.' : 'Back to the bulb. Connect both wires.', 'think'); });
+  }
+  ctx.actions([{ label: 'Reset wires', cls: 'ghost', on: () => { bench.reset(); ctx.mood(''); } }]);
+  drawTray(); bench.draw();
+}
+
+/* ── TOPIC 1 · SOLVE — Close the Loop ──────────────────────────── */
 const MINI = { vb: '22 4 356 318', box: { x0: 60, y0: 95, x1: 340, y1: 295 } };
 const BULB_T = () => ({ type: 'bulb', edge: 'T', f: .5 });
 const L1K = {
@@ -660,13 +1036,18 @@ const L1K = {
   looseTop:    { s: () => [BAT({ conn: 'loosePos' }), BULB_T()], why: 'A wire is not touching the + side.' },
   sameSide:    { s: () => [BAT({ conn: 'bothPos' }), BULB_T()], why: 'Both wires go to +. The − side needs a wire too!' },
   sameSideNeg: { s: () => [BAT({ conn: 'bothNeg' }), BULB_T()], why: 'Both wires go to −. The + side needs a wire too!' },
-  wood:        { s: () => [BAT(), BULB_T(), { type: 'wood', edge: 'B', f: .5 }], why: 'Wood is an insulator. It blocks electricity.' }
+  wood:        { s: () => [BAT(), BULB_T(), { type: 'wood', edge: 'B', f: .5 }], why: 'Wood is an insulator. It blocks electricity.' },
+  switchGap:   { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'gap', edge: 'R', f: .5 }], why: 'The switch is closed, but there is still a gap.' },
+  woodSwitch:  { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'wood', edge: 'R', f: .5 }], why: 'The switch is closed, but wood still blocks the road.' },
+  bareOK:      { s: () => [BAT(), BULB_T(), { type: 'bare', edge: 'B', f: .5 }], why: 'It lights, but that bare copper is not safe to touch!' },
+  patchOK:     { s: () => [BAT(), BULB_T(), { type: 'patch', edge: 'R', f: .5 }], why: 'The repaired wire piece carries electricity fine.' }
 };
-function L1(ctx) {
+function solveLoop(ctx) {
   const R = [
     ['ok', 'gapTop', 'loose', 'switchOn'],
     ['sameSide', 'ok', 'switchOff', 'gapBottom', 'wiggly', 'looseTop'],
-    ['wood', 'switchOn', 'sameSideNeg', 'twoGaps', 'wiggly', 'switchOff']
+    ['wood', 'switchOn', 'sameSideNeg', 'twoGaps', 'wiggly', 'switchOff'],
+    ['switchGap', 'bareOK', 'sameSideNeg', 'patchOK', 'woodSwitch', 'looseTop']
   ];
   ctx.stage.classList.add('bare');
   let r = 0, kinds, picked, checked;
@@ -676,7 +1057,7 @@ function L1(ctx) {
     ctx.goal('Tap <b>every</b> circuit where the bulb will light up. Then press <b>Check</b>.');
     ctx.say(['Remember: electricity needs a full loop — out of the + side and back into the − side!',
       'Trickier now. Look closely at both sides of each battery.',
-      'Last round! Look for anything that could block the road.'][r], 'think');
+      'Look for anything that could block the road.', 'Expert round! Some of these are sneaky: check every part.'][r], 'think');
     ctx.actions([{ label: 'Check', cls: 'primary', on: check }]);
     draw();
   }
@@ -710,9 +1091,52 @@ function L1(ctx) {
   start();
 }
 
-/* =====================================================================
-   MISSION 2 — Conductor Detective
-   ===================================================================== */
+/* ═════════════════════════════════════════════════════════════════════
+   TOPIC 2 · CONDUCTORS & INSULATORS
+   Learn: the teacher's demo lab.  Solve: the students' mission.
+   ═════════════════════════════════════════════════════════════════════ */
+/* ── TOPIC 2 · LEARN — Conductors & Insulators ────────────────────── */
+function learnConductors(ctx) {
+  const OBJ = [
+    { e: '🔩', n: 'Iron bolt', c: 1 }, { e: '🥄', n: 'Metal spoon', c: 1 }, { e: '🔑', n: 'Key', c: 1 }, { e: '📎', n: 'Paper clip', c: 1 },
+    { e: '📏', n: 'Plastic ruler', c: 0 }, { e: '🥢', n: 'Wooden sticks', c: 0 }, { e: '🎈', n: 'Rubber balloon', c: 0 }, { e: '🧦', n: 'Wool sock', c: 0 }
+  ];
+  const BOX = { x0: 160, y0: 150, x1: 840, y1: 440 };
+  const found = { 1: [], 0: [] }; let probe = null;
+  ctx.ideas([
+    '<b>Conductors</b> let electricity flow. Metals are conductors.',
+    '<b>Insulators</b> block electricity: plastic, wood, rubber and cloth.',
+    'The road for electricity must be made of <b>conductors</b>.'
+  ]);
+  ctx.goal('Drop an object into the <b>test gap</b>. Does the bulb light up?');
+  ctx.say('This circuit has a gap. Let’s find out which objects let electricity through!', 'think');
+  function draw() {
+    const slots = [BAT(), { type: 'bulb', edge: 'T', f: .5 }, { type: 'probe', edge: 'R', f: .5, item: probe && probe.e, cond: probe && probe.c }];
+    const col = (x, title, color, list) => `<text class="rec-h" x="${x}" y="262" fill="${color}" text-anchor="middle">${title}</text><text class="rec-e" x="${x}" y="330" text-anchor="middle">${list.map(o => o.e).join(' ') || '…'}</text>`;
+    const extra = col(365, 'Conductors', '#3BE0A1', found[1]) + col(635, 'Insulators', '#FF6B7A', found[0]) + '<path d="M500 235V370" stroke="#2E3A92" stroke-width="3" stroke-dasharray="6 6"/>';
+    ctx.stage.innerHTML = loopSVG({ box: BOX, slots, tap: true, extra, label: 'Test circuit with a gap' });
+  }
+  function test(i) {
+    const o = OBJ[i]; probe = o;
+    if (!found[o.c].includes(o)) found[o.c].push(o);
+    draw(); drawTray(); sfx(o.c ? 'on' : 'bad');
+    if (o.c) { ctx.learn(0); ctx.mood('good'); ctx.say(`The bulb lights up! The ${o.n.toLowerCase()} is made of metal: a <b>conductor</b>.`, 'wow', 'good'); }
+    else { ctx.learn(1); ctx.mood('bad'); ctx.say(`The bulb stays dark. The ${o.n.toLowerCase()} is an <b>insulator</b>: it blocks electricity.`, 'oops', 'bad'); }
+    if (found[1].length && found[0].length && found[1].length + found[0].length >= 4) ctx.learn(2);
+  }
+  function drawTray() {
+    ctx.tray.innerHTML = OBJ.map((o, i) => `<button class="part${found[o.c].includes(o) ? ' tested' : ''}" data-k="${i}"><span class="icon emoji">${o.e}</span><span class="pname">${o.n}</span></button>`).join('');
+    $$('.part', ctx.tray).forEach(b => enableDrag(b, {
+      targets: () => $$('.slot[data-i="2"] .hit', ctx.stage),
+      onDrop: () => test(+b.dataset.k), onTap: () => test(+b.dataset.k)
+    }));
+  }
+  ctx.stage.onclick = e => { if (e.target.closest('.slot[data-i="2"]') && probe) { probe = null; ctx.mood(''); sfx('pick'); draw(); } };
+  ctx.actions([{ label: 'Clear results', cls: 'ghost', on: () => { found[1] = []; found[0] = []; probe = null; ctx.mood(''); draw(); drawTray(); } }]);
+  draw(); drawTray();
+}
+
+/* ── TOPIC 2 · SOLVE — Conductor Detective ──────────────────────────── */
 const ITEMS = [
   { e: '🥄', n: 'Metal spoon', c: 1, f: 'Spoons are made of steel, and metals let electricity flow.' },
   { e: '🔑', n: 'Key', c: 1, f: 'Keys are made of metal, so they conduct.' },
@@ -725,10 +1149,15 @@ const ITEMS = [
   { e: '📄', n: 'Paper', c: 0, f: 'Dry paper is an insulator.' },
   { e: '🥢', n: 'Wooden chopsticks', c: 0, f: 'Wood is an insulator.' },
   { e: '📏', n: 'Plastic ruler', c: 0, f: 'Plastic is an insulator. That is why wires are covered in it!' },
-  { e: '🧸', n: 'Teddy bear', c: 0, f: 'Cloth and stuffing are insulators.' }
+  { e: '🧸', n: 'Teddy bear', c: 0, f: 'Cloth and stuffing are insulators.' },
+  // tricky ones: every game includes these four
+  { e: '✏️', n: 'Pencil lead', c: 1, hard: 1, f: 'Surprise! Pencil “lead” is graphite, and graphite conducts electricity.' },
+  { e: '💍', n: 'Gold ring', c: 1, hard: 1, f: 'Gold is a metal, and one of the best conductors.' },
+  { e: '🧤', n: 'Rubber gloves', c: 0, hard: 1, f: 'Rubber is an insulator. Electricians wear rubber gloves to stay safe.' },
+  { e: '🖍️', n: 'Wax crayon', c: 0, hard: 1, f: 'Wax is an insulator, even though a crayon looks like a pencil.' }
 ];
-function L2(ctx) {
-  const q = shuffle(ITEMS); let idx = 0, tests = 3, busy = false, probe = null;
+function solveConductors(ctx) {
+  const q = shuffle([...ITEMS.filter(i => i.hard), ...shuffle(ITEMS.filter(i => !i.hard)).slice(0, 8)]); let idx = 0, tests = 2, busy = false, probe = null;
   ctx.stage.classList.add('bare');
   ctx.goal('Is it a <b>conductor</b> or an <b>insulator</b>? Drag each object into the right box, or tap a box.');
   ctx.stage.innerHTML = `<div class="det">
@@ -746,7 +1175,7 @@ function L2(ctx) {
     const it = q[idx]; probe = null; drawTester();
     token.style.visibility = ''; token.innerHTML = `<span class="te">${it.e}</span><span class="tn">${it.n}</span>`;
     token.classList.remove('shake'); testLabel(); ctx.dots(idx); ctx.mood('');
-    ctx.say(idx === 0 ? 'Detective tip: you have 3 test tokens. Drop an object on the tester to see if the bulb lights!' : `Next object: the ${lower(it.n)}.`, 'think');
+    ctx.say(idx === 0 ? 'Detective tip: you only have 2 test tokens. Save them for the tricky objects!' : `Next object: the ${lower(it.n)}.`, 'think');
   }
   function test() {
     if (!tests || busy) return;
@@ -777,16 +1206,65 @@ function L2(ctx) {
   show();
 }
 
-/* =====================================================================
-   MISSION 3 — Wire Repair Shop
-   ===================================================================== */
-function L3(ctx) {
+/* ═════════════════════════════════════════════════════════════════════
+   TOPIC 3 · THE ELECTRIC WIRE
+   Learn: the teacher's demo lab.  Solve: the students' mission.
+   ═════════════════════════════════════════════════════════════════════ */
+/* ── TOPIC 3 · LEARN — The Electric Wire ─────────────────────────── */
+function learnWire(ctx) {
+  const BOX = { x0: 150, y0: 160, x1: 850, y1: 440 };
+  let copper = false, jacket = false;
+  ctx.ideas([
+    '<b>Copper</b> is a conductor: it carries the electricity.',
+    'Bare copper is <b>dangerous</b>: it can spark and give you a shock.',
+    '<b>Plastic</b> is an insulator: on its own it carries nothing.',
+    'A real wire = <b>copper inside</b> + <b>plastic outside</b>.'
+  ]);
+  ctx.goal('The wire is missing! Put the <b>copper core</b> and the <b>plastic jacket</b> into the dashed box.');
+  ctx.say('Real wires have two parts. Try each part on its own first, then both together!', 'think');
+  const SECTION = `<g transform="translate(500 322)"><text class="rec-h" y="-78" text-anchor="middle" fill="#B3BAEC">Inside the wire:</text>
+    <circle r="52" fill="rgba(255,77,100,.75)" stroke="#E0334B" stroke-width="4"/><circle r="22" fill="#E4833F" stroke="#9C4F1C" stroke-width="3"/>
+    <path d="M22 0H118" stroke="#F7B27A" stroke-width="3"/><text class="sec-l" x="126" y="6" fill="#F7B27A">copper: conductor</text>
+    <path d="M-50 16L-116 40" stroke="#FF8E9B" stroke-width="3"/><text class="sec-l" x="-124" y="48" text-anchor="end" fill="#FF8E9B">plastic: insulator</text></g>`;
+  function draw() {
+    const res = { status: copper ? 'works' : 'open', bright: 1, dir: 1, burnt: [] };
+    const slots = [BAT(), { type: 'bulb', edge: 'R', f: .5 }, { type: 'build', edge: 'T', f: .5, copper, jacket }];
+    ctx.stage.innerHTML = loopSVG({ box: BOX, slots, res, tap: true, extra: copper && jacket ? SECTION : '', label: 'Circuit with a missing wire' });
+  }
+  function update() {
+    draw(); drawTray();
+    if (copper && jacket) { ctx.learn(0); ctx.learn(3); sfx('good'); ctx.mood('good'); ctx.say('A perfect wire! The copper carries the electricity and the plastic keeps it safely inside. Look at the cut-open view!', 'wow', 'good'); }
+    else if (copper) { ctx.learn(0); ctx.learn(1); sfx('zap'); ctx.mood('warn'); ctx.say('The bulb lights, because copper is a conductor. But look: it is <b>sparking</b>! Bare copper is not safe to touch.', 'oops', 'warn'); }
+    else if (jacket) { ctx.learn(2); sfx('bad'); ctx.mood('bad'); ctx.say('Plastic on its own? The bulb stays dark. Plastic is an <b>insulator</b>, so electricity can’t flow through it.', 'think', 'bad'); }
+    else { ctx.mood(''); ctx.say('The wire is empty. Drag a part into the dashed box.', 'think'); }
+  }
+  function put(k) { if (k === 'copper') copper = true; else jacket = true; sfx('drop'); update(); }
+  function drawTray() {
+    const P = [['copper', 'Copper core', 'conductor', 'M-50 0H50', '#E4833F', 12], ['jacket', 'Plastic jacket', 'insulator', 'M-50 0H50', 'rgba(255,77,100,.8)', 28]];
+    ctx.tray.innerHTML = P.map(([k, n, sub, d, c, w]) => `<button class="part tool${(k === 'copper' ? copper : jacket) ? ' used' : ''}" data-k="${k}"><span class="icon"><svg viewBox="-70 -40 140 80" aria-hidden="true"><path d="${d}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/></svg></span><span class="pname">${n}<small>${sub}</small></span></button>`).join('');
+    $$('.part', ctx.tray).forEach(b => enableDrag(b, {
+      targets: () => $$('.slot[data-i="2"] .hit', ctx.stage),
+      onDrop: () => put(b.dataset.k), onTap: () => put(b.dataset.k)
+    }));
+  }
+  ctx.stage.onclick = e => {
+    if (!e.target.closest('.slot[data-i="2"]')) return;
+    if (jacket) jacket = false; else if (copper) copper = false; else return;
+    sfx('pick'); update();
+  };
+  ctx.actions([{ label: 'Empty the wire', cls: 'ghost', on: () => { copper = jacket = false; update(); } }]);
+  update();
+}
+
+/* ── TOPIC 3 · SOLVE — Wire Repair Shop ──────────────────────────── */
+function solveWire(ctx) {
   const SEG = [['T', .22], ['T', .5], ['T', .78], ['B', .22], ['B', .5], ['B', .78]];
-  const R = [{ 1: 'bare' }, { 0: 'gap', 4: 'bare' }, { 2: 'wood', 3: 'bare', 5: 'gap', 0: 'bare' }];
+  const R = [{ 1: 'bare' }, { 0: 'gap', 4: 'bare' }, { 2: 'wood', 3: 'bare', 5: 'gap', 0: 'bare' }, { 0: 'bare', 1: 'plastic', 2: 'gap', 3: 'wood', 5: 'bare' }];
   const GOALS = [
     'A wire lost its plastic cover! Make the circuit <b>work</b> and <b>safe to touch</b>.',
     'Two problems this time. Find them both!',
-    'Big repair job! Find and fix <b>every</b> problem.'
+    'Big repair job! Find and fix <b>every</b> problem.',
+    'Expert repair: five problems, and one is a material you haven’t fixed yet!'
   ];
   const TOOLS = [{ id: 'tape', name: 'Insulating tape', sub: 'covers bare copper' }, { id: 'patch', name: 'New wire', sub: 'copper inside, plastic outside' }];
   const BOX = { x0: 150, y0: 120, x1: 830, y1: 440 };
@@ -837,10 +1315,10 @@ function L3(ctx) {
     if (tool === 'tape') {
       if (p.type === 'bare') { p.type = 'taped'; ok = true; }
       else if (p.type === 'gap') msg = 'Tape is plastic, which is an insulator! Electricity can’t cross the gap on tape. Try a new wire.';
-      else if (p.type === 'wood') msg = 'Tape won’t help here. Wood blocks electricity, so replace it with a new wire.';
+      else if (p.type === 'wood' || p.type === 'plastic') msg = 'Tape won’t help here. That piece blocks electricity, so replace it with a new wire.';
       else msg = 'This part of the wire is already fine!';
     } else {
-      if (p.type === 'gap' || p.type === 'wood') { p.type = 'patch'; ok = true; }
+      if (['gap', 'wood', 'plastic'].includes(p.type)) { p.type = 'patch'; ok = true; }
       else if (p.type === 'bare') msg = 'This copper already carries electricity. The problem is that it has no cover. Use tape!';
       else msg = 'This part of the wire is already fine!';
     }
@@ -851,131 +1329,152 @@ function L3(ctx) {
   start();
 }
 
-/* =====================================================================
-   MISSION 4 — Which Way? (polarity)
-   ===================================================================== */
-function bigLED(on, M, labels) {
-  return (on ? '<circle cx="760" cy="150" r="200" fill="url(#gR)"/>' : '') +
-    `<path class="leg big" d="M${M(740)} 222 V258 L${M(700)} 292 V430"/><path class="leg big" d="M${M(780)} 222 V258 L${M(820)} 292 V370"/>
-     <rect x="712" y="206" width="96" height="18" rx="6" fill="#B8324A"/>
-     <path d="M722 208 V150 A38 38 0 0 1 798 150 V208 Z" fill="${on ? '#FF4D64' : 'rgba(255,77,100,.3)'}" stroke="${on ? '#fff' : '#B8324A'}" stroke-width="4"/>
-     <path d="M738 196 V150 A22 22 0 0 1 752 128" stroke="rgba(255,255,255,.55)" stroke-width="6" fill="none" stroke-linecap="round"/>` +
-    (labels ? `<text class="legtxt" x="${M(700)}" y="478" text-anchor="middle">+ long leg</text><text class="legtxt" x="${M(820)}" y="418" text-anchor="middle">− short leg</text>` : '');
+/* ═════════════════════════════════════════════════════════════════════
+   TOPIC 4 · THE DANGEROUS BATTERY
+   Learn: the teacher's demo lab.  Solve: the students' mission.
+   ═════════════════════════════════════════════════════════════════════ */
+/* ── TOPIC 4 · LEARN — The Dangerous Battery ─────────────────────── */
+function learnDanger(ctx) {
+  const BOX = { x0: 160, y0: 140, x1: 840, y1: 430 };
+  const BATS = [{ v: '3V', k: 'ok', name: '3 V battery' }, { v: '9V', k: 'burn', name: '9 V battery' }, { v: '10,000V', k: 'boom', name: '10,000 V!' }];
+  let bat = BATS[0], closed = false, state = 'idle';
+  ctx.ideas([
+    'The <b>right</b> battery lights the bulb safely.',
+    '<b>Too much</b> power burns parts out.',
+    '<b>Huge</b> power, like 10,000 V, destroys parts and is dangerous for people too!',
+    'So we must <b>protect</b> our circuit. That is the resistor’s job!'
+  ]);
+  ctx.goal('This bulb is made for a <b>3 V</b> battery. Choose a battery, then tap the <b>switch</b> to close it.');
+  ctx.say('Pick a battery from the box and close the switch. What do you think will happen?', 'think');
+  function draw(flash) {
+    const burnt = state === 'burn' || state === 'boom';
+    const slots = [BAT({ volts: bat.v, danger: bat.k === 'boom' }), { type: 'bulb', edge: 'R', f: .5, burnt }, { type: 'switch', edge: 'B', f: .5, closed }];
+    const res = { status: closed && (state === 'on' || flash) ? 'works' : 'open', bright: 1, dir: 1, burnt: [] };
+    const boom = state === 'boom' ? `<g class="boom" transform="translate(894 285)"><circle r="95" fill="#FFD23F"/><circle r="64" fill="#FF8A3D"/><circle r="34" fill="#fff"/></g>` : '';
+    ctx.stage.innerHTML = loopSVG({ box: BOX, slots, res, tap: true, extra: boom, speed: flash ? .2 : null, label: 'Battery, bulb and switch' });
+  }
+  function toggle() {
+    if (state === 'burn' || state === 'boom') { ctx.say('The bulb is broken. Press <b>New bulb</b> to replace it.', 'think'); return; }
+    closed = !closed; sfx('click');
+    if (!closed) { state = 'idle'; ctx.mood(''); draw(); ctx.say('Switch open: the loop is broken, so the bulb is off.', 'think'); return; }
+    if (bat.k === 'ok') { state = 'on'; draw(); sfx('on'); ctx.learn(0); ctx.mood('good'); ctx.say('3 V is just right for this bulb. It glows safely!', 'wow', 'good'); return; }
+    draw(true);
+    ctx.later(() => {
+      if (bat.k === 'burn') {
+        state = 'burn'; sfx('pop'); ctx.learn(1); ctx.mood('bad');
+        ctx.say('Flash… POP! 9 V is <b>too much</b> for a 3 V bulb. The thin wire inside melted and the bulb burned out.', 'oops', 'bad');
+      } else {
+        state = 'boom'; sfx('pop'); ctx.later(() => sfx('pop'), 150); ctx.learn(2); ctx.mood('bad');
+        ctx.stage.classList.remove('shake'); void ctx.stage.offsetWidth; ctx.stage.classList.add('shake');
+        ctx.say('BOOM! 10,000 volts destroyed the bulb instantly. <b>Never</b> touch wall sockets or big batteries: high voltage is dangerous for people too!', 'oops', 'bad');
+      }
+      draw(); ctx.later(() => ctx.learn(3), 1600);
+    }, 450);
+  }
+  function drawTray() {
+    ctx.tray.innerHTML = BATS.map((b, i) => `<button class="part${bat === b ? ' sel' : ''}" data-k="${i}"><span class="icon">${partIcon({ type: 'battery', volts: b.v, danger: b.k === 'boom' })}</span><span class="pname">${b.name}</span></button>`).join('');
+    $$('.part', ctx.tray).forEach(b => b.onclick = () => { bat = BATS[+b.dataset.k]; closed = false; state = 'idle'; sfx('drop'); ctx.mood(''); draw(); drawTray(); ctx.say(`${bat.name} in place. Now tap the switch!`, 'think'); });
+  }
+  ctx.stage.onclick = e => { if (e.target.closest('.slot[data-i="2"]')) toggle(); };
+  ctx.actions([{ label: 'New bulb', cls: 'ghost', on: () => { state = 'idle'; closed = false; ctx.mood(''); draw(); ctx.say('A brand new bulb. Try again!', 'happy'); } }]);
+  draw(); drawTray();
 }
-function bigBuzzer(on, M) {
-  return `<path d="M${M(735)} 206 V258 L${M(700)} 292 V400" stroke="#FF4D64" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M${M(785)} 206 V258 L${M(820)} 292 V400" stroke="#0b0b10" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="760" cy="150" r="62" fill="#1d1d27" stroke="#4a4a5c" stroke-width="4"/><circle cx="760" cy="150" r="12" fill="#07070b"/>
-    <text class="plus-mark" x="${M(722)}" y="128" text-anchor="middle" dominant-baseline="central">+</text>` +
-    (on ? '<g class="waves"><path d="M720 66 q40 -24 80 0"/><path d="M706 46 q54 -32 108 0"/><path d="M692 26 q68 -40 136 0"/></g>' : '');
-}
-function L4(ctx) {
-  const R = [
-    { k: 'led', flip: false, labels: true, goal: 'Drag the <b>red</b> and <b>blue</b> wire ends onto the LED’s legs. The long leg is the <b>+</b> leg!' },
-    { k: 'led', flip: true, goal: 'This LED is turned around and has no labels. Which leg is longer?' },
-    { k: 'buzzer', flip: Math.random() < .5, goal: 'Now a <b>buzzer</b>! Find its <b>+</b> side and connect it.' },
-    { k: 'loop1', goal: 'The wires are connected, but will the LED glow? Tap <b>⇄</b> to turn parts around, then press <b>Switch ON</b>.' },
-    { k: 'loop2', goal: 'Two LEDs! Every LED must face the same way as the battery. Flip parts, then <b>Switch ON</b>.' }
+
+/* ── TOPIC 4 · SOLVE — Safe or Boom? ──────────────────────────────── */
+// Predict what happens before the power goes on. Combines every rule so far:
+// loops, gaps, polarity, and matching resistor shields to battery volts.
+function solveDanger(ctx) {
+  const BOX = { x0: 160, y0: 140, x1: 840, y1: 430 };
+  const RES = (f, s) => ({ type: 'resistor', edge: 'T', f, strength: s });
+  const LED = (o = {}) => Object.assign({ type: 'led', edge: 'R', f: .5, color: 'red' }, o);
+  const CASES = [
+    { s: [BAT({ level: 1 }), RES(.5, 1), LED()], why: '3 volts with 1 shield: just right.' },
+    { s: [BAT({ level: 3 }), LED({ color: 'green' })], why: '9 volts and no resistor at all: far too much!' },
+    { s: [BAT({ level: 1 }), RES(.5, 1), LED(), { type: 'gap', edge: 'B', f: .5 }], why: 'There is a gap in the loop, so no electricity can flow.' },
+    { s: [BAT({ level: 3 }), RES(.5, 1), LED({ color: 'yellow' })], why: '9 volts needs 3 shields, but there is only 1.' },
+    { s: [BAT({ level: 1 }), RES(.5, 3), LED({ color: 'green' })], why: '3 shields for only 3 volts: too much protection, so the LED is dim.' },
+    { s: [BAT({ level: 3 }), RES(.3, 1), RES(.7, 2), LED()], why: '1 + 2 = 3 shields for 9 volts: perfect.' },
+    { s: [BAT({ level: 2 }), RES(.5, 2), LED({ dir: -1, color: 'yellow' })], why: 'The resistor is right, but the LED is backwards, so nothing flows.' },
+    { s: [BAT({ level: 2 }), RES(.3, 1), RES(.7, 1), LED({ color: 'green' }), { type: 'switch', edge: 'B', f: .5, closed: true }], why: '6 volts with 1 + 1 = 2 shields, and the switch is closed.' }
   ];
-  const BOX = { x0: 160, y0: 130, x1: 840, y1: 430 };
-  let r = 0;
-  function nextBtn() { ctx.actions([{ label: r < R.length - 1 ? 'Next ›' : 'Finish mission', cls: 'primary', on: () => { if (r < R.length - 1) { r++; start(); } else ctx.win(); } }]); }
+  const OUT = [['glow', 'Glows safely'], ['dim', 'Glows, but very dim'], ['burn', 'POP! It burns out'], ['nothing', 'Nothing happens']];
+  const outcome = s => ({ works: 'glow', dim: 'dim', burn: 'burn' })[evalLoop(s).status] || 'nothing';
+  let i = 0, done = false;
   function start() {
-    const c = R[r]; ctx.dots(r); ctx.goal(c.goal); ctx.mood(''); ctx.actions([]); ctx.stage.onclick = null;
-    if (c.k === 'led' || c.k === 'buzzer') wireRound(c); else loopRound(c);
+    done = false; ctx.dots(i); ctx.mood(''); ctx.actions([]);
+    ctx.goal(`Circuit ${i + 1} of ${CASES.length}: what will happen when it is switched on?`);
+    ctx.say(i === 0 ? 'Look at the battery, count the shields, and check every part. Then predict!' : 'Predict first, then watch.', 'think');
+    ctx.stage.innerHTML = loopSVG({ box: BOX, slots: CASES[i].s, powered: false, label: 'Circuit to predict' });
+    ctx.tray.innerHTML = `<div class="opts two">${OUT.map(([k, t]) => `<button class="opt" data-k="${k}">${t}</button>`).join('')}</div>`;
+    $$('.opt', ctx.tray).forEach(b => b.onclick = () => pick(b));
   }
-  function wireRound(c) {
-    const M = x => c.flip ? 1520 - x : x;
-    const T = c.k === 'led' ? { plus: [M(700), 430], minus: [M(820), 370] } : { plus: [M(700), 400], minus: [M(820), 400] };
-    const W = { red: { x: 520, y: 215, hx: 520, hy: 215, at: null, ax: 470, ay: 150 }, blue: { x: 520, y: 395, hx: 520, hy: 395, at: null, ax: 470, ay: 440 } };
-    let counted = false, done = false, drag = null;
-    const fl = w => `M${w.ax} ${w.ay}C${w.ax + 110} ${w.ay} ${w.x - 110} ${w.y + 30} ${w.x} ${w.y}`;
-    ctx.say(r === 0 ? 'The red wire comes from the battery’s + side. The blue wire comes from the − side.' : r === 1 ? 'Look carefully at the two legs.' : 'Buzzers have a + side too, just like LEDs.', 'think');
-    function draw() {
-      const on = W.red.at === 'plus' && W.blue.at === 'minus';
-      let s = `<svg class="board drag" viewBox="0 0 1000 560" role="img" aria-label="Battery, resistor and ${c.k === 'led' ? 'LED' : 'buzzer'}">${DEFS}`;
-      s += '<path class="w-out" d="M150 228V150H470"/><path class="w-red" d="M150 228V150H470"/><path class="w-out" d="M150 369V440H470"/><path class="w-blue" d="M150 369V440H470"/>';
-      s += c.k === 'led' ? bigLED(on, M, c.labels) : bigBuzzer(on, M);
-      for (const k of ['plus', 'minus']) if (W.red.at !== k && W.blue.at !== k) s += `<circle class="pad" cx="${T[k][0]}" cy="${T[k][1]}" r="26"/>`;
-      s += `<path data-w="red" class="w-out" d="${fl(W.red)}"/><path data-w="red" class="w-red" d="${fl(W.red)}"/><path data-w="blue" class="w-out" d="${fl(W.blue)}"/><path data-w="blue" class="w-blue" d="${fl(W.blue)}"/>`;
-      if (on) s += `<path class="flow" d="M150 228V150H470${fl(W.red).replace(/^M\S+ \S+/, '')}"/><path class="flow rev" d="M150 369V440H470${fl(W.blue).replace(/^M\S+ \S+/, '')}"/>`;
-      s += `<g transform="translate(310 150) scale(1.25)">${PART.resistor({ strength: 1 }, { a: 0, d: 1 })}</g>`;
-      s += `<g transform="translate(150 300) rotate(270) scale(1.5)">${PART.battery({ level: 1 }, { a: 270, d: 1 })}</g>`;
-      s += `<circle data-e="red" class="wend red${W.red.at ? '' : ' idle'}" cx="${W.red.x}" cy="${W.red.y}" r="22"/><circle data-e="blue" class="wend blue${W.blue.at ? '' : ' idle'}" cx="${W.blue.x}" cy="${W.blue.y}" r="22"/></svg>`;
-      ctx.stage.innerHTML = s; bind(); return on;
-    }
-    function bind() {
-      const svg = $('svg', ctx.stage);
-      svg.addEventListener('pointerdown', e => {
-        if (done) return; Snd.ac();
-        const p = svgPt(svg, e); let best = null, bd = 60;
-        for (const k of ['red', 'blue']) { const d = Math.hypot(W[k].x - p.x, W[k].y - p.y); if (d < bd) { bd = d; best = k; } }
-        if (!best) return;
-        e.preventDefault(); drag = best; W[best].at = null; sfx('pick');
-        try { svg.setPointerCapture(e.pointerId); } catch (err) {}
-      });
-      svg.addEventListener('pointermove', e => {
-        if (!drag) return;
-        const p = svgPt(svg, e), w = W[drag];
-        w.x = Math.max(24, Math.min(976, p.x)); w.y = Math.max(24, Math.min(536, p.y));
-        $$(`path[data-w="${drag}"]`, svg).forEach(el => el.setAttribute('d', fl(w)));
-        const end = $(`circle[data-e="${drag}"]`, svg); end.setAttribute('cx', w.x); end.setAttribute('cy', w.y);
-      });
-      const up = () => {
-        if (!drag) return;
-        const w = W[drag]; drag = null; let snapped = null;
-        for (const t of ['plus', 'minus']) {
-          if (W.red.at === t || W.blue.at === t) continue;
-          if (Math.hypot(T[t][0] - w.x, T[t][1] - w.y) < 64) { snapped = t; break; }
-        }
-        if (snapped) { w.at = snapped; w.x = T[snapped][0]; w.y = T[snapped][1]; sfx('drop'); } else { w.x = w.hx; w.y = w.hy; }
-        judge(draw());
-      };
-      svg.addEventListener('pointerup', up); svg.addEventListener('pointercancel', up);
-    }
-    function judge(on) {
-      if (on) {
-        done = true; sfx(c.k === 'buzzer' ? 'buzz' : 'good'); ctx.mood('good');
-        ctx.say(c.k === 'buzzer' ? 'Beep beep! The buzzer’s + side is connected to the battery’s + side.' : 'It glows! The long leg is connected to the + side of the battery.', 'wow', 'good');
-        nextBtn();
-      } else if (W.red.at && W.blue.at) {
-        if (!counted) { ctx.miss(); counted = true; }
-        sfx('bad'); ctx.mood('bad');
-        ctx.say(c.k === 'buzzer' ? 'Silence… A buzzer only works one way round. Look for the + mark!' : 'Nothing happens! An LED only lets electricity flow one way. Swap the wires!', 'oops', 'bad');
-      } else if (W.red.at || W.blue.at) { ctx.mood('warn'); ctx.say('One wire is on. Now connect the other one to finish the loop.', 'think', 'warn'); }
-      else ctx.mood('');
-    }
-    draw();
-  }
-  function loopRound(c) {
-    const slots = c.k === 'loop1'
-      ? [BAT(), { type: 'resistor', edge: 'T', f: .5 }, { type: 'led', edge: 'R', f: .5, dir: -1, color: 'green', flip: true }]
-      : [BAT({ dir: -1, flip: true }), { type: 'resistor', edge: 'T', f: .3 }, { type: 'led', edge: 'T', f: .72, dir: 1, color: 'yellow', flip: true }, { type: 'led', edge: 'B', f: .5, dir: -1, color: 'red', flip: true }];
-    let powered = false, done = false, res = null;
-    const draw = (hl = -1) => { ctx.stage.innerHTML = loopSVG({ box: BOX, slots, res, powered, tap: true, badges: true, hl }); };
-    ctx.say(c.k === 'loop1' ? 'Check the LED’s legs: the long leg must face the + side of the battery.' : 'You can flip the battery too! Think before you switch on.', 'think');
-    ctx.stage.onclick = e => {
-      if (done) return;
-      const el = e.target.closest('.flipb') || e.target.closest('.slot'); if (!el) return;
-      const i = +(el.dataset.flip ?? el.dataset.i); if (!slots[i].flip) return;
-      slots[i].dir = -(slots[i].dir || 1); sfx('click'); powered = false; res = null; ctx.mood(''); draw();
-    };
-    ctx.actions([{ label: 'Switch ON', cls: 'primary', on: () => {
-      if (done) return;
-      res = evalLoop(slots); powered = true;
-      if (res.status === 'works') {
-        done = true; draw(); sfx('good'); ctx.mood('good');
-        ctx.say(c.k === 'loop1' ? 'Glowing! Now the long leg faces the + side.' : 'Both LEDs glow! They all face the same way as the battery.', 'wow', 'good'); nextBtn();
-      } else { ctx.miss(); sfx('bad'); ctx.mood('bad'); draw(res.culprit); ctx.say('Still dark! The circled part is facing the wrong way.', 'oops', 'bad'); }
-    } }]);
-    draw();
+  function pick(b) {
+    if (done) return; done = true;
+    const C = CASES[i], ans = outcome(C.s), ok = b.dataset.k === ans;
+    $$('.opt', ctx.tray).forEach(x => { x.disabled = true; if (x.dataset.k === ans) x.classList.add('right'); });
+    if (!ok) { b.classList.add('wrong'); ctx.miss(); }
+    ctx.stage.innerHTML = loopSVG({ box: BOX, slots: C.s, powered: true, label: 'Circuit switched on' });
+    sfx(ans === 'burn' ? 'pop' : ok ? 'good' : 'bad'); ctx.mood(ok ? 'good' : 'bad');
+    ctx.say(`${ok ? 'Correct!' : 'Not quite.'} ${C.why}`, ok ? 'wow' : 'oops', ok ? 'good' : 'bad');
+    ctx.actions([{ label: i < CASES.length - 1 ? 'Next circuit ›' : 'Finish', cls: 'primary', on: () => { if (i < CASES.length - 1) { i++; start(); } else ctx.win(); } }]);
   }
   start();
 }
 
-/* =====================================================================
-   MISSION 5 — Resistor Bodyguard
-   ===================================================================== */
+/* ═════════════════════════════════════════════════════════════════════
+   TOPIC 5 · RESISTORS
+   Learn: the teacher's demo lab.  Solve: the students' mission.
+   ═════════════════════════════════════════════════════════════════════ */
+/* ── TOPIC 5 · LEARN — Resistors ─────────────────────────────────── */
+function learnResistors(ctx) {
+  const BOX = { x0: 160, y0: 140, x1: 840, y1: 430 };
+  const OPTS = [{ k: 0, name: 'Plain wire', sub: 'no protection' }, { k: 1, name: 'Small resistor', sub: '1 shield' }, { k: 3, name: 'Big resistor', sub: '3 shields' }];
+  let pick = null, edge = 'T', rush = false, timer = null;
+  ctx.ideas([
+    'Without a resistor, <b>too much</b> electricity rushes through and the LED burns out.',
+    'A resistor <b>slows electricity down</b>, like a bodyguard. The LED is safe and bright.',
+    'A <b>bigger</b> resistor slows it even more, so the LED gets <b>dim</b>.',
+    'A resistor protects the LED from <b>anywhere</b> in the loop: before it or after it.'
+  ]);
+  ctx.goal('A <b>3 V</b> battery and an LED. Put a piece in the gap and watch <b>how fast</b> the electricity moves.');
+  ctx.say('Watch the yellow dots: they show how fast electricity is moving.', 'think');
+  const spot = () => pick == null ? { type: 'empty', edge, f: .5 } : pick === 0 ? { type: 'patch', edge, f: .5 } : { type: 'resistor', edge, f: .5, strength: pick };
+  const slots = () => [BAT({ level: 1 }), { type: 'led', edge: 'R', f: .5, color: 'green' }, spot()];
+  function draw() {
+    if (rush) { ctx.stage.innerHTML = loopSVG({ box: BOX, slots: slots(), res: { status: 'works', bright: 1, dir: 1, burnt: [] }, tap: true, speed: .18 }); return; }
+    ctx.stage.innerHTML = loopSVG({ box: BOX, slots: slots(), tap: true, speed: pick === 3 ? 2.6 : null });
+  }
+  function place(k) {
+    clearTimeout(timer); pick = k; rush = false; ctx.mood('');
+    const after = edge === 'B';
+    if (k === 0) {
+      rush = true; draw(); sfx('zap'); ctx.say('Whoa, the electricity is rushing through!', 'wow', 'warn');
+      timer = ctx.later(() => { rush = false; draw(); sfx('pop'); ctx.learn(0); ctx.mood('bad'); ctx.say('POP! A plain wire doesn’t slow electricity down, so the LED burned out. It needs protection!', 'oops', 'bad'); }, 900);
+    } else if (k === 1) {
+      draw(); sfx('good'); ctx.learn(1); ctx.mood('good'); if (after) ctx.learn(3);
+      ctx.say(after ? 'Same result! The resistor protects the LED even when it comes <b>after</b> the LED.' : 'The small resistor slows electricity down. The LED is <b>safe and bright</b>!', 'wow', 'good');
+    } else {
+      draw(); sfx('on'); ctx.learn(2); ctx.mood('warn'); if (after) ctx.learn(3);
+      ctx.say('The big resistor is like a <b>traffic jam</b>. Electricity crawls slowly, so the LED is only <b>dim</b>.', 'think', 'warn');
+    }
+    drawTray();
+  }
+  function drawTray() {
+    ctx.tray.innerHTML = OPTS.map(o => `<button class="part${pick === o.k ? ' sel' : ''}" data-k="${o.k}"><span class="icon">${partIcon(o.k === 0 ? { type: 'patch' } : { type: 'resistor', strength: o.k })}</span><span class="pname">${o.name}<small>${o.sub}</small></span></button>`).join('');
+    $$('.part', ctx.tray).forEach(b => enableDrag(b, {
+      targets: () => $$('.slot[data-i="2"] .hit', ctx.stage),
+      onDrop: () => place(+b.dataset.k), onTap: () => place(+b.dataset.k)
+    }));
+  }
+  ctx.stage.onclick = e => { if (e.target.closest('.slot[data-i="2"]') && pick != null) { clearTimeout(timer); pick = null; rush = false; ctx.mood(''); sfx('pick'); draw(); drawTray(); } };
+  ctx.actions([{ label: 'Move the gap', cls: 'ghost', on: () => {
+    edge = edge === 'T' ? 'B' : 'T'; sfx('click');
+    if (pick != null) place(pick); else { draw(); ctx.say(edge === 'B' ? 'The gap is now <b>after</b> the LED. Try a resistor here!' : 'The gap is back <b>before</b> the LED.', 'think'); }
+  } }]);
+  draw(); drawTray();
+}
+
+/* ── TOPIC 5 · SOLVE — Resistor Bodyguard ──────────────────────────── */
 function gauge(v) {
   const cx = 500, cy = 385, r = 110, rad = a => a * Math.PI / 180;
   const P = (a, rr = r) => [cx + rr * Math.cos(rad(a)), cy - rr * Math.sin(rad(a))];
@@ -991,12 +1490,12 @@ function gauge(v) {
   } else s += `<text class="socket-q" x="${cx}" y="${cy - 40}" text-anchor="middle" dominant-baseline="central">?</text>`;
   return s + `<circle cx="${cx}" cy="${cy}" r="10" fill="#fff"/></g>`;
 }
-function L5(ctx) {
-  const R = [{ lv: 1, n: 1, cards: [1, 2, 3] }, { lv: 3, n: 1, cards: [1, 2, 3] }, { lv: 2, n: 1, cards: [3, 1, 2] }, { lv: 3, n: 2, cards: [0, 1, 2, 1] }, { lv: 2, n: 2, cards: [0, 1, 1, 3] }];
+function solveResistors(ctx) {
+  const R = [{ lv: 1, n: 1, cards: [1, 2, 3] }, { lv: 3, n: 1, cards: [1, 2, 3] }, { lv: 2, n: 1, cards: [3, 1, 2] }, { lv: 3, n: 2, cards: [0, 1, 2, 1] }, { lv: 2, n: 2, cards: [0, 1, 1, 3] }, { lv: 3, n: 3, cards: [1, 2, 0, 1, 1] }];
   const NAMES = ['Plain wire', 'Small bodyguard', 'Medium bodyguard', 'Big bodyguard'];
   const BOX = { x0: 160, y0: 140, x1: 840, y1: 430 };
   let r = 0, place, sel, powered, done, color;
-  const fs = () => R[r].n === 1 ? [.5] : [.33, .67];
+  const fs = () => [[.5], [.33, .67], [.22, .5, .78]][R[r].n - 1];
   function slots() {
     const c = R[r];
     return [BAT({ level: c.lv }), ...fs().map((f, k) => {
@@ -1009,8 +1508,8 @@ function L5(ctx) {
     const c = R[r]; place = Array(c.n).fill(null); sel = null; powered = false; done = false; color = ['red', 'green', 'yellow'][r % 3];
     ctx.dots(r); ctx.mood('');
     ctx.goal(c.n === 1 ? `This battery is <b>${c.lv * 3} volts</b>. Pick the resistor bodyguard that keeps the LED <b>bright</b> and <b>safe</b>.`
-      : `Two spots! Bodyguards in a row add up their shields. This battery is <b>${c.lv * 3} volts</b>.`);
-    ctx.say(r === 0 ? 'A resistor slows electricity down. Each shield blocks some of it. Too few shields: POP! Too many: the LED is too dim.' : r === 3 ? 'Fill both spots. A plain wire has zero shields.' : 'Choose carefully, then switch on!', 'think');
+      : `${c.n === 2 ? 'Two' : 'Three'} spots! Bodyguards in a row add up their shields. This battery is <b>${c.lv * 3} volts</b>.`);
+    ctx.say(r === 0 ? 'A resistor slows electricity down. Each shield blocks some of it. Too few shields: POP! Too many: the LED is too dim.' : r === 3 ? 'Fill both spots. A plain wire has zero shields.' : r === 5 ? 'Three spots to fill. There is more than one right answer!' : 'Choose carefully, then switch on!', 'think');
     ctx.actions([{ label: 'Switch ON', cls: 'primary', on: test }]);
     drawAll();
   }
@@ -1063,10 +1562,56 @@ function L5(ctx) {
   start();
 }
 
-/* =====================================================================
-   MISSION 6 — Circuit Builder
-   ===================================================================== */
-function L6(ctx) {
+/* ═════════════════════════════════════════════════════════════════════
+   TOPIC 6 · THE FULL CIRCUIT
+   Learn: the teacher's demo lab.  Solve: the students' mission.
+   ═════════════════════════════════════════════════════════════════════ */
+/* ── TOPIC 6 · LEARN — The Full Circuit ──────────────────────────── */
+function learnFull(ctx) {
+  const BOX = { x0: 160, y0: 140, x1: 840, y1: 430 };
+  const SPOTS = [['L', .5], ['T', .5], ['B', .5]];
+  const PARTS = [
+    { name: 'Battery', sub: 'power source', p: { type: 'battery', dir: 1 } },
+    { name: 'Wire', sub: 'the road', p: { type: 'patch' } },
+    { name: 'Resistor', sub: 'protection', p: { type: 'resistor', strength: 1 } }
+  ];
+  const place = [null, null, null];
+  ctx.ideas([
+    '<b>1. Power source:</b> a battery gives electricity its push.',
+    '<b>2. A road:</b> wires made of conductors carry electricity around.',
+    '<b>3. Protection:</b> a resistor keeps the LED safe.',
+    'All 3 in one closed loop and the LED glows! The <b>order</b> doesn’t matter.'
+  ]);
+  ctx.goal('Every circuit needs <b>3 things</b>. Drag the battery, the wire and the resistor into the empty spots.');
+  ctx.say('Any part can go in any spot. Let’s see what each one does!', 'think');
+  const slots = () => [...SPOTS.map(([e, f], i) => place[i] == null ? { type: 'empty', edge: e, f } : Object.assign({}, PARTS[place[i]].p, { edge: e, f })), { type: 'led', edge: 'R', f: .5, color: 'green' }];
+  function draw() { ctx.stage.innerHTML = loopSVG({ box: BOX, slots: slots(), tap: true, label: 'Circuit with three empty spots' }); }
+  function put(pi, k) {
+    const prev = place.indexOf(pi); if (prev >= 0) place[prev] = null;
+    place[k] = pi; sfx('drop'); ctx.learn(pi); draw(); drawTray();
+    if (place.every(x => x != null)) { ctx.learn(3); sfx('good'); ctx.mood('good'); ctx.say('It glows! Power + road + protection in one closed loop. Try swapping the parts around: it still works!', 'wow', 'good'); }
+    else { ctx.mood(''); ctx.say(['The <b>battery</b> gives the push. But the loop still has empty spots.', 'The <b>wire</b> makes a road for electricity. Keep going!', 'The <b>resistor</b> will protect the LED. Fill the other spots!'][pi], 'think'); }
+  }
+  let sel = null;
+  function drawTray() {
+    ctx.tray.innerHTML = PARTS.map((P, i) => place.includes(i) ? '' : `<button class="part${sel === i ? ' sel' : ''}" data-k="${i}"><span class="icon">${partIcon(P.p)}</span><span class="pname">${P.name}<small>${P.sub}</small></span></button>`).join('') || '<p class="traynote">All parts are in the circuit. Tap one to take it back.</p>';
+    $$('.part', ctx.tray).forEach(b => { const i = +b.dataset.k; enableDrag(b, {
+      targets: () => $$('.slot .hit', ctx.stage).filter(h => +h.closest('.slot').dataset.i < 3),
+      onDrop: h => put(i, +h.closest('.slot').dataset.i),
+      onTap: () => { sel = sel === i ? null : i; drawTray(); if (sel != null) ctx.say('Now tap an empty spot.', 'think'); }
+    }); });
+  }
+  ctx.stage.onclick = e => {
+    const g = e.target.closest('.slot'); if (!g) return;
+    const k = +g.dataset.i; if (k > 2) return;
+    if (sel != null) { const i = sel; sel = null; put(i, k); }
+    else if (place[k] != null) { place[k] = null; sfx('pick'); ctx.mood(''); draw(); drawTray(); }
+  };
+  draw(); drawTray();
+}
+
+/* ── TOPIC 6 · SOLVE — Circuit Builder ──────────────────────────── */
+function solveBuilder(ctx) {
   const PC = {
     battery: { type: 'battery', name: 'Battery', flip: true }, led: { type: 'led', name: 'LED', flip: true }, buzzer: { type: 'buzzer', name: 'Buzzer', flip: true },
     resistor: { type: 'resistor', name: 'Resistor', strength: 1 }, patch: { type: 'patch', name: 'Wire piece' },
@@ -1158,9 +1703,259 @@ function L6(ctx) {
   start();
 }
 
-/* =====================================================================
-   MISSION 7 — Switch Master
-   ===================================================================== */
+/* ═════════════════════════════════════════════════════════════════════
+   TOPIC 7 · BREADBOARDS
+   Learn: the teacher's demo lab.  Solve: the students' mission.
+   ═════════════════════════════════════════════════════════════════════ */
+/* ── TOPIC 7 · LEARN — Breadboards ───────────────────────────────── */
+function learnBreadboard(ctx) {
+  const EX = [{ type: 'wire', a: 'tp10', b: 'a10' }, { type: 'led', a: 'c10', b: 'c12', color: 'green' }, { type: 'res', a: 'b12', b: 'b16' }, { type: 'wire', a: 'e16', b: 'tn16' }];
+  let peek = null, showAll = false, example = false;
+  const seen = new Set();
+  ctx.ideas([
+    'Each column of <b>5 holes</b> (a–e or f–j) is joined by a hidden metal clip.',
+    'The <b>+</b> and <b>−</b> rails run along the <b>whole</b> board.',
+    'The <b>middle gap</b> separates the top half from the bottom half.',
+    'Parts plugged into the <b>same column</b> are connected: no glue or tape needed!'
+  ]);
+  ctx.goal('Move over the holes, or tap them, to <b>X-ray</b> the breadboard and see its hidden metal clips.');
+  ctx.say('A breadboard lets us build circuits quickly. Let’s look inside it!', 'think');
+  const ALL_NETS = [...new Set(ALL_HOLES.map(netOf))];
+  function draw() {
+    const glow = [];
+    let parts = '';
+    if (showAll) ALL_NETS.forEach(net => glow.push({ net }));
+    if (example) {
+      const res = evalBB(EX), seenN = new Set();
+      ALL_HOLES.forEach(h => { const n = netOf(h); if (!seenN.has(n) && res.roots.has(res.f(n))) { seenN.add(n); glow.push({ net: n, color: '#FFB400' }); } });
+      parts = EX.map((p, i) => bbPartSVG(p, i, { on: res.lit.has(i) })).join('');
+    }
+    if (peek) glow.push({ net: netOf(peek) });
+    ctx.stage.innerHTML = boardSVG({ glow, marks: peek ? [{ id: peek }] : [], parts, extra: example ? BB_BATTERY : '' });
+  }
+  function look(h) {
+    if (h === peek) return;
+    peek = h; draw(); if (!h) return;
+    const k = bbKind(netOf(h)); seen.add(k);
+    if (k === 'top' || k === 'bottom') ctx.learn(0); else ctx.learn(1);
+    if (seen.has('top') && seen.has('bottom')) ctx.learn(2);
+    ctx.say(bbExplain(h), 'happy');
+  }
+  const holeAt = e => { const svg = $('svg', ctx.stage); if (!svg) return null; const p = svgPt(svg, e); return nearestHole(p.x, p.y); };
+  ctx.stage.onpointermove = e => { if (e.pointerType === 'mouse') look(holeAt(e)); };
+  ctx.stage.onclick = e => look(holeAt(e));
+  function drawTray() {
+    ctx.tray.innerHTML = `<button class="chipbtn${showAll ? ' on' : ''}" data-t="all">Show all clips</button><button class="chipbtn${example ? ' on' : ''}" data-t="ex">Example circuit</button>`;
+    $$('.chipbtn', ctx.tray).forEach(b => b.onclick = () => {
+      sfx('tap');
+      if (b.dataset.t === 'all') { showAll = !showAll; if (showAll) { ctx.learn(0); ctx.learn(1); ctx.learn(2); ctx.say('Every clip at once! Columns of 5 in the middle, and long rails at the top and bottom.', 'wow'); } }
+      else { example = !example; if (example) { ctx.learn(3); ctx.mood('good'); ctx.say('A real circuit: + rail → wire → LED → resistor → wire → − rail. The yellow glow shows the path through the hidden clips.', 'wow', 'good'); } else ctx.mood(''); }
+      draw(); drawTray();
+    });
+  }
+  draw(); drawTray();
+}
+
+/* ── TOPIC 7 · SOLVE — Breadboard X-Ray ──────────────────────────── */
+function solveBreadboard(ctx) {
+  const KINDS = [['top', 'Top strip (a–e)'], ['bottom', 'Bottom strip (f–j)'], ['plus', '+ rail'], ['minus', '− rail']];
+  const Q = [
+    ['a5', 'd5', true, 'Same column, same half: one hidden metal clip joins all 5 holes a5 to e5.'],
+    ['c3', 'c9', false, 'Holes side by side in a letter row are NOT joined. Each column has its own clip.'],
+    ['tp2', 'tp18', true, 'The + rail is one long clip that runs along the whole board.'],
+    ['tp6', 'tn6', false, 'The + rail and the − rail are separate clips. Joining them would be a short circuit!'],
+    ['c12', 'h12', false, 'The gap in the middle splits the top half from the bottom half. c12 and h12 are not joined.'],
+    ['f14', 'j14', true, 'Same column in the bottom half: f14 to j14 share one clip.'],
+    ['tp4', 'bp4', false, 'The top rails and the bottom rails are separate. You need a wire to join them.']
+  ];
+  const TAP = [['b7', ['a7', 'c7', 'd7', 'e7']], ['h15', ['f15', 'g15', 'i15', 'j15']]];
+  let step = 0, found = new Set(), picked = new Set(), locked = false;
+  const total = 1 + Q.length + TAP.length;
+  function next() { step++; if (step >= total) { ctx.dots(total); ctx.win(); } else start(); }
+  function nextBtn() { ctx.actions([{ label: step < total - 1 ? 'Next ›' : 'Finish mission', cls: 'primary', on: next }]); }
+  function start() {
+    ctx.dots(step); ctx.mood(''); locked = false; picked = new Set(); ctx.tray.innerHTML = ''; ctx.actions([]);
+    if (step === 0) {
+      ctx.goal('Tap holes to X-ray the breadboard and see its hidden metal clips. Find all <b>4 kinds</b> of clip.');
+      ctx.say('A breadboard lets you build circuits without glue or tape. Tap a hole!', 'think');
+      ctx.stage.innerHTML = boardSVG(); drawChips();
+    } else if (step <= Q.length) {
+      const [a, b] = Q[step - 1];
+      ctx.goal(`Are holes <b>A</b> and <b>B</b> connected inside the breadboard?`);
+      ctx.say('Think about the hidden clips before you answer.', 'think');
+      ctx.stage.innerHTML = boardSVG({ marks: [{ id: a, label: 'A' }, { id: b, label: 'B' }] });
+      ctx.actions([{ label: 'Connected', cls: 'primary', on: () => answer(true) }, { label: 'Not connected', on: () => answer(false) }]);
+    } else {
+      const [star] = TAP[step - 1 - Q.length];
+      ctx.goal('Tap <b>every</b> hole that is connected to the star hole ★. Then press <b>Check</b>.');
+      ctx.say('Tap a hole again to un-choose it.', 'think');
+      drawTap();
+      ctx.actions([{ label: 'Check', cls: 'primary', on: checkTap }]);
+    }
+  }
+  function drawChips() {
+    ctx.tray.innerHTML = KINDS.map(([k, t]) => `<span class="chip${found.has(k) ? ' on' : ''}">${found.has(k) ? '✓ ' : ''}${t}</span>`).join('');
+  }
+  function answer(yes) {
+    if (locked) return; locked = true;
+    const [a, b, conn, why] = Q[step - 1], right = yes === conn;
+    const nets = [...new Set([netOf(a), netOf(b)])];
+    ctx.stage.innerHTML = boardSVG({ glow: nets.map(net => ({ net })), marks: [{ id: a, label: 'A' }, { id: b, label: 'B' }] });
+    if (right) { sfx('good'); ctx.mood('good'); ctx.say(`Correct! ${why}`, 'wow', 'good'); }
+    else { ctx.miss(); sfx('bad'); ctx.mood('bad'); ctx.say(`Not quite. ${why}`, 'oops', 'bad'); }
+    nextBtn();
+  }
+  function drawTap(show) {
+    const [star, ans] = TAP[step - 1 - Q.length];
+    const marks = [{ id: star, cls: 'star', label: '★' }, ...[...picked].map(id => ({ id, cls: show ? (ans.includes(id) ? 'ok' : 'bad') : 'pick' }))];
+    if (show) ans.filter(id => !picked.has(id)).forEach(id => marks.push({ id, cls: 'miss' }));
+    ctx.stage.innerHTML = boardSVG({ glow: show ? [{ net: netOf(star) }] : [], marks });
+  }
+  function checkTap() {
+    if (locked) return; locked = true;
+    const [, ans] = TAP[step - 1 - Q.length];
+    const ok = picked.size === ans.length && ans.every(id => picked.has(id));
+    drawTap(true);
+    if (ok) { sfx('good'); ctx.mood('good'); ctx.say('Perfect! Those 4 holes share one clip with the star hole.', 'wow', 'good'); }
+    else { ctx.miss(); sfx('bad'); ctx.mood('bad'); ctx.say('Look at the glowing clip: only the holes in the <b>same column</b> and the <b>same half</b> are connected.', 'oops', 'bad'); }
+    nextBtn();
+  }
+  ctx.stage.onclick = e => {
+    const svg = $('svg', ctx.stage); if (!svg) return;
+    const pt = svgPt(svg, e), h = nearestHole(pt.x, pt.y); if (!h) return;
+    if (step === 0) {
+      const n = netOf(h), k = bbKind(n), fresh = !found.has(k); found.add(k); sfx(fresh ? 'on' : 'click');
+      ctx.stage.innerHTML = boardSVG({ glow: [{ net: n }], marks: [{ id: h }] }); drawChips();
+      if (found.size === KINDS.length) { ctx.mood('good'); ctx.say(`${bbExplain(h)} You found all 4 kinds of clip!`, 'wow', 'good'); nextBtn(); }
+      else ctx.say(bbExplain(h), 'happy');
+    } else if (step > Q.length && !locked) {
+      const [star] = TAP[step - 1 - Q.length]; if (h === star) return;
+      picked.has(h) ? picked.delete(h) : picked.add(h); sfx('tap'); drawTap();
+    }
+  };
+  start();
+}
+
+/* ═════════════════════════════════════════════════════════════════════
+   TOPIC 8 · POLARITY
+   Learn: the teacher's demo lab.  Solve: the students' mission.
+   ═════════════════════════════════════════════════════════════════════ */
+/* ── TOPIC 8 · LEARN — Polarity ──────────────────────────────────── */
+function learnPolarity(ctx) {
+  let dev = 'led', flip = false;
+  ctx.ideas([
+    'An LED has <b>2 legs</b>: a long leg and a short leg.',
+    'The <b>long leg</b> goes to the <b>+</b> side. Then it glows!',
+    'Backwards, it stays dark: an LED lets electricity through <b>one way only</b>.',
+    '<b>Buzzers</b> have a + side too: the red wire goes to +.'
+  ]);
+  ctx.goal('Connect the <b>red</b> (+) and <b>blue</b> (−) wires to the LED. Then try it the other way round!');
+  ctx.say('Look at the LED’s legs. One is longer than the other. Does that matter?', 'think');
+  const M = x => flip ? 1520 - x : x;
+  const terms = () => dev === 'led' ? { plus: [M(700), 430], minus: [M(820), 370] } : { plus: [M(700), 400], minus: [M(820), 400] };
+  const bench = wireBench(ctx, {
+    label: 'Battery, resistor and an LED', terms, resistor: true,
+    comp: (W, on) => dev === 'led' ? bigLED(on, M, true) : bigBuzzer(on, M),
+    flowing: W => W.red.at === 'plus' && W.blue.at === 'minus',
+    onGrab: () => ctx.learn(0),
+    onChange(W, on) {
+      if (on) {
+        ctx.mood('good');
+        if (dev === 'led') { ctx.learn(1); sfx('good'); ctx.say('It glows! The long leg is connected to the <b>+</b> side. Notice the resistor on the red wire: it protects the LED.', 'wow', 'good'); }
+        else { ctx.learn(3); sfx('buzz'); ctx.say('Beep beep! The buzzer’s red + leg is connected to the + side.', 'wow', 'good'); }
+      } else if (W.red.at && W.blue.at) {
+        if (dev === 'led') ctx.learn(2);
+        sfx('bad'); ctx.mood('bad');
+        ctx.say(dev === 'led' ? 'Nothing! The LED is backwards. It only lets electricity go <b>one way</b>, from the long leg to the short leg.' : 'Silence! The buzzer is backwards. Find its + side.', 'oops', 'bad');
+      } else if (W.red.at || W.blue.at) { ctx.mood('warn'); ctx.say('One wire is on. Connect the other one too.', 'think', 'warn'); }
+      else ctx.mood('');
+    }
+  });
+  function drawTray() {
+    ctx.tray.innerHTML = `<button class="chipbtn${dev === 'led' ? ' on' : ''}" data-t="led">LED</button><button class="chipbtn${dev === 'buzzer' ? ' on' : ''}" data-t="buzzer">Buzzer</button><button class="chipbtn" data-t="flip">Turn it around ⇄</button>`;
+    $$('.chipbtn', ctx.tray).forEach(b => b.onclick = () => {
+      const t = b.dataset.t; sfx('tap'); ctx.mood('');
+      if (t === 'flip') flip = !flip; else dev = t;
+      drawTray(); bench.reset();
+      ctx.say(t === 'flip' ? 'Turned around! Which leg is the long one now?' : t === 'buzzer' ? 'A buzzer! Look for the <b>+</b> mark and the red leg.' : 'Back to the LED.', 'think');
+    });
+  }
+  ctx.actions([{ label: 'Reset wires', cls: 'ghost', on: () => { bench.reset(); ctx.mood(''); } }]);
+  drawTray(); bench.draw();
+}
+
+/* ── TOPIC 8 · SOLVE — Which Way? ──────────────────────────── */
+function solvePolarity(ctx) {
+  const R = [
+    { k: 'led', flip: false, labels: true, goal: 'Drag the <b>red</b> and <b>blue</b> wire ends onto the LED’s legs. The long leg is the <b>+</b> leg!' },
+    { k: 'led', flip: true, goal: 'This LED is turned around and has no labels. Which leg is longer?' },
+    { k: 'buzzer', flip: Math.random() < .5, goal: 'Now a <b>buzzer</b>! Find its <b>+</b> side and connect it.' },
+    { k: 'loop1', goal: 'The wires are connected, but will the LED glow? Tap <b>⇄</b> to turn parts around, then press <b>Switch ON</b>.' },
+    { k: 'loop2', goal: 'Two LEDs! Every LED must face the same way as the battery. Flip parts, then <b>Switch ON</b>.' },
+    { k: 'loop3', goal: 'Three LEDs, all dark. Find the <b>one</b> flip that makes them <b>all</b> glow!' }
+  ];
+  const BOX = { x0: 160, y0: 130, x1: 840, y1: 430 };
+  let r = 0;
+  function nextBtn() { ctx.actions([{ label: r < R.length - 1 ? 'Next ›' : 'Finish mission', cls: 'primary', on: () => { if (r < R.length - 1) { r++; start(); } else ctx.win(); } }]); }
+  function start() {
+    const c = R[r]; ctx.dots(r); ctx.goal(c.goal); ctx.mood(''); ctx.actions([]); ctx.stage.onclick = null;
+    if (c.k === 'led' || c.k === 'buzzer') wireRound(c); else loopRound(c);
+  }
+  function wireRound(c) {
+    const M = x => c.flip ? 1520 - x : x;
+    const T = c.k === 'led' ? { plus: [M(700), 430], minus: [M(820), 370] } : { plus: [M(700), 400], minus: [M(820), 400] };
+    let counted = false, done = false;
+    ctx.say(r === 0 ? 'The red wire comes from the battery’s + side. The blue wire comes from the − side.' : r === 1 ? 'Look carefully at the two legs.' : 'Buzzers have a + side too, just like LEDs.', 'think');
+    wireBench(ctx, {
+      label: `Battery, resistor and ${c.k === 'led' ? 'LED' : 'buzzer'}`, terms: () => T, resistor: true, locked: () => done,
+      comp: (W, on) => c.k === 'led' ? bigLED(on, M, c.labels) : bigBuzzer(on, M),
+      flowing: W => W.red.at === 'plus' && W.blue.at === 'minus',
+      onChange(W, on) {
+        if (on) {
+          done = true; sfx(c.k === 'buzzer' ? 'buzz' : 'good'); ctx.mood('good');
+          ctx.say(c.k === 'buzzer' ? 'Beep beep! The buzzer’s + side is connected to the battery’s + side.' : 'It glows! The long leg is connected to the + side of the battery.', 'wow', 'good');
+          nextBtn();
+        } else if (W.red.at && W.blue.at) {
+          if (!counted) { ctx.miss(); counted = true; }
+          sfx('bad'); ctx.mood('bad');
+          ctx.say(c.k === 'buzzer' ? 'Silence… A buzzer only works one way round. Look for the + mark!' : 'Nothing happens! An LED only lets electricity flow one way. Swap the wires!', 'oops', 'bad');
+        } else if (W.red.at || W.blue.at) { ctx.mood('warn'); ctx.say('One wire is on. Now connect the other one to finish the loop.', 'think', 'warn'); }
+        else ctx.mood('');
+      }
+    }).draw();
+  }
+  function loopRound(c) {
+    const slots = {
+      loop1: [BAT(), { type: 'resistor', edge: 'T', f: .5 }, { type: 'led', edge: 'R', f: .5, dir: -1, color: 'green', flip: true }],
+      loop2: [BAT({ dir: -1, flip: true }), { type: 'resistor', edge: 'T', f: .3 }, { type: 'led', edge: 'T', f: .72, dir: 1, color: 'yellow', flip: true }, { type: 'led', edge: 'B', f: .5, dir: -1, color: 'red', flip: true }],
+      loop3: [BAT({ dir: -1, flip: true }), { type: 'led', edge: 'T', f: .25, dir: 1, color: 'green', flip: true }, { type: 'resistor', edge: 'T', f: .62 }, { type: 'led', edge: 'R', f: .5, dir: 1, color: 'yellow', flip: true }, { type: 'led', edge: 'B', f: .5, dir: 1, color: 'red', flip: true }]
+    }[c.k];
+    let powered = false, done = false, res = null;
+    const draw = (hl = -1) => { ctx.stage.innerHTML = loopSVG({ box: BOX, slots, res, powered, tap: true, badges: true, hl }); };
+    ctx.say({ loop1: 'Check the LED’s legs: the long leg must face the + side of the battery.', loop2: 'You can flip the battery too! Think before you switch on.', loop3: 'Hint: every LED must agree with one special part. Which one?' }[c.k], 'think');
+    ctx.stage.onclick = e => {
+      if (done) return;
+      const el = e.target.closest('.flipb') || e.target.closest('.slot'); if (!el) return;
+      const i = +(el.dataset.flip ?? el.dataset.i); if (!slots[i].flip) return;
+      slots[i].dir = -(slots[i].dir || 1); sfx('click'); powered = false; res = null; ctx.mood(''); draw();
+    };
+    ctx.actions([{ label: 'Switch ON', cls: 'primary', on: () => {
+      if (done) return;
+      res = evalLoop(slots); powered = true;
+      if (res.status === 'works') {
+        done = true; draw(); sfx('good'); ctx.mood('good');
+        ctx.say({ loop1: 'Glowing! Now the long leg faces the + side.', loop2: 'Both LEDs glow! They all face the same way as the battery.', loop3: 'All three glow! Every LED now agrees with the battery. Flipping just the battery was the one-flip trick.' }[c.k], 'wow', 'good'); nextBtn();
+      } else { ctx.miss(); sfx('bad'); ctx.mood('bad'); draw(res.culprit); ctx.say('Still dark! The circled part is facing the wrong way.', 'oops', 'bad'); }
+    } }]);
+    draw();
+  }
+  start();
+}
+
+/* ═════════════════════════════════════════════════════════════════════
+   PART 5 · FINAL CHALLENGES
+   ═════════════════════════════════════════════════════════════════════ */
+/* ── CHALLENGE 1 — Switch Master ────────────────────────────────── */
 const TWO_BRANCH = { P: [160, 120], J1: [330, 120], m1: [600, 120], K1: [860, 120], J2: [330, 290], m2: [600, 290], K2: [860, 290], K3: [860, 440], N: [160, 440] };
 const CIR = {
   A: { nodes: { P: [160, 120], a: [520, 120], b: [860, 120], c: [860, 440], N: [160, 440] },
@@ -1223,7 +2018,7 @@ function circuitSVG(C, sw, sol) {
   s += `<g transform="translate(${N.P[0]} ${(N.P[1] + N.N[1]) / 2}) rotate(270) scale(1.2)">${PART.battery({ level: 1 }, { a: 270, d: 1 })}</g>`;
   return s + '</svg>';
 }
-function L7(ctx) {
+function challengeSwitches(ctx) {
   let g = 0, sw = {}, done = false;
   function start() {
     const G = L7G[g];
@@ -1254,9 +2049,7 @@ function L7(ctx) {
   start();
 }
 
-/* =====================================================================
-   MISSION 8 — Circuit Doctor
-   ===================================================================== */
+/* ── CHALLENGE 2 — Circuit Doctor ───────────────────────────────── */
 const DX = [
   { k: 'gap', sym: 'The LED stays dark.', culprit: 3,
     slots: () => [BAT(), { type: 'resistor', edge: 'T', f: .5 }, { type: 'led', edge: 'R', f: .5, color: 'green' }, { type: 'gap', edge: 'B', f: .5 }],
@@ -1292,7 +2085,7 @@ const DXO = [
   { k: 'reversed', t: 'The LED faces the wrong way' }, { k: 'bare', t: 'Bare wire: not safe!' }, { k: 'noResistor', t: 'The resistor is missing' },
   { k: 'tooStrong', t: 'The resistor is too strong' }
 ];
-function L8(ctx) {
+function challengeDoctor(ctx) {
   const BOX = { x0: 160, y0: 130, x1: 840, y1: 430 };
   let i = 0, tries = 0, done = false, slots;
   function start() {
@@ -1321,206 +2114,8 @@ function L8(ctx) {
   start();
 }
 
-/* =====================================================================
-   BREADBOARD — shared drawing and wiring logic
-   Columns 1–20; letter rows a–e (top half) and f–j (bottom half);
-   four power rails: tp / tn on top, bp / bn at the bottom.
-   ===================================================================== */
-const BB = {
-  x: c => 150 + (c - 1) * 40,
-  rows: { a: 146, b: 174, c: 202, d: 230, e: 258, f: 314, g: 342, h: 370, i: 398, j: 426 },
-  rails: { tp: 72, tn: 100, bp: 468, bn: 496 }
-};
-const HOLE_RE = /^(tp|tn|bp|bn|[a-j])(\d+)$/;
-const ALL_HOLES = ['tp', 'tn', 'bp', 'bn', ...'abcdefghij'].flatMap(r => Array.from({ length: 20 }, (_, k) => r + (k + 1)));
-function holeXY(id) { const m = HOLE_RE.exec(id); return [BB.x(+m[2]), BB.rails[m[1]] ?? BB.rows[m[1]]]; }
-// Every hole joined by the same hidden metal clip shares one "net"
-function netOf(id) { const m = HOLE_RE.exec(id); return m[1].length === 2 ? m[1] : ('abcde'.includes(m[1]) ? 'T' : 'B') + m[2]; }
-const isStrip = net => /^[TB]/.test(net);
-const NETC = net => isStrip(net) ? '#1FBF84' : net[1] === 'p' ? '#FF4D64' : '#2F8FE8';
-function holeName(id) {
-  const m = HOLE_RE.exec(id);
-  return { tp: 'the top + rail', tn: 'the top − rail', bp: 'the bottom + rail', bn: 'the bottom − rail' }[m[1]] || `hole <b>${m[1]}${m[2]}</b>`;
-}
-function nearestHole(x, y) {
-  let best = null, bd = 17;
-  for (const h of ALL_HOLES) { const [hx, hy] = holeXY(h), d = Math.hypot(hx - x, hy - y); if (d < bd) { bd = d; best = h; } }
-  return best;
-}
-function glowSVG(net, color = NETC(net)) {
-  let x1, y1, x2, y2;
-  if (isStrip(net)) {
-    const c = +net.slice(1), L = net[0] === 'T' ? ['a', 'e'] : ['f', 'j'];
-    x1 = x2 = BB.x(c); y1 = BB.rows[L[0]] - 14; y2 = BB.rows[L[1]] + 14;
-  } else { y1 = y2 = BB.rails[net]; x1 = BB.x(1) - 14; x2 = BB.x(20) + 14; }
-  return `<path d="M${x1} ${y1}L${x2} ${y2}" stroke="${color}" stroke-opacity=".3" stroke-width="30" stroke-linecap="round"/>
-    <path d="M${x1} ${y1}L${x2} ${y2}" stroke="${color}" stroke-width="8" stroke-linecap="round"/>`;
-}
-function boardSVG(o = {}) {
-  let s = `<svg class="board" viewBox="0 0 1000 560" role="img" aria-label="Breadboard">${DEFS}
-    <rect x="112" y="40" width="836" height="488" rx="20" fill="#ECEFF8" stroke="#C3C9E0" stroke-width="3"/>
-    <rect x="112" y="276" width="836" height="20" fill="#D3D8EA"/>`;
-  for (const [y, c] of [[56, '#FF4D64'], [116, '#2F8FE8'], [452, '#FF4D64'], [512, '#2F8FE8']]) s += `<path d="M${BB.x(1) - 14} ${y}H${BB.x(20) + 14}" stroke="${c}" stroke-width="3"/>`;
-  for (const [r, t, c] of [['tp', '+', '#E0334B'], ['tn', '−', '#1F7FD6'], ['bp', '+', '#E0334B'], ['bn', '−', '#1F7FD6']])
-    s += `<text class="bb-sign" x="128" y="${BB.rails[r]}" fill="${c}">${t}</text><text class="bb-sign" x="932" y="${BB.rails[r]}" fill="${c}">${t}</text>`;
-  for (const l of 'abcdefghij') s += `<text class="bb-lbl" x="128" y="${BB.rows[l]}">${l}</text><text class="bb-lbl" x="932" y="${BB.rows[l]}">${l}</text>`;
-  for (const c of [1, 5, 10, 15, 20]) s += `<text class="bb-lbl" x="${BB.x(c)}" y="131">${c}</text>`;
-  (o.glow || []).forEach(g => { s += glowSVG(g.net, g.color); });
-  ALL_HOLES.forEach(h => { const [x, y] = holeXY(h); s += `<rect x="${x - 6}" y="${y - 6}" width="12" height="12" rx="2.5" class="bb-hole"/>`; });
-  (o.marks || []).forEach(m => {
-    const [x, y] = holeXY(m.id);
-    s += `<circle cx="${x}" cy="${y}" r="13" class="bb-mark ${m.cls || ''}"/>` +
-      (m.label ? `<g transform="translate(${x + 17} ${y - 19})"><circle r="13" fill="#FF9F1C"/><text class="tag-t" text-anchor="middle" dominant-baseline="central">${m.label}</text></g>` : '');
-  });
-  return s + (o.parts || '') + (o.extra || '') + '</svg>';
-}
-
-/* =====================================================================
-   MISSION 7 — Breadboard X-Ray
-   ===================================================================== */
-function LBX(ctx) {
-  const KINDS = [['top', 'Top strip (a–e)'], ['bottom', 'Bottom strip (f–j)'], ['plus', '+ rail'], ['minus', '− rail']];
-  const kindOf = n => isStrip(n) ? (n[0] === 'T' ? 'top' : 'bottom') : n[1] === 'p' ? 'plus' : 'minus';
-  const Q = [
-    ['a5', 'd5', true, 'Same column, same half: one hidden metal clip joins all 5 holes a5 to e5.'],
-    ['c3', 'c9', false, 'Holes side by side in a letter row are NOT joined. Each column has its own clip.'],
-    ['tp2', 'tp18', true, 'The + rail is one long clip that runs along the whole board.'],
-    ['tp6', 'tn6', false, 'The + rail and the − rail are separate clips. Joining them would be a short circuit!'],
-    ['c12', 'h12', false, 'The gap in the middle splits the top half from the bottom half. c12 and h12 are not joined.'],
-    ['f14', 'j14', true, 'Same column in the bottom half: f14 to j14 share one clip.'],
-    ['tp4', 'bp4', false, 'The top rails and the bottom rails are separate. You need a wire to join them.']
-  ];
-  const TAP = [['b7', ['a7', 'c7', 'd7', 'e7']], ['h15', ['f15', 'g15', 'i15', 'j15']]];
-  let step = 0, found = new Set(), picked = new Set(), locked = false;
-  const total = 1 + Q.length + TAP.length;
-  const explain = h => {
-    const n = netOf(h), k = kindOf(n);
-    if (k === 'plus' || k === 'minus') return `That hole is on ${holeName(h)}. One long metal clip joins <b>every</b> hole in this line.`;
-    const c = n.slice(1), L = k === 'top' ? 'a–e' : 'f–j';
-    return `${holeName(h)}: a hidden clip joins the 5 holes in column ${c} (${L}). Parts plugged in there are connected!`;
-  };
-  function next() { step++; if (step >= total) { ctx.dots(total); ctx.win(); } else start(); }
-  function nextBtn() { ctx.actions([{ label: step < total - 1 ? 'Next ›' : 'Finish mission', cls: 'primary', on: next }]); }
-  function start() {
-    ctx.dots(step); ctx.mood(''); locked = false; picked = new Set(); ctx.tray.innerHTML = ''; ctx.actions([]);
-    if (step === 0) {
-      ctx.goal('Tap holes to X-ray the breadboard and see its hidden metal clips. Find all <b>4 kinds</b> of clip.');
-      ctx.say('A breadboard lets you build circuits without glue or tape. Tap a hole!', 'think');
-      ctx.stage.innerHTML = boardSVG(); drawChips();
-    } else if (step <= Q.length) {
-      const [a, b] = Q[step - 1];
-      ctx.goal(`Are holes <b>A</b> and <b>B</b> connected inside the breadboard?`);
-      ctx.say('Think about the hidden clips before you answer.', 'think');
-      ctx.stage.innerHTML = boardSVG({ marks: [{ id: a, label: 'A' }, { id: b, label: 'B' }] });
-      ctx.actions([{ label: 'Connected', cls: 'primary', on: () => answer(true) }, { label: 'Not connected', on: () => answer(false) }]);
-    } else {
-      const [star] = TAP[step - 1 - Q.length];
-      ctx.goal('Tap <b>every</b> hole that is connected to the star hole ★. Then press <b>Check</b>.');
-      ctx.say('Tap a hole again to un-choose it.', 'think');
-      drawTap();
-      ctx.actions([{ label: 'Check', cls: 'primary', on: checkTap }]);
-    }
-  }
-  function drawChips() {
-    ctx.tray.innerHTML = KINDS.map(([k, t]) => `<span class="chip${found.has(k) ? ' on' : ''}">${found.has(k) ? '✓ ' : ''}${t}</span>`).join('');
-  }
-  function answer(yes) {
-    if (locked) return; locked = true;
-    const [a, b, conn, why] = Q[step - 1], right = yes === conn;
-    const nets = [...new Set([netOf(a), netOf(b)])];
-    ctx.stage.innerHTML = boardSVG({ glow: nets.map(net => ({ net })), marks: [{ id: a, label: 'A' }, { id: b, label: 'B' }] });
-    if (right) { sfx('good'); ctx.mood('good'); ctx.say(`Correct! ${why}`, 'wow', 'good'); }
-    else { ctx.miss(); sfx('bad'); ctx.mood('bad'); ctx.say(`Not quite. ${why}`, 'oops', 'bad'); }
-    nextBtn();
-  }
-  function drawTap(show) {
-    const [star, ans] = TAP[step - 1 - Q.length];
-    const marks = [{ id: star, cls: 'star', label: '★' }, ...[...picked].map(id => ({ id, cls: show ? (ans.includes(id) ? 'ok' : 'bad') : 'pick' }))];
-    if (show) ans.filter(id => !picked.has(id)).forEach(id => marks.push({ id, cls: 'miss' }));
-    ctx.stage.innerHTML = boardSVG({ glow: show ? [{ net: netOf(star) }] : [], marks });
-  }
-  function checkTap() {
-    if (locked) return; locked = true;
-    const [, ans] = TAP[step - 1 - Q.length];
-    const ok = picked.size === ans.length && ans.every(id => picked.has(id));
-    drawTap(true);
-    if (ok) { sfx('good'); ctx.mood('good'); ctx.say('Perfect! Those 4 holes share one clip with the star hole.', 'wow', 'good'); }
-    else { ctx.miss(); sfx('bad'); ctx.mood('bad'); ctx.say('Look at the glowing clip: only the holes in the <b>same column</b> and the <b>same half</b> are connected.', 'oops', 'bad'); }
-    nextBtn();
-  }
-  ctx.stage.onclick = e => {
-    const svg = $('svg', ctx.stage); if (!svg) return;
-    const pt = svgPt(svg, e), h = nearestHole(pt.x, pt.y); if (!h) return;
-    if (step === 0) {
-      const n = netOf(h), k = kindOf(n), fresh = !found.has(k); found.add(k); sfx(fresh ? 'on' : 'click');
-      ctx.stage.innerHTML = boardSVG({ glow: [{ net: n }], marks: [{ id: h }] }); drawChips();
-      if (found.size === KINDS.length) { ctx.mood('good'); ctx.say(`${explain(h)} You found all 4 kinds of clip!`, 'wow', 'good'); nextBtn(); }
-      else ctx.say(explain(h), 'happy');
-    } else if (step > Q.length && !locked) {
-      const [star] = TAP[step - 1 - Q.length]; if (h === star) return;
-      picked.has(h) ? picked.delete(h) : picked.add(h); sfx('tap'); drawTap();
-    }
-  };
-  start();
-}
-
-/* =====================================================================
-   MISSION 10 — Breadboard Builder
-   ===================================================================== */
-function evalBB(parts) {
-  const par = {}, f = x => { if (!(x in par)) par[x] = x; while (par[x] !== x) { par[x] = par[par[x]]; x = par[x]; } return x; };
-  parts.forEach(p => { if (p.type === 'wire') { const a = f(netOf(p.a)), b = f(netOf(p.b)); if (a !== b) par[a] = b; } });
-  const P = f('tp'), N = f('tn'), out = { status: 'open', lit: new Set(), burnt: new Set(), roots: new Set(), f };
-  if (P === N) { out.status = 'short'; return out; }
-  const comps = []; parts.forEach((p, i) => { if (p.type !== 'wire') comps.push({ i, type: p.type, na: f(netOf(p.a)), nb: f(netOf(p.b)) }); });
-  let reversed = false, resOnly = false;
-  const seen = new Set([P]), path = [];
-  (function dfs(n, rev) {
-    if (n === N) {
-      const leds = path.filter(c => c.type === 'led'), hasR = path.some(c => c.type === 'res');
-      if (rev) { reversed = true; return; }
-      if (!leds.length) { resOnly = true; return; }
-      if (hasR) { leds.forEach(c => out.lit.add(c.i)); path.forEach(c => { out.roots.add(c.na); out.roots.add(c.nb); }); }
-      else leds.forEach(c => out.burnt.add(c.i));
-      return;
-    }
-    for (const c of comps) {
-      if (path.includes(c) || c.na === c.nb) continue;
-      let nx, r = false;
-      if (c.na === n) nx = c.nb; else if (c.nb === n) { nx = c.na; r = c.type === 'led'; } else continue;
-      if (seen.has(nx)) continue;
-      seen.add(nx); path.push(c); dfs(nx, rev || r); path.pop(); seen.delete(nx);
-    }
-  })(P, false);
-  if (out.burnt.size) { out.status = 'burn'; out.lit.clear(); out.roots.clear(); }
-  else if (out.lit.size) out.status = 'works';
-  else if (comps.some(c => c.type === 'led' && c.na === c.nb)) out.status = 'bypass';
-  else if (reversed) out.status = 'reversed';
-  else if (resOnly) out.status = 'resonly';
-  return out;
-}
-function bbPartSVG(p, i, st) {
-  const [x1, y1] = holeXY(p.a), [x2, y2] = holeXY(p.b), mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-  const grab = d => `<path d="${d}" stroke="transparent" stroke-width="24" fill="none"/>`;
-  if (p.type === 'wire') {
-    const na = netOf(p.a), nb = netOf(p.b);
-    const col = [na, nb].some(n => n === 'tp' || n === 'bp') ? '#FF4D64' : [na, nb].some(n => n === 'tn' || n === 'bn') ? '#2F8FE8' : '#1FBF84';
-    const d = `M${x1} ${y1}Q${mx} ${my - Math.max(28, Math.hypot(x2 - x1, y2 - y1) * .3)} ${x2} ${y2}`;
-    return `<g class="bbpart" data-p="${i}">${grab(d)}<path d="${d}" stroke="#1a1d2e" stroke-width="10" fill="none" stroke-linecap="round"/><path d="${d}" stroke="${col}" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="${x1}" cy="${y1}" r="4" fill="#C9CCE0"/><circle cx="${x2}" cy="${y2}" r="4" fill="#C9CCE0"/></g>`;
-  }
-  if (p.type === 'res') {
-    const a = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI, d = `M${x1} ${y1}L${x2} ${y2}`;
-    return `<g class="bbpart" data-p="${i}">${grab(d)}<path d="${d}" class="bb-leg"/><g transform="translate(${mx} ${my}) rotate(${a})"><rect x="-24" y="-9" width="48" height="18" rx="9" class="res"/><rect x="-14" y="-9" width="5" height="18" fill="#7A4A21"/><rect x="-4" y="-9" width="5" height="18" fill="#1a1a1a"/><rect x="6" y="-9" width="5" height="18" fill="#8B4513"/><rect x="15" y="-9" width="4" height="18" fill="#D4AF37"/></g></g>`;
-  }
-  const c = LEDC[p.color || 'red'], cy = Math.min(y1, y2) - 44, sg = x1 <= x2 ? -1 : 1, ax = mx + sg * 7, kx = mx - sg * 7;
-  const da = `M${ax} ${cy + 15}V${cy + 24}l${sg * 6} 6L${x1} ${y1}`, dk = `M${kx} ${cy + 15}L${x2} ${y2}`;
-  return `<g class="bbpart" data-p="${i}">${st.on ? `<circle cx="${mx}" cy="${cy}" r="80" fill="url(#${c.g})"/>` : ''}${grab(da)}${grab(dk)}
-    <path d="${da}" class="bb-leg"/><path d="${dk}" class="bb-leg"/>
-    <rect x="${mx - 18}" y="${cy + 8}" width="36" height="7" rx="2" fill="${st.burnt ? '#3a3a48' : c.rim}"/>
-    <path d="M${mx - 14} ${cy + 9}V${cy - 6}A14 14 0 0 1 ${mx + 14} ${cy - 6}V${cy + 9}Z" fill="${st.burnt ? '#2f2f3a' : st.on ? c.on : c.off}" stroke="${st.burnt ? '#555' : st.on ? '#fff' : c.rim}" stroke-width="2.5"/>
-    <text class="bb-plus" x="${ax + sg * 13}" y="${cy + 26}">+</text>${st.burnt ? `<g transform="translate(${mx} ${cy + 62})">${SMOKE}</g>` : ''}</g>`;
-}
-function LBB(ctx) {
+/* ── CHALLENGE 3 — Breadboard Builder ───────────────────────────── */
+function challengeBreadboard(ctx) {
   const R = [
     { pre: [{ type: 'led', a: 'c10', b: 'c11', color: 'red' }, { type: 'res', a: 'a11', b: 'a15' }], tray: { wire: 2 }, need: 1,
       goal: 'Add two <b>jumper wires</b>: one from the <b>+ rail</b> to the LED’s long-leg column, and one from the resistor’s far end to the <b>− rail</b>.' },
@@ -1536,8 +2131,6 @@ function LBB(ctx) {
     led: partIcon({ type: 'led', color: 'green' }), res: partIcon({ type: 'resistor', strength: 1 }),
     wire: '<svg viewBox="-70 -50 140 90" aria-hidden="true"><path d="M-50 20 Q0 -50 50 20" stroke="#060920" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M-50 20 Q0 -50 50 20" stroke="#1FBF84" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="-50" cy="20" r="5" fill="#C9CCE0"/><circle cx="50" cy="20" r="5" fill="#C9CCE0"/></svg>'
   };
-  const BAT_SVG = `<path class="w-out" d="M60 252V72H150"/><path class="w-red" d="M60 252V72H150"/><path class="w-out" d="M60 348V372H96V100H150"/><path class="w-blue" d="M60 348V372H96V100H150"/>
-    <g transform="translate(60 300) rotate(270)">${PART.battery({ level: 1 }, { a: 270, d: 1 })}</g>`;
   let r = 0, parts, mode, pendingA, res, powered, done, peek;
   const colors = ['green', 'yellow'];
   function start() {
@@ -1558,7 +2151,7 @@ function LBB(ctx) {
     } else if (peek) glow.push({ net: peek });
     const marks = pendingA ? [{ id: pendingA, cls: 'pend' }] : [];
     const partsSVG = parts.map((p, i) => bbPartSVG(p, i, { on: powered && res && res.lit.has(i), burnt: powered && res && res.burnt.has(i) })).join('');
-    ctx.stage.innerHTML = boardSVG({ glow, marks, parts: partsSVG, extra: BAT_SVG });
+    ctx.stage.innerHTML = boardSVG({ glow, marks, parts: partsSVG, extra: BB_BATTERY });
   }
   function drawTray() {
     ctx.tray.innerHTML = Object.keys(R[r].tray).map(k => `<button class="part${mode === k ? ' sel' : ''}" data-k="${k}"${left(k) <= 0 ? ' disabled' : ''}><span class="icon">${ICON[k]}</span><span class="pname">${NAME[k]}<small>${left(k)} left</small></span></button>`).join('');
@@ -1624,25 +2217,31 @@ function LBB(ctx) {
   start();
 }
 
-/* ================= missions list ================= */
-const DIFF = ['', 'Easy', 'Medium', 'Hard', 'Expert'];
-const DC = ['', 'var(--mint)', 'var(--sky)', 'var(--volt)', 'var(--coral)'];
-const LEVELS = [
-  { name: 'Close the Loop', learn: 'Spot which circuits make a full loop from + to −.', diff: 1, rounds: 3, stars: [1, 3], play: L1 },
-  { name: 'Conductor Detective', learn: 'Sort everyday objects into conductors and insulators.', diff: 1, rounds: 12, stars: [1, 3], play: L2 },
-  { name: 'Wire Repair Shop', learn: 'Fix broken and unsafe wires with copper and tape.', diff: 2, rounds: 3, stars: [0, 2], play: L3 },
-  { name: 'Which Way?', learn: 'Connect LEDs and buzzers the right way round.', diff: 2, rounds: 5, stars: [1, 3], play: L4 },
-  { name: 'Resistor Bodyguard', learn: 'Pick the resistor that keeps an LED bright and safe.', diff: 3, rounds: 5, stars: [1, 3], play: L5 },
-  { name: 'Circuit Builder', learn: 'Build complete circuits from a box of parts.', diff: 3, rounds: 4, stars: [1, 3], play: L6 },
-  { name: 'Breadboard X-Ray', learn: 'Discover which breadboard holes are secretly connected.', diff: 3, rounds: 10, stars: [1, 3], play: LBX },
-  { name: 'Switch Master', learn: 'Use switches to control which bulbs light up.', diff: 4, rounds: 6, stars: [1, 3], play: L7 },
-  { name: 'Circuit Doctor', learn: 'Find what is wrong in each broken circuit.', diff: 4, rounds: 7, stars: [1, 3], play: L8 },
-  { name: 'Breadboard Builder', learn: 'Plug in LEDs, resistors and wires to build real circuits.', diff: 4, rounds: 4, stars: [1, 3], play: LBB }
-].map((l, i) => ({ ...l, n: i + 1 }));
-const MAX_BOLTS = LEVELS.length * 3;
+/* ═════════════════════════════════════════════════════════════════════
+   PART 6 · COURSE MAP, SCREENS AND ROUTER
+   Every topic has a LEARN lab (teacher demo) and a SOLVE mission.
+   Addresses: #t3-learn, #t3-solve, #c1 (final challenge 1), #map
+   ═════════════════════════════════════════════════════════════════════ */
+const TOPICS = [
+  { name: 'Battery Connection', idea: 'Close the loop from + to −.', learn: learnBattery, solve: { name: 'Close the Loop', play: solveLoop, rounds: 4, stars: [1, 3] } },
+  { name: 'Conductors & Insulators', idea: 'Which materials let electricity pass?', learn: learnConductors, solve: { name: 'Conductor Detective', play: solveConductors, rounds: 12, stars: [1, 3] } },
+  { name: 'The Electric Wire', idea: 'Copper inside, plastic outside.', learn: learnWire, solve: { name: 'Wire Repair Shop', play: solveWire, rounds: 4, stars: [1, 3] } },
+  { name: 'The Dangerous Battery', idea: 'Too much power destroys parts.', learn: learnDanger, solve: { name: 'Safe or Boom?', play: solveDanger, rounds: 8, stars: [1, 3] } },
+  { name: 'Resistors', idea: 'A bodyguard that slows electricity.', learn: learnResistors, solve: { name: 'Resistor Bodyguard', play: solveResistors, rounds: 6, stars: [1, 3] } },
+  { name: 'The Full Circuit', idea: 'Power + road + protection.', learn: learnFull, solve: { name: 'Circuit Builder', play: solveBuilder, rounds: 4, stars: [1, 3] } },
+  { name: 'Breadboards', idea: 'Hidden clips join the holes.', learn: learnBreadboard, solve: { name: 'Breadboard X-Ray', play: solveBreadboard, rounds: 10, stars: [1, 3] } },
+  { name: 'Polarity', idea: 'The long leg goes to +.', learn: learnPolarity, solve: { name: 'Which Way?', play: solvePolarity, rounds: 6, stars: [1, 3] } }
+].map((t, i) => ({ ...t, n: i + 1 }));
+const CHALLENGES = [
+  { name: 'Switch Master', idea: 'Series and parallel switches', play: challengeSwitches, rounds: 6, stars: [1, 3] },
+  { name: 'Circuit Doctor', idea: 'Find what is broken', play: challengeDoctor, rounds: 7, stars: [1, 3] },
+  { name: 'Breadboard Builder', idea: 'Build real circuits', play: challengeBreadboard, rounds: 4, stars: [1, 3] }
+].map((c, i) => ({ ...c, n: i + 1 }));
+const MAX_BOLTS = (TOPICS.length + CHALLENGES.length) * 3;
 const starsFor = (m, [a, b]) => m <= a ? 3 : m <= b ? 2 : 1;
+const ICON_LEARN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_SOLVE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1zM14 7l3 3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>';
 
-/* ================= screens ================= */
 let current = null;
 function stopCurrent() {
   if (current) { current.timers.forEach(clearTimeout); current = null; }
@@ -1651,43 +2250,50 @@ function stopCurrent() {
 }
 
 function showMap() {
-  const st = getStars(), total = Object.values(st).reduce((a, b) => a + b, 0);
-  const next = LEVELS.find(l => !st[l.n]) || LEVELS[0];
-  const dbat = n => `<span class="dbat">${[1, 2, 3, 4].map(k => `<i class="${k <= n ? 'on' : ''}"></i>`).join('')}</span>`;
+  const st = getStars(), learned = getLearned(), total = Object.values(st).reduce((a, b) => a + b, 0);
+  const nextT = TOPICS.find(t => !st['t' + t.n]);
+  const cta = nextT
+    ? `<a class="btn primary" href="#t${nextT.n}-${learned[nextT.n] ? 'solve' : 'learn'}">${total || learned[1] ? 'Continue' : 'Start'}: Topic ${nextT.n} ›</a>`
+    : '<a class="btn primary" href="#c1">Final challenges ›</a>';
+  const bolts = s => `<span class="bolts" aria-label="${s} of 3 bolts">${[1, 2, 3].map(k => BOLT(k <= s)).join('')}</span>`;
   app.innerHTML = `<div class="screen">
-    <header class="maphead"><div class="logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 1.5 4 13.5h6.5L9 22.5l10-12.5h-6.6z"/></svg>Electricity Lab</div>${fsBtn()}${soundBtn()}</header>
-    <section class="hero">
-      <div>
-        <p class="kicker">Electricity missions · Grades 4–5</p>
-        <h1 class="brand">Circuit <span class="q">Quest</span></h1>
-        <p class="lede">Ten hands-on missions, from easy to expert. Close loops, hunt for conductors, fix wires, master the breadboard, and become a real circuit doctor.</p>
-        <div class="cta"><a class="btn primary" href="#m${next.n}">${total ? 'Continue' : 'Start'} with Mission ${next.n} ›</a>
-          <p class="tip">Teachers: add <code>#m1</code>–<code>#m${LEVELS.length}</code> to the address to open one mission.</p></div>
-      </div>
-      <div class="labcell">
-        <div class="lc-top">${volty('happy')}<p>Hi, I’m <b>Volty</b>! Every mission earns up to 3 bolts to charge the lab battery. Can you fill it up?</p></div>
+    <header class="maphead"><div class="logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 1.5 4 13.5h6.5L9 22.5l10-12.5h-6.6z"/></svg>Electricity Lab · Session 2</div>${fsBtn()}${soundBtn()}</header>
+    <section class="hero2">
+      <div><p class="kicker">Electricity · Grades 4–5</p><h1 class="brand">Circuit <span class="q">Quest</span></h1></div>
+      <p class="lede">Every topic has two steps: <span class="lg">${ICON_LEARN}Learn</span> we explore the lab together, then <span class="sv">${ICON_SOLVE}Solve</span> it’s your turn to think!</p>
+      <div class="cta">${cta}</div>
+      <div class="labmini">
         <div class="bigcell" role="img" aria-label="${total} of ${MAX_BOLTS} bolts collected"><div class="bc-body"><div class="bc-fill" style="width:${total / MAX_BOLTS * 100}%"></div><div class="bc-ticks"></div></div><div class="bc-nub"></div></div>
         <div class="bc-cap"><span>Lab battery</span><span><b>${total}</b> / ${MAX_BOLTS} bolts</span></div>
       </div>
     </section>
-    <nav class="missions" aria-label="Missions">${LEVELS.map(l => { const s = st[l.n] || 0; return `<a class="mcard${s ? ' done' : ''}${l === next ? ' next' : ''}" href="#m${l.n}" style="--dc:${DC[l.diff]}">
-      <div class="mtop"><span class="mnum">${l.n}</span><span class="diff">${dbat(l.diff)}${DIFF[l.diff]}</span></div>
-      <h2 class="mname">${l.name}</h2><p class="mdesc">${l.learn}</p>
-      <div class="mfoot"><span class="bolts" aria-label="${s} of 3 bolts">${[1, 2, 3].map(k => BOLT(k <= s)).join('')}</span><span class="play">${s ? 'Replay' : 'Play'} ›</span></div></a>`; }).join('')}</nav>
+    <nav class="topics" aria-label="Topics">${TOPICS.map(t => { const s = st['t' + t.n] || 0; return `<article class="tcard${s ? ' done' : ''}${t === nextT ? ' next' : ''}">
+      <div class="mtop"><span class="mnum">${t.n}</span>${learned[t.n] ? '<span class="tag-l">✓ Learned</span>' : ''}</div>
+      <h2 class="mname">${t.name}</h2><p class="mdesc">${t.idea}</p>
+      <div class="tbtns"><a class="tbtn learn" href="#t${t.n}-learn">${ICON_LEARN}Learn</a><a class="tbtn solve" href="#t${t.n}-solve"><span>${ICON_SOLVE}Solve</span>${bolts(s)}</a></div>
+    </article>`; }).join('')}</nav>
+    <section class="finals" aria-label="Final challenges"><h2 class="finals-h">Final<br>challenges</h2>${CHALLENGES.map(c => `<a class="fcard" href="#c${c.n}"><span class="mnum">${c.n}</span><span><b>${c.name}</b><small>${c.idea}</small></span>${bolts(st['c' + c.n] || 0)}</a>`).join('')}</section>
   </div>`;
 }
 
-function openLevel(n) {
-  const L = LEVELS[n - 1];
-  app.innerHTML = `<div class="screen">
+// One frame for every screen: header · goal · stage (+ ideas panel) · dock
+function openScreen(kind, n) {
+  const learn = kind === 'learn', chal = kind === 'challenge';
+  const item = chal ? CHALLENGES[n - 1] : TOPICS[n - 1];
+  const key = (chal ? 'c' : 't') + n;
+  const title = learn ? item.name : chal ? item.name : item.solve.name;
+  const eyebrow = chal ? `<span class="mode challenge">Challenge</span>Final challenge ${n} of ${CHALLENGES.length}`
+    : `<span class="mode ${kind}">${learn ? 'Learn' : 'Solve'}</span>Topic ${n} of ${TOPICS.length}${learn ? '' : ' · ' + item.name}`;
+  const swap = chal ? '' : learn ? `<a class="btn primary small" href="#t${n}-solve">${ICON_SOLVE}Solve it ›</a>` : `<a class="btn ghost small" href="#t${n}-learn">${ICON_LEARN}Learn</a>`;
+  app.innerHTML = `<div class="screen ${kind}">
     <header class="lvhead">
-      <a class="btn ghost small" href="#map">‹ Missions</a>
-      <div class="lvtitle"><div class="eyebrow">Mission ${n} of ${LEVELS.length} · ${DIFF[L.diff]}</div><h1>${L.name}</h1></div>
+      <a class="btn ghost small" href="#map">‹ Map</a>
+      <div class="lvtitle"><div class="eyebrow">${eyebrow}</div><h1>${title}</h1></div>
       <div class="dots" id="dots" role="img" aria-label="Progress"></div>
-      ${fsBtn()}${soundBtn()}
+      ${swap}${fsBtn()}${soundBtn()}
     </header>
     <p class="goal" id="goal"></p>
-    <main class="stagebox"><div class="stage" id="stage"></div></main>
+    <main class="stagebox"><div class="stagecell"><div class="stage" id="stage"></div></div>${learn ? '<aside class="ideas" id="ideas" aria-label="What we discover"></aside>' : ''}</main>
     <footer class="dock">
       <div class="talk"><div id="vbox">${volty()}</div><div class="bubble" id="bubble" aria-live="polite"></div></div>
       <div class="tray" id="tray"></div>
@@ -1695,12 +2301,13 @@ function openLevel(n) {
     </footer>
   </div>`;
   const stage = $('#stage'), bubble = $('#bubble');
+  let ideaList = null; const found = new Set();
   const ctx = current = {
-    n, L, mistakes: 0, timers: [], stage, tray: $('#tray'),
+    mistakes: 0, timers: [], stage, tray: $('#tray'),
     goal(h) { $('#goal').innerHTML = `<span>${h}</span>`; },
     say(h, mood = 'happy', tone = '') { bubble.innerHTML = `<span>${h}</span>`; bubble.className = 'bubble ' + tone; $('#vbox').innerHTML = volty(mood); },
-    dots(i, total = L.rounds) {
-      stage.classList.remove('enter'); void stage.offsetWidth; stage.classList.add('enter');
+    dots(i, total = chal ? item.rounds : item.solve.rounds, fade = true) {
+      if (fade) { stage.classList.remove('enter'); void stage.offsetWidth; stage.classList.add('enter'); }
       $('#dots').innerHTML = Array.from({ length: total }, (_, k) => `<i class="${k < i ? 'done' : k === i ? 'now' : ''}"></i>`).join('');
       $('#dots').setAttribute('aria-label', `Round ${Math.min(i + 1, total)} of ${total}`);
     },
@@ -1710,27 +2317,53 @@ function openLevel(n) {
       list.forEach(b => { const el = document.createElement('button'); el.className = 'btn ' + (b.cls || ''); el.innerHTML = b.label; el.onclick = () => { Snd.ac(); b.on(); }; a.appendChild(el); });
     },
     miss() { this.mistakes++; },
-    later(fn, ms) { this.timers.push(setTimeout(fn, ms)); },
+    later(fn, ms) { const id = setTimeout(fn, ms); this.timers.push(id); return id; },
+    // Learn labs: a list of ideas that light up as they are discovered
+    ideas(list) { ideaList = list; found.clear(); renderIdeas(); },
+    learn(i) {
+      if (!ideaList || found.has(i)) return;
+      found.add(i); sfx('idea'); renderIdeas(i);
+      if (found.size === ideaList.length) setLearned(n);
+    },
     win() {
-      const s = starsFor(this.mistakes, L.stars); saveStars(n, s); sfx('win'); confetti();
+      const s = starsFor(this.mistakes, item.stars || item.solve.stars); saveStars(key, s); sfx('win'); confetti();
+      const [href, label] = chal
+        ? (n < CHALLENGES.length ? [`#c${n + 1}`, 'Next challenge ›'] : ['#map', 'Back to the map'])
+        : (n < TOPICS.length ? [`#t${n + 1}-learn`, `Next: Topic ${n + 1} ›`] : ['#c1', 'Final challenges ›']);
       const ov = document.createElement('div'); ov.className = 'overlay';
       ov.innerHTML = `<div class="wincard" role="dialog" aria-modal="true" aria-labelledby="wt">${volty('wow')}
         <h2 id="wt">${['', 'Mission complete!', 'Great work!', 'Super engineer!'][s]}</h2>
         <div class="winbolts">${[1, 2, 3].map(k => BOLT(k <= s)).join('')}</div>
         <p>${s < 3 ? `You made ${this.mistakes} mistakes. Play again to earn all 3 bolts!` : this.mistakes ? `Only ${this.mistakes} mistake${this.mistakes === 1 ? '' : 's'}: you earned all 3 bolts!` : 'Perfect! No mistakes, and all 3 bolts are yours.'}</p>
-        <div class="actions"><button class="btn ghost" data-a="again">Play again</button>${n < LEVELS.length ? `<a class="btn primary" href="#m${n + 1}">Next mission ›</a>` : '<a class="btn primary" href="#map">Back to missions</a>'}</div></div>`;
+        <div class="actions"><button class="btn ghost" data-a="again">Play again</button><a class="btn primary" href="${href}">${label}</a></div></div>`;
       document.body.appendChild(ov);
-      $('[data-a="again"]', ov).onclick = () => { stopCurrent(); openLevel(n); };
+      $('[data-a="again"]', ov).onclick = () => { stopCurrent(); openScreen(kind, n); };
       $('.btn.primary', ov).focus();
     }
   };
-  L.play(ctx);
+  function renderIdeas(fresh) {
+    const box = $('#ideas'); if (!box || !ideaList) return;
+    const all = found.size === ideaList.length;
+    box.innerHTML = `<h2>What we discover <span>${found.size}/${ideaList.length}</span></h2><ol>${ideaList.map((t, i) => {
+      const on = found.has(i);
+      return `<li><button class="idea${on ? ' on' : ''}${fresh === i ? ' fresh' : ''}" data-idea="${i}"${on ? ' disabled' : ' title="Reveal this idea"'}><span class="inum">${on ? '✓' : i + 1}</span><span>${on ? t : 'Discover it in the lab…'}</span></button></li>`;
+    }).join('')}</ol>${all ? `<a class="btn primary small ready" href="#t${n}-solve">Ready? Solve it ›</a>` : ''}`;
+    $$('[data-idea]', box).forEach(b => b.onclick = () => ctx.learn(+b.dataset.idea));
+    ctx.dots(found.size, ideaList.length, false);
+  }
+  if (learn) item.learn(ctx); else (chal ? item.play : item.solve.play)(ctx);
 }
 
+// Old addresses (#m1 … #m10) from the first version still work
+const LEGACY = { m1: '#t1-solve', m2: '#t2-solve', m3: '#t3-solve', m4: '#t8-solve', m5: '#t5-solve', m6: '#t6-solve', m7: '#t7-solve', m8: '#c1', m9: '#c2', m10: '#c3' };
 function route() {
   stopCurrent();
-  const m = /^#m(\d+)$/.exec(location.hash);
-  if (m && LEVELS[+m[1] - 1]) openLevel(+m[1]); else showMap();
+  const h = location.hash;
+  if (LEGACY[h.slice(1)]) { location.replace(LEGACY[h.slice(1)]); return; }
+  let m;
+  if ((m = /^#t(\d+)-(learn|solve)$/.exec(h)) && TOPICS[+m[1] - 1]) openScreen(m[2], +m[1]);
+  else if ((m = /^#c(\d+)$/.exec(h)) && CHALLENGES[+m[1] - 1]) openScreen('challenge', +m[1]);
+  else showMap();
   window.scrollTo(0, 0);
 }
 document.addEventListener('click', e => {
