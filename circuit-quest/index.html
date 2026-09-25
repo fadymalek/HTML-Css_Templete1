@@ -144,7 +144,7 @@ svg.board.drag{touch-action:none}
 .traynote{color:var(--soft);font-weight:700;margin:0;align-self:center;max-width:14rem}
 
 /* mission 1 cards */
-.cards{height:100%;display:grid;gap:clamp(8px,1.4vh,16px);grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr)}
+.cards{height:100%;display:grid;gap:clamp(8px,1.4vh,16px);grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
 .cards.six{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
 .ccard{position:relative;min-height:0;display:flex;flex-direction:column;gap:2px;padding:6px 6px 8px;background:var(--stage);border:3px solid var(--line);border-radius:1.3rem;color:var(--text);cursor:pointer;text-align:center;transition:transform .12s,border-color .15s}
 .ccard svg.board{flex:1;min-height:0;height:100%}
@@ -541,10 +541,10 @@ const PART = {
   battery(p, s) {
     const v = p.volts || ({ 1: '3V', 2: '6V', 3: '9V' })[p.level || 1];
     let x = '';
-    if (p.conn === 'looseNeg') x = cut(-76, -46) + wirePath('M-76 0 C-62 0 -62 24 -54 30') + '<circle cx="-54" cy="30" r="6" class="tip"/>';
-    if (p.conn === 'loosePos') x = cut(46, 76) + wirePath('M76 0 C62 0 62 24 54 30') + '<circle cx="54" cy="30" r="6" class="tip"/>';
-    if (p.conn === 'bothPos') x = cut(-76, -46) + wirePath('M-76 0 V44 H64 V6');
-    if (p.conn === 'bothNeg') x = cut(46, 76) + wirePath('M76 0 V44 H-64 V6');
+    if (p.conn === 'looseNeg') x = cut(-62, -46) + wirePath('M-62 0 C-56 0 -62 24 -54 30') + '<circle cx="-54" cy="30" r="6" class="tip"/>';
+    if (p.conn === 'loosePos') x = cut(46, 62) + wirePath('M62 0 C56 0 62 24 54 30') + '<circle cx="54" cy="30" r="6" class="tip"/>';
+    if (p.conn === 'bothPos') x = cut(-62, -46) + wirePath('M-62 0 V44 H64 V6');
+    if (p.conn === 'bothNeg') x = cut(46, 62) + wirePath('M62 0 V44 H-64 V6');
     return x + `<rect x="-46" y="-26" width="86" height="52" rx="12" class="bat-body${p.danger ? ' danger' : ''}"/>
       <path d="M16 -26 H28 a12 12 0 0 1 12 12 V14 a12 12 0 0 1 -12 12 H16 Z" fill="#FFD23F"/>
       <rect x="40" y="-11" width="8" height="22" rx="3" fill="#FFD23F"/>` +
@@ -689,7 +689,7 @@ function loopSVG(o) {
     const hw = p.type === 'build' ? 175 : 62;
     const hit = o.tap ? `<rect class="hit" x="${-hw}" y="${tall ? -100 : -54}" width="${2 * hw}" height="${tall ? 144 : 108}" rx="18"/>` : '';
     const badge = o.badges && p.flip ? `<g class="flipb" data-flip="${i}" transform="translate(0 60) rotate(${-a})"><title>Flip</title><circle r="18" class="flipc"/><path class="flipi" d="M-8 -4 H7 l-4 -4 M8 4 H-7 l4 4"/></g>` : '';
-    s += `<g class="slot${o.tap ? ' tap' : ''}" data-i="${i}" transform="translate(${x} ${y}) rotate(${a})">${hit}<g transform="scale(${d} 1)">${PART[p.type](p, st)}</g>${o.hl === i ? `<circle class="ring${o.ringGood ? ' good' : ''}" r="64"/>` : ''}${badge}</g>`;
+    s += `<g class="slot${o.tap ? ' tap' : ''}" data-i="${i}" transform="translate(${x} ${y}) rotate(${a})${o.scale ? ` scale(${o.scale})` : ''}">${hit}<g transform="scale(${d} 1)">${PART[p.type](p, st)}</g>${o.hl === i ? `<circle class="ring${o.ringGood ? ' good' : ''}" r="64"/>` : ''}${badge}</g>`;
   });
   return s + (o.extra || '') + '</svg>';
 }
@@ -1022,29 +1022,38 @@ function learnBattery(ctx) {
 }
 
 /* ── TOPIC 1 · SOLVE — Close the Loop ──────────────────────────── */
-const MINI = { vb: '22 4 356 326', box: { x0: 60, y0: 95, x1: 340, y1: 295 } };
+const MINI = { vb: '16 -8 610 302', box: { x0: 50, y0: 50, x1: 520, y1: 240 }, scale: 1.15 };
 const BULB_T = () => ({ type: 'bulb', edge: 'T', f: .5 });
+const BULB_R = () => ({ type: 'bulb', edge: 'R', f: .5 });
 const L1K = {
-  ok:          { s: () => [BAT(), BULB_T()], why: 'Full loop from + to −.' },
-  wiggly:      { s: () => [BAT(), BULB_T(), { type: 'wiggle', edge: 'B', f: .5 }], why: 'A long, wiggly wire still makes a full loop!' },
-  switchOn:    { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }], why: 'The switch is closed, so the loop is complete.' },
-  switchOff:   { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: false }], why: 'The switch is open, so the loop is broken.' },
-  gapTop:      { s: () => [BAT(), BULB_T(), { type: 'gap', edge: 'R', f: .5 }], why: 'There is a gap in the wire.' },
-  gapBottom:   { s: () => [BAT(), BULB_T(), { type: 'gap', edge: 'B', f: .5 }], why: 'There is a gap in the wire.' },
-  twoGaps:     { s: () => [BAT(), BULB_T(), { type: 'gap', edge: 'R', f: .5 }, { type: 'gap', edge: 'B', f: .5 }], why: 'The wire is broken in two places.' },
-  loose:       { s: () => [BAT({ conn: 'looseNeg' }), BULB_T()], why: 'A wire is not touching the − side.' },
-  looseTop:    { s: () => [BAT({ conn: 'loosePos' }), BULB_T()], why: 'A wire is not touching the + side.' },
-  sameSide:    { s: () => [BAT({ conn: 'bothPos' }), BULB_T()], why: 'Both wires go to +. The − side needs a wire too!' },
-  sameSideNeg: { s: () => [BAT({ conn: 'bothNeg' }), BULB_T()], why: 'Both wires go to −. The + side needs a wire too!' },
-  wood:        { s: () => [BAT(), BULB_T(), { type: 'wood', edge: 'B', f: .5 }], why: 'Wood is an insulator. It blocks electricity.' },
-  switchGap:   { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'gap', edge: 'R', f: .5 }], why: 'The switch is closed, but there is still a gap.' },
-  woodSwitch:  { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'wood', edge: 'R', f: .5 }], why: 'The switch is closed, but wood still blocks the road.' },
-  bareOK:      { s: () => [BAT(), BULB_T(), { type: 'bare', edge: 'B', f: .5 }], why: 'It lights, but that bare copper is not safe to touch!' },
-  patchOK:     { s: () => [BAT(), BULB_T(), { type: 'patch', edge: 'R', f: .5 }], why: 'The repaired wire piece carries electricity fine.' },
-  twoSwitch:   { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'switch', edge: 'R', f: .5, closed: true }], why: 'Both switches are closed, so the loop is complete.' },
-  oneSwitchOpen: { s: () => [BAT(), BULB_T(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'switch', edge: 'R', f: .5, closed: false }], why: 'One switch is still open. Every switch on the road must be closed.' },
-  eraserR:     { s: () => [BAT(), BULB_T(), { type: 'eraser', edge: 'R', f: .5 }], why: 'A rubber eraser is an insulator. It blocks the road.' },
-  patchSwitchOff: { s: () => [BAT(), BULB_T(), { type: 'patch', edge: 'R', f: .5 }, { type: 'switch', edge: 'B', f: .5, closed: false }], why: 'The wire is repaired, but the switch is open.' }
+  ok:          { s: () => [BAT(), BULB_R()], why: 'Full loop from + to −.' },
+  wiggly:      { s: () => [BAT(), BULB_R(), { type: 'wiggle', edge: 'B', f: .5 }], why: 'A long, wiggly wire still makes a full loop!' },
+  switchOn:    { s: () => [BAT(), BULB_R(), { type: 'switch', edge: 'B', f: .5, closed: true }], why: 'The switch is closed, so the loop is complete.' },
+  switchOff:   { s: () => [BAT(), BULB_R(), { type: 'switch', edge: 'B', f: .5, closed: false }], why: 'The switch is open, so the loop is broken.' },
+  gapTop:      { s: () => [BAT(), BULB_R(), { type: 'gap', edge: 'T', f: .5 }], why: 'There is a gap in the wire.' },
+  gapBottom:   { s: () => [BAT(), BULB_R(), { type: 'gap', edge: 'B', f: .5 }], why: 'There is a gap in the wire.' },
+  twoGaps:     { s: () => [BAT(), BULB_R(), { type: 'gap', edge: 'T', f: .5 }, { type: 'gap', edge: 'B', f: .5 }], why: 'The wire is broken in two places.' },
+  loose:       { s: () => [BAT({ conn: 'looseNeg' }), BULB_R()], why: 'A wire is not touching the − side.' },
+  looseTop:    { s: () => [BAT({ conn: 'loosePos' }), BULB_R()], why: 'A wire is not touching the + side.' },
+  sameSide:    { s: () => [BAT({ conn: 'bothPos' }), BULB_R()], why: 'Both wires go to +. The − side needs a wire too!' },
+  sameSideNeg: { s: () => [BAT({ conn: 'bothNeg' }), BULB_R()], why: 'Both wires go to −. The + side needs a wire too!' },
+  wood:        { s: () => [BAT(), BULB_R(), { type: 'wood', edge: 'B', f: .5 }], why: 'Wood is an insulator. It blocks electricity.' },
+  switchGap:   { s: () => [BAT(), BULB_R(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'gap', edge: 'T', f: .5 }], why: 'The switch is closed, but there is still a gap.' },
+  woodSwitch:  { s: () => [BAT(), BULB_R(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'wood', edge: 'T', f: .5 }], why: 'The switch is closed, but wood still blocks the road.' },
+  bareOK:      { s: () => [BAT(), BULB_R(), { type: 'bare', edge: 'B', f: .5 }], why: 'It lights, but that bare copper is not safe to touch!' },
+  patchOK:     { s: () => [BAT(), BULB_R(), { type: 'patch', edge: 'T', f: .5 }], why: 'The repaired wire piece carries electricity fine.' },
+  twoSwitch:   { s: () => [BAT(), BULB_R(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'switch', edge: 'T', f: .5, closed: true }], why: 'Both switches are closed, so the loop is complete.' },
+  oneSwitchOpen: { s: () => [BAT(), BULB_R(), { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'switch', edge: 'T', f: .5, closed: false }], why: 'One switch is still open. Every switch on the road must be closed.' },
+  eraserR:     { s: () => [BAT(), BULB_R(), { type: 'eraser', edge: 'T', f: .5 }], why: 'A rubber eraser is an insulator. It blocks the road.' },
+  patchSwitchOff: { s: () => [BAT(), BULB_R(), { type: 'patch', edge: 'T', f: .5 }, { type: 'switch', edge: 'B', f: .5, closed: false }], why: 'The wire is repaired, but the switch is open.' },
+  threeSwitch: { s: () => [BAT(), BULB_R(), { type: 'switch', edge: 'B', f: .25, closed: true }, { type: 'switch', edge: 'B', f: .75, closed: true }, { type: 'switch', edge: 'T', f: .5, closed: true }], why: 'All three switches are closed, so the loop is complete.' },
+  looseSwitchOn: { s: () => [BAT({ conn: 'looseNeg' }), BULB_R(), { type: 'switch', edge: 'B', f: .5, closed: true }], why: 'The switch is closed, but a wire is not touching the − side.' },
+  wigglySwitch: { s: () => [BAT(), BULB_R(), { type: 'wiggle', edge: 'B', f: .5 }, { type: 'switch', edge: 'T', f: .5, closed: true }], why: 'A long wire and a closed switch: still one complete loop.' },
+  plasticR:    { s: () => [BAT(), BULB_R(), { type: 'plastic', edge: 'T', f: .5 }], why: 'A plastic straw is an insulator. It blocks the road.' },
+  sameSideSwitch: { s: () => [BAT({ conn: 'bothPos' }), BULB_R(), { type: 'switch', edge: 'T', f: .5, closed: true }], why: 'The switch is closed, but both wires go to the + side.' },
+  wigglyGap:   { s: () => [BAT(), BULB_R(), { type: 'wiggle', edge: 'B', f: .5 }, { type: 'gap', edge: 'T', f: .5 }], why: 'The long wire is fine, but there is a gap on the other side.' },
+  bareSwitchOff: { s: () => [BAT(), BULB_R(), { type: 'bare', edge: 'B', f: .5 }, { type: 'switch', edge: 'T', f: .5, closed: false }], why: 'Bare copper still conducts, but the switch is open.' },
+  patchTwoSwitch: { s: () => [BAT(), BULB_R(), { type: 'patch', edge: 'T', f: .5 }, { type: 'switch', edge: 'B', f: .25, closed: true }, { type: 'switch', edge: 'B', f: .75, closed: true }], why: 'A repaired wire and two closed switches: the loop is complete!' }
 };
 function solveLoop(ctx) {
   const R = [
@@ -1052,7 +1061,9 @@ function solveLoop(ctx) {
     ['sameSide', 'ok', 'switchOff', 'gapBottom', 'wiggly', 'looseTop'],
     ['wood', 'switchOn', 'sameSideNeg', 'twoGaps', 'wiggly', 'switchOff'],
     ['switchGap', 'bareOK', 'sameSideNeg', 'patchOK', 'woodSwitch', 'looseTop'],
-    ['twoSwitch', 'oneSwitchOpen', 'eraserR', 'bareOK', 'sameSide', 'patchSwitchOff']
+    ['twoSwitch', 'oneSwitchOpen', 'eraserR', 'bareOK', 'sameSide', 'patchSwitchOff'],
+    ['threeSwitch', 'looseSwitchOn', 'wigglySwitch', 'plasticR', 'sameSideSwitch', 'patchOK'],
+    ['wigglyGap', 'patchTwoSwitch', 'bareSwitchOff', 'twoSwitch', 'eraserR', 'sameSideNeg']
   ];
   ctx.stage.classList.add('bare');
   let r = 0, kinds, picked, checked;
@@ -1062,7 +1073,7 @@ function solveLoop(ctx) {
     ctx.goal('Tap <b>every</b> circuit where the bulb will light up. Then press <b>Check</b>.');
     ctx.say(['Remember: electricity needs a full loop — out of the + side and back into the − side!',
       'Trickier now. Look closely at both sides of each battery.',
-      'Look for anything that could block the road.', 'Expert round! Some of these are sneaky: check every part.', 'Master round! Count every switch and check every material.'][r], 'think');
+      'Look for anything that could block the road.', 'Expert round! Some of these are sneaky: check every part.', 'Master round! Count every switch and check every material.', 'Champion round! A closed switch doesn’t always mean the bulb lights.', 'Final round! Check the battery, every switch and every material.'][r], 'think');
     ctx.actions([{ label: 'Check', cls: 'primary', on: check }]);
     draw();
   }
@@ -1164,7 +1175,7 @@ const ITEMS = [
   { e: '🧽', n: 'Dry sponge', c: 0, hard: 1, f: 'A dry sponge is an insulator. (Wet things can be dangerous, though!)' }
 ];
 function solveConductors(ctx) {
-  const q = shuffle([...ITEMS.filter(i => i.hard), ...shuffle(ITEMS.filter(i => !i.hard)).slice(0, 8)]); let idx = 0, tests = 2, busy = false, probe = null;
+  const q = shuffle([...ITEMS.filter(i => i.hard), ...shuffle(ITEMS.filter(i => !i.hard)).slice(0, 10)]); let idx = 0, tests = 2, busy = false, probe = null;
   ctx.stage.classList.add('bare');
   ctx.goal('Is it a <b>conductor</b> or an <b>insulator</b>? Drag each object into the right box, or tap a box.');
   ctx.stage.innerHTML = `<div class="det">
@@ -1409,7 +1420,9 @@ function solveDanger(ctx) {
     { s: [BAT({ level: 1 }), RES(.5, 1), LED(), { type: 'switch', edge: 'B', f: .5, closed: false }], why: 'Everything else is right, but the switch is open.' },
     { s: [BAT({ level: 3 }), RES(.22, 1), RES(.5, 1), RES(.78, 1), LED({ color: 'yellow' })], why: '1 + 1 + 1 = 3 shields for 9 volts: perfect.' },
     { s: [BAT({ level: 2 }), RES(.5, 2), LED(), { type: 'bare', edge: 'B', f: .5 }], why: 'It glows: bare copper still conducts. But that bare wire is not safe to touch!' },
-    { s: [BAT({ level: 3, dir: -1 }), RES(.3, 1), RES(.7, 2), LED({ color: 'green' })], why: 'The shields are right, but the battery is turned around, so the LED is backwards.' }
+    { s: [BAT({ level: 3, dir: -1 }), RES(.3, 1), RES(.7, 2), LED({ color: 'green' })], why: 'The shields are right, but the battery is turned around, so the LED is backwards.' },
+    { s: [BAT({ level: 2 }), RES(.3, 1), RES(.7, 1), LED({ color: 'yellow' }), { type: 'eraser', edge: 'B', f: .5 }], why: 'The shields are right, but a rubber eraser blocks the road.' },
+    { s: [BAT({ level: 1 }), { type: 'patch', edge: 'T', f: .5 }, LED({ color: 'green' }), { type: 'switch', edge: 'B', f: .5, closed: true }], why: 'The wire is fine and the switch is closed, but there is no resistor at all: POP!' }
   ];
   const OUT = [['glow', 'Glows safely'], ['dim', 'Glows, but very dim'], ['burn', 'POP! It burns out'], ['nothing', 'Nothing happens']];
   const outcome = s => ({ works: 'glow', dim: 'dim', burn: 'burn' })[evalLoop(s).status] || 'nothing';
@@ -2114,7 +2127,11 @@ const DX = [
   { k: 'gap', sym: 'The bulb stays dark.', culprit: 0,
     slots: () => [BAT({ conn: 'looseNeg' }), { type: 'bulb', edge: 'R', f: .5 }, { type: 'switch', edge: 'B', f: .5, closed: true }],
     fix: s => { s[0].conn = 'both'; }, hint: 'The switch is closed. Now check where the wires meet the battery.',
-    why: 'Yes! A wire slipped off the − side of the battery. Reconnect it and the loop is complete.' }
+    why: 'Yes! A wire slipped off the − side of the battery. Reconnect it and the loop is complete.' },
+  { k: 'insulator', sym: 'The bulb stays dark, even though the switch is closed.', culprit: 3,
+    slots: () => [BAT(), { type: 'bulb', edge: 'R', f: .5 }, { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'eraser', edge: 'T', f: .5 }],
+    fix: s => { s[3].type = 'patch'; }, hint: 'The switch is fine. What is that pink and blue thing made of?',
+    why: 'Yes! A rubber eraser is an insulator. Replace it with a wire and the bulb lights.' }
 ];
 const DXO = [
   { k: 'gap', t: 'The wire is broken' }, { k: 'switch', t: 'The switch is open' }, { k: 'insulator', t: 'An insulator blocks the road' },
@@ -2259,10 +2276,10 @@ function challengeBreadboard(ctx) {
    Addresses: #t3-learn, #t3-solve, #c1 (final challenge 1), #map
    ═════════════════════════════════════════════════════════════════════ */
 const TOPICS = [
-  { name: 'Battery Connection', idea: 'Close the loop from + to −.', learn: learnBattery, solve: { name: 'Close the Loop', play: solveLoop, rounds: 5, stars: [1, 3] } },
-  { name: 'Conductors & Insulators', idea: 'Which materials let electricity pass?', learn: learnConductors, solve: { name: 'Conductor Detective', play: solveConductors, rounds: 14, stars: [1, 3] } },
+  { name: 'Battery Connection', idea: 'Close the loop from + to −.', learn: learnBattery, solve: { name: 'Close the Loop', play: solveLoop, rounds: 7, stars: [1, 3] } },
+  { name: 'Conductors & Insulators', idea: 'Which materials let electricity pass?', learn: learnConductors, solve: { name: 'Conductor Detective', play: solveConductors, rounds: 16, stars: [1, 3] } },
   { name: 'The Electric Wire', idea: 'Copper inside, plastic outside.', learn: learnWire, solve: { name: 'Wire Repair Shop', play: solveWire, rounds: 5, stars: [1, 3] } },
-  { name: 'The Dangerous Battery', idea: 'Too much power destroys parts.', learn: learnDanger, solve: { name: 'Safe or Boom?', play: solveDanger, rounds: 14, stars: [1, 3] } },
+  { name: 'The Dangerous Battery', idea: 'Too much power destroys parts.', learn: learnDanger, solve: { name: 'Safe or Boom?', play: solveDanger, rounds: 16, stars: [1, 3] } },
   { name: 'Resistors', idea: 'A bodyguard that slows electricity.', learn: learnResistors, solve: { name: 'Resistor Bodyguard', play: solveResistors, rounds: 8, stars: [1, 3] } },
   { name: 'The Full Circuit', idea: 'Power + road + protection.', learn: learnFull, solve: { name: 'Circuit Builder', play: solveBuilder, rounds: 5, stars: [1, 3] } },
   { name: 'Breadboards', idea: 'Hidden clips join the holes.', learn: learnBreadboard, solve: { name: 'Breadboard X-Ray', play: solveBreadboard, rounds: 15, stars: [1, 3] } },
@@ -2270,7 +2287,7 @@ const TOPICS = [
 ].map((t, i) => ({ ...t, n: i + 1 }));
 const CHALLENGES = [
   { name: 'Switch Master', idea: 'Series and parallel switches', play: challengeSwitches, rounds: 8, stars: [1, 3] },
-  { name: 'Circuit Doctor', idea: 'Find what is broken', play: challengeDoctor, rounds: 10, stars: [1, 3] },
+  { name: 'Circuit Doctor', idea: 'Find what is broken', play: challengeDoctor, rounds: 11, stars: [1, 3] },
   { name: 'Breadboard Builder', idea: 'Build real circuits', play: challengeBreadboard, rounds: 4, stars: [1, 3] }
 ].map((c, i) => ({ ...c, n: i + 1 }));
 const MAX_BOLTS = (TOPICS.length + CHALLENGES.length) * 3;
