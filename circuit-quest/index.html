@@ -1997,7 +1997,13 @@ const CIR = {
        edges: [['P', 'a', 'switch', 'S1'], ['a', 'b', 'bulb', 'A'], ['b', 'c', 'bulb', 'B'], ['c', 'N', 'wire']] },
   B: { nodes: TWO_BRANCH, edges: [['P', 'J1', 'wire'], ['J1', 'm1', 'switch', 'S1'], ['m1', 'K1', 'bulb', 'A'], ['J1', 'J2', 'wire'], ['J2', 'm2', 'switch', 'S2'], ['m2', 'K2', 'bulb', 'B'], ['K1', 'K2', 'wire'], ['K2', 'K3', 'wire'], ['K3', 'N', 'wire']] },
   C: { nodes: TWO_BRANCH, edges: [['P', 'J1', 'wire'], ['J1', 'm1', 'switch', 'S1'], ['m1', 'K1', 'bulb', 'A'], ['J1', 'J2', 'wire'], ['J2', 'm2', 'switch', 'S2'], ['m2', 'K2', 'bulb', 'B'], ['K1', 'K2', 'wire'], ['K2', 'K3', 'wire'], ['K3', 'N', 'switch', 'S0']] },
-  D: { nodes: TWO_BRANCH, edges: [['P', 'J1', 'wire'], ['J1', 'm1', 'switch', 'S1'], ['m1', 'K1', 'bulb', 'B'], ['J1', 'J2', 'wire'], ['J2', 'm2', 'switch', 'S2'], ['m2', 'K2', 'bulb', 'C'], ['K1', 'K2', 'wire'], ['K2', 'K3', 'wire'], ['K3', 'N', 'bulb', 'A']] }
+  D: { nodes: TWO_BRANCH, edges: [['P', 'J1', 'wire'], ['J1', 'm1', 'switch', 'S1'], ['m1', 'K1', 'bulb', 'B'], ['J1', 'J2', 'wire'], ['J2', 'm2', 'switch', 'S2'], ['m2', 'K2', 'bulb', 'C'], ['K1', 'K2', 'wire'], ['K2', 'K3', 'wire'], ['K3', 'N', 'bulb', 'A']] },
+  // three branches and a main switch on the road back to the battery
+  E: { nodes: { P: [160, 100], J1: [300, 100], m1: [560, 100], K1: [860, 100], J2: [300, 225], m2: [560, 225], K2: [860, 225], J3: [300, 350], m3: [560, 350], K3: [860, 350], K4: [860, 465], N: [160, 465] },
+       edges: [['P', 'J1', 'wire'], ['J1', 'm1', 'switch', 'S1'], ['m1', 'K1', 'bulb', 'A'], ['J1', 'J2', 'wire'], ['J2', 'm2', 'switch', 'S2'], ['m2', 'K2', 'bulb', 'B'], ['J2', 'J3', 'wire'], ['J3', 'm3', 'switch', 'S3'], ['m3', 'K3', 'bulb', 'C'], ['K1', 'K2', 'wire'], ['K2', 'K3', 'wire'], ['K3', 'K4', 'wire'], ['K4', 'N', 'switch', 'S0']] },
+  // three bulbs in one loop, with a bypass switch (S1) around bulb A
+  F: { nodes: { P: [160, 120], a: [380, 120], b: [680, 120], c: [860, 120], a2: [380, 250], b2: [680, 250], d: [860, 440], e: [520, 440], N: [160, 440] },
+       edges: [['P', 'a', 'wire'], ['a', 'b', 'bulb', 'A'], ['b', 'c', 'wire'], ['a', 'a2', 'wire'], ['a2', 'b2', 'switch', 'S1'], ['b2', 'b', 'wire'], ['c', 'd', 'bulb', 'B'], ['d', 'e', 'bulb', 'C'], ['e', 'N', 'switch', 'S0']] }
 };
 const TAGC = { A: '#FFD23F', B: '#5CC8FF', C: '#3BE0A1' };
 const L7G = [
@@ -2008,27 +2014,43 @@ const L7G = [
   { c: 'C', t: { A: 0, B: 1 }, txt: 'Light <b>only</b> bulb <b>B</b>.', why: 'Close S0 on the main road and S2 on bulb B’s branch, and keep S1 open.' },
   { c: 'D', t: { A: 1, B: 0, C: 1 }, txt: 'Light bulbs <b>A</b> and <b>C</b>, but keep <b>B</b> off.', why: 'Bulb A is on the main road, so it lights whenever any branch is closed.' },
   { c: 'D', t: { A: 1, B: 1, C: 0 }, txt: 'Light <b>A</b> and <b>B</b>, but keep <b>C</b> off.', why: 'Close S1 for bulb B’s branch. Bulb A is on the main road, so it lights too.' },
-  { c: 'D', t: { A: 0, B: 0, C: 1 }, imp: true, txt: 'Light <b>only</b> bulb <b>C</b>.', why: 'Right, it’s impossible! Bulb A sits on the main road. Any electricity that goes through C must also go through A.' }
+  { c: 'D', t: { A: 0, B: 0, C: 1 }, imp: true, txt: 'Light <b>only</b> bulb <b>C</b>.', why: 'Right, it’s impossible! Bulb A sits on the main road. Any electricity that goes through C must also go through A.' },
+  { c: 'E', t: { A: 1, B: 0, C: 1 }, txt: 'Three roads now! Light <b>A</b> and <b>C</b>, but keep <b>B</b> off.', why: 'Close S0 on the main road, plus S1 and S3. Keep S2 open.' },
+  { c: 'E', t: { A: 0, B: 1, C: 0 }, sw: { S0: false }, imp: true, txt: 'Light bulb <b>B</b> while the main switch <b>S0</b> stays <b>open</b>.', why: 'Right, it’s impossible! S0 is on the main road back to the battery. With S0 open, no branch can work.' },
+  { c: 'E', t: { A: 1, B: 1, C: 1 }, sw: { S3: false }, imp: true, txt: 'Light <b>all three</b> bulbs but keep <b>S3</b> open.', why: 'Right, it’s impossible! Bulb C is only on the road through S3.' },
+  { c: 'F', t: { A: 1, B: 1, C: 1 }, txt: 'A new circuit! Light <b>all three</b> bulbs.', why: 'Close S0 and keep S1 open. Electricity goes through A, B and C, one after another.' },
+  { c: 'F', t: { A: 0, B: 1, C: 1 }, txt: 'Light <b>B</b> and <b>C</b>, but keep <b>A</b> off.', why: 'Closing S1 makes a shortcut around bulb A, so electricity skips it. Engineers call this a <b>bypass</b>.' },
+  { c: 'F', t: { A: 1, B: 0, C: 0 }, imp: true, txt: 'Light <b>only</b> bulb <b>A</b>.', why: 'Right, it’s impossible! A, B and C share one road to the battery, so electricity through A must also go through B and C.' }
 ];
-// Find every simple path from + (P) to − (N); a bulb on any path lights up.
+// Find every simple path from + (P) to − (N). A bulb lights when it is on a
+// path, unless a plain wire or closed switch joins its two ends (a bypass):
+// then electricity takes the shortcut and the bulb stays dark.
 function solve(C, sw) {
   const adj = {};
   C.edges.forEach(([u, v, t, id], k) => {
     if (t === 'switch' && !sw[id]) return;
     (adj[u] = adj[u] || []).push([v, k]); (adj[v] = adj[v] || []).push([u, k]);
   });
-  const lit = {}, flows = [], seen = new Set(), stack = [];
+  const paths = [], seen = new Set(), stack = [];
   (function dfs(n) {
-    if (n === 'N') {
-      const bulbs = stack.filter(([k]) => C.edges[k][2] === 'bulb'), b = bulbs.length ? 1 / bulbs.length : 0;
-      bulbs.forEach(([k]) => { const id = C.edges[k][3]; lit[id] = Math.max(lit[id] || 0, b); });
-      stack.forEach(s => flows.push(s)); return;
-    }
+    if (n === 'N') { paths.push(stack.slice()); return; }
     seen.add(n);
     for (const [m, k] of adj[n] || []) { if (seen.has(m)) continue; stack.push([k, n]); dfs(m); stack.pop(); }
     seen.delete(n);
   })('P');
-  return { lit, flows };
+  const linked = (a, b) => {
+    const found = new Set([a]), todo = [a];
+    while (todo.length) { const n = todo.pop(); if (n === b) return true; for (const [m, k] of adj[n] || []) if (C.edges[k][2] !== 'bulb' && !found.has(m)) { found.add(m); todo.push(m); } }
+    return false;
+  };
+  const bypassed = new Set(); C.edges.forEach(([u, v, t], k) => { if (t === 'bulb' && linked(u, v)) bypassed.add(k); });
+  const short = linked('P', 'N'), lit = {}, flows = [];
+  if (!short) paths.filter(p => !p.some(([k]) => bypassed.has(k))).forEach(p => {
+    const bulbs = p.filter(([k]) => C.edges[k][2] === 'bulb'); if (!bulbs.length) return;
+    bulbs.forEach(([k]) => { const id = C.edges[k][3]; lit[id] = Math.max(lit[id] || 0, 1 / bulbs.length); });
+    flows.push(...p);
+  });
+  return { lit, flows, short };
 }
 function circuitSVG(C, sw, sol) {
   const N = C.nodes, seg = (a, b) => `M${N[a][0]} ${N[a][1]}L${N[b][0]} ${N[b][1]}`;
@@ -2062,7 +2084,7 @@ function challengeSwitches(ctx) {
     if (g === 0 || L7G[g - 1].c !== G.c) sw = {};
     done = false; ctx.dots(g); ctx.mood('');
     ctx.goal(`${G.txt}<span class="goal-s">Tap the switches to open or close them. If you think it can’t be done, press “It’s impossible!”</span>`);
-    ctx.say(g === 0 ? 'Watch the little dots: they show where electricity travels.' : g === 2 ? 'A new circuit with two roads!' : 'New challenge. Think before you tap!', 'think');
+    ctx.say(g === 0 ? 'Watch the little dots: they show where electricity travels.' : L7G[g - 1].c !== G.c ? 'A new circuit! Follow every road from + back to −.' : 'New challenge. Think before you tap!', 'think');
     ctx.actions([{ label: 'It’s impossible!', cls: 'ghost', on: imp }]);
     draw();
   }
@@ -2075,7 +2097,8 @@ function challengeSwitches(ctx) {
     const h = e.target.closest('[data-sw]'); if (!h || done) return;
     const id = h.dataset.sw; sw[id] = !sw[id]; sfx('click');
     const sol = draw(), G = L7G[g];
-    if (!G.imp && Object.keys(G.t).every(k => ((sol.lit[k] || 0) > 0) === !!G.t[k])) win(G);
+    const swOK = !G.sw || Object.keys(G.sw).every(k => !!sw[k] === G.sw[k]);
+    if (!G.imp && swOK && Object.keys(G.t).every(k => ((sol.lit[k] || 0) > 0) === !!G.t[k])) win(G);
   };
   function imp() {
     if (done) return;
@@ -2131,11 +2154,31 @@ const DX = [
   { k: 'insulator', sym: 'The bulb stays dark, even though the switch is closed.', culprit: 3,
     slots: () => [BAT(), { type: 'bulb', edge: 'R', f: .5 }, { type: 'switch', edge: 'B', f: .5, closed: true }, { type: 'eraser', edge: 'T', f: .5 }],
     fix: s => { s[3].type = 'patch'; }, hint: 'The switch is fine. What is that pink and blue thing made of?',
-    why: 'Yes! A rubber eraser is an insulator. Replace it with a wire and the bulb lights.' }
+    why: 'Yes! A rubber eraser is an insulator. Replace it with a wire and the bulb lights.' },
+  { k: 'switch', sym: 'The LED stays dark.', culprit: 4,
+    slots: () => [BAT(), { type: 'resistor', edge: 'T', f: .3 }, { type: 'switch', edge: 'T', f: .7, closed: true }, { type: 'led', edge: 'R', f: .5, color: 'green' }, { type: 'switch', edge: 'B', f: .5, closed: false }],
+    fix: s => { s[4].closed = true; }, hint: 'There are two switches. Check both of them!',
+    why: 'Yes! One switch was closed, but the other was open. Every switch on the road must be closed.' },
+  { k: 'tooWeak', sym: 'POP! The LED burned out.', culprit: 1,
+    slots: () => [BAT({ level: 2 }), { type: 'resistor', edge: 'T', f: .5, strength: 1 }, { type: 'led', edge: 'R', f: .5, color: 'red' }],
+    fix: s => { s[1].strength = 2; }, hint: 'Count the shields, then read the battery: 6 volts.',
+    why: 'Yes! 6 volts needs 2 shields, not 1.' },
+  { k: 'tooStrong', sym: 'The LED barely glows.', culprit: 1,
+    slots: () => [BAT({ level: 2 }), { type: 'resistor', edge: 'T', f: .3, strength: 3 }, { type: 'resistor', edge: 'T', f: .7, strength: 1 }, { type: 'led', edge: 'R', f: .5, color: 'yellow' }],
+    fix: s => { s[1].strength = 1; }, hint: 'Add up all the shields: 3 + 1. How many does 6 volts need?',
+    why: 'Yes! 3 + 1 = 4 shields, but 6 volts only needs 2. Too much protection makes the LED dim.' },
+  { k: 'reversed', sym: 'Nothing glows and nothing beeps.', culprit: 3,
+    slots: () => [BAT(), { type: 'resistor', edge: 'T', f: .3 }, { type: 'led', edge: 'T', f: .7, color: 'green' }, { type: 'buzzer', edge: 'R', f: .5, dir: -1 }],
+    fix: s => { s[3].dir = 1; }, hint: 'An LED is not the only part with a + side…',
+    why: 'Yes! The buzzer is backwards. It blocks the whole loop, so the LED can’t glow either. Flip it and both work.' },
+  { k: 'bare', sym: 'The LED glows… but something is sparking!', culprit: 3,
+    slots: () => [BAT(), { type: 'resistor', edge: 'T', f: .5 }, { type: 'led', edge: 'R', f: .5, color: 'yellow' }, { type: 'bare', edge: 'B', f: .5 }],
+    fix: s => { s[3].type = 'taped'; }, hint: 'Look along every wire for orange copper.',
+    why: 'Yes! Bare copper sparks and can shock you, even when the LED works. Tape makes it safe.' }
 ];
 const DXO = [
   { k: 'gap', t: 'The wire is broken' }, { k: 'switch', t: 'The switch is open' }, { k: 'insulator', t: 'An insulator blocks the road' },
-  { k: 'reversed', t: 'The LED faces the wrong way' }, { k: 'bare', t: 'Bare wire: not safe!' }, { k: 'noResistor', t: 'The resistor is missing' },
+  { k: 'reversed', t: 'A part faces the wrong way' }, { k: 'bare', t: 'Bare wire: not safe!' }, { k: 'noResistor', t: 'The resistor is missing' },
   { k: 'tooStrong', t: 'The resistor is too strong' }, { k: 'tooWeak', t: 'The resistor is too weak' }
 ];
 function challengeDoctor(ctx) {
@@ -2177,7 +2220,14 @@ function challengeBreadboard(ctx) {
     { pre: [], tray: { led: 1, res: 1, wire: 3 }, need: 1,
       goal: 'Build the whole circuit yourself, just like in TinkerCad: <b>+ rail → LED → resistor → − rail</b>.' },
     { pre: [], tray: { led: 2, res: 1, wire: 4 }, need: 2,
-      goal: 'Final challenge: make <b>two LEDs</b> glow at the same time!' }
+      goal: 'Make <b>two LEDs</b> glow at the same time!' },
+    { pre: [{ type: 'wire', a: 'tp5', b: 'a5', lock: false }, { type: 'led', a: 'c7', b: 'c5', color: 'red', lock: false }, { type: 'res', a: 'b11', b: 'd11', lock: false }, { type: 'wire', a: 'a11', b: 'tn11', lock: false }],
+      tray: { led: 1, res: 1, wire: 2 }, need: 1,
+      goal: 'Debug round! This build doesn’t work. Find the <b>two</b> mistakes, take those parts out, and plug them in correctly.' },
+    { pre: [], tray: { led: 1, res: 1, wire: 5 }, need: 1, bottom: true,
+      goal: 'Build it in the <b>bottom half</b> (rows f–j). Careful: the battery is only connected to the <b>top</b> rails!' },
+    { pre: [], tray: { led: 3, res: 1, wire: 5 }, need: 3,
+      goal: 'Master build: make <b>three LEDs</b> glow at the same time!' }
   ];
   const NAME = { led: 'LED', res: 'Resistor', wire: 'Jumper wire' };
   const ICON = {
@@ -2185,12 +2235,12 @@ function challengeBreadboard(ctx) {
     wire: '<svg viewBox="-70 -50 140 90" aria-hidden="true"><path d="M-50 20 Q0 -50 50 20" stroke="#060920" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M-50 20 Q0 -50 50 20" stroke="#1FBF84" stroke-width="7" fill="none" stroke-linecap="round"/><circle cx="-50" cy="20" r="5" fill="#C9CCE0"/><circle cx="50" cy="20" r="5" fill="#C9CCE0"/></svg>'
   };
   let r = 0, parts, mode, pendingA, res, powered, done, peek;
-  const colors = ['green', 'yellow'];
+  const colors = ['green', 'yellow', 'red'];
   function start() {
     const c = R[r]; parts = c.pre.map(p => Object.assign({ lock: true }, p));
     mode = null; pendingA = null; res = null; powered = false; done = false; peek = null;
     ctx.dots(r); ctx.goal(c.goal); ctx.mood('');
-    ctx.say(r === 0 ? 'The battery is already plugged into the top rails. Choose a part, then tap two holes to plug it in.' : r === 2 ? 'Tip: tap any hole to X-ray its hidden clip.' : 'Choose a part from the box, then tap two holes.', 'think');
+    ctx.say(r === 0 ? 'The battery is already plugged into the top rails. Choose a part, then tap two holes to plug it in.' : r === 2 ? 'Tip: tap any hole to X-ray its hidden clip.' : r === 4 ? 'Tap a part on the board to take it out. Tap holes to X-ray the clips.' : r === 5 ? 'Hint: you can join a top rail to a bottom rail with a wire.' : 'Choose a part from the box, then tap two holes.', 'think');
     ctx.actions([{ label: 'Switch ON', cls: 'primary', on: test }, { label: 'Clear my parts', cls: 'ghost', on: clear }]);
     draw(); drawTray();
   }
@@ -2239,7 +2289,7 @@ function challengeBreadboard(ctx) {
     if (occupied(h)) { sfx('bad'); ctx.say('That hole already has a leg in it. Pick an empty hole.', 'oops', 'warn'); return; }
     if (!pendingA) { pendingA = h; sfx('click'); draw(); prompt(); return; }
     const p = { type: mode, a: pendingA, b: h };
-    if (mode === 'led') p.color = colors[parts.filter(q => q.type === 'led').length % 2];
+    if (mode === 'led') p.color = colors[parts.filter(q => q.type === 'led').length % 3];
     parts.push(p); pendingA = null; mode = null;
     sfx('drop'); reset(); draw(); drawTray();
     ctx.say(`${NAME[p.type]} plugged in! Choose the next part, or press <b>Switch ON</b> to test.`, 'happy');
@@ -2249,9 +2299,15 @@ function challengeBreadboard(ctx) {
     mode = null; pendingA = null; peek = null; drawTray();
     res = evalBB(parts); powered = true; draw();
     const need = R[r].need, usesBottom = parts.some(p => [p.a, p.b].some(h => /^b[pn]/.test(h)));
+    const inBottom = parts.some(p => p.type === 'led' && /^[f-j]/.test(p.a) && /^[f-j]/.test(p.b));
+    if (res.status === 'works' && res.lit.size >= need && R[r].bottom && !inBottom) {
+      ctx.miss(); sfx('bad'); ctx.mood('warn');
+      ctx.say('It glows, but the LED must be in the <b>bottom half</b> (rows f–j). Move it down!', 'think', 'warn');
+      return;
+    }
     if (res.status === 'works' && res.lit.size >= need) {
       done = true; sfx('good'); ctx.mood('good');
-      ctx.say(need > 1 ? 'Two LEDs glowing! You solved the challenge. The yellow glow shows the path electricity takes.' : 'It glows! The yellow glow shows the path: + rail → LED → resistor → − rail.', 'wow', 'good');
+      ctx.say(need > 1 ? `${need === 3 ? 'Three' : 'Two'} LEDs glowing! You solved the challenge. The yellow glow shows the path electricity takes.` : 'It glows! The yellow glow shows the path: + rail → LED → resistor → − rail.', 'wow', 'good');
       ctx.actions([{ label: r < R.length - 1 ? 'Next build ›' : 'Finish mission', cls: 'primary', on: () => { if (r < R.length - 1) { r++; start(); } else ctx.win(); } }]);
       return;
     }
@@ -2286,9 +2342,9 @@ const TOPICS = [
   { name: 'Polarity', idea: 'The long leg goes to +.', learn: learnPolarity, solve: { name: 'Which Way?', play: solvePolarity, rounds: 7, stars: [1, 3] } }
 ].map((t, i) => ({ ...t, n: i + 1 }));
 const CHALLENGES = [
-  { name: 'Switch Master', idea: 'Series and parallel switches', play: challengeSwitches, rounds: 8, stars: [1, 3] },
-  { name: 'Circuit Doctor', idea: 'Find what is broken', play: challengeDoctor, rounds: 11, stars: [1, 3] },
-  { name: 'Breadboard Builder', idea: 'Build real circuits', play: challengeBreadboard, rounds: 4, stars: [1, 3] }
+  { name: 'Switch Master', idea: 'Series and parallel switches', play: challengeSwitches, rounds: 14, stars: [1, 3] },
+  { name: 'Circuit Doctor', idea: 'Find what is broken', play: challengeDoctor, rounds: 16, stars: [1, 3] },
+  { name: 'Breadboard Builder', idea: 'Build real circuits', play: challengeBreadboard, rounds: 7, stars: [1, 3] }
 ].map((c, i) => ({ ...c, n: i + 1 }));
 const MAX_BOLTS = (TOPICS.length + CHALLENGES.length) * 3;
 const starsFor = (m, [a, b]) => m <= a ? 3 : m <= b ? 2 : 1;
