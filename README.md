@@ -25,3 +25,23 @@ Final challenges: **Switch Master**, **Circuit Doctor**, **Breadboard Builder**.
 
 Direct links: `#t3-learn`, `#t3-solve`, `#c1` … e.g. `circuit-quest/index.html#t5-learn`.
 Every screen fits the window with no scrolling (full-screen button in the header). Works with mouse or touch. Progress is saved in the browser.
+
+## Algorithm Strategies Lab (lecture slides 43–48)
+
+`algorithm-strategies/index.html` is a self-contained, step-by-step animation page for teaching algorithm strategies (one HTML file, no install). Every example has pseudocode with the current line highlighted, a live variables panel, and Play / Back / Next controls with 4 speeds.
+
+| Slide | Topic | Animated examples |
+|-------|-------|-------------------|
+| 43 | Algorithm structure | 5! iterative (loop) vs recursive (call stack) |
+| 43 | Problem type | Satisfying (first route found) vs optimal (check all routes) |
+| 44 | Brute force | Naive string matching · Traveling salesman (all 24 tours) |
+| 44 | Greedy | Kruskal MST · Dijkstra shortest path |
+| 45 | Divide & conquer | Merge sort · Quick sort |
+| 45 | Dynamic programming | Fibonacci without DP (recursion tree) · Fibonacci with DP (table) · Bellman–Ford |
+| 46 | DFS / BFS | Same graph, stack vs queue |
+| 46 | Backtracking | N-Queens (4×4, 5×5, 6×6) |
+| 47 | Evolutionary | Genetic algorithm (selection, crossover, mutation) |
+| 47 | Randomized | Monte Carlo π · Las Vegas search |
+| 48 | Analysis | Linear search: best, average and worst case |
+
+Keyboard: → next step, ← back, Space play/pause, Home restart, PgDn/PgUp next/previous topic. Direct links: `algorithm-strategies/index.html#greedy`, `#dynamic-programming`, `#backtracking` …

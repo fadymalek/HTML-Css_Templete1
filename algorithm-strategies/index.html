@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Algorithm Strategies Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF1F7; --surface:#FFFFFF; --surface2:#F4F6FB; --line:#D3DAE8; --grid:#E8ECF4; --edge:#B3BED4;
+  --ink:#152039; --ink2:#48546F; --ink3:#7F8BA6;
+  --accent:#2C58E0; --accent-soft:#DDE6FF; --on-accent:#FFFFFF;
+  --amber:#D48406; --amber-soft:#FFEDC9;
+  --green:#12875E; --green-soft:#D2F0E2;
+  --red:#CF3A52; --red-soft:#FCDDE3;
+  --violet:#7450D4; --violet-soft:#EAE2FF;
+  --teal:#0C8796; --teal-soft:#D0F0F2;
+  --cell:#FFFFFF; --sq0:#F4EFE4; --sq1:#D5C6A6;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'Cascadia Mono',Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0C1221; --surface:#131B2F; --surface2:#19223A; --line:#27324F; --grid:#172039; --edge:#3D4A6E;
+    --ink:#E6EBF7; --ink2:#A9B4CF; --ink3:#6F7C9C;
+    --accent:#7392FF; --accent-soft:#1E2B5A; --on-accent:#0C1221;
+    --amber:#F3B443; --amber-soft:#43320F;
+    --green:#3CCB92; --green-soft:#113A2B;
+    --red:#FF6B81; --red-soft:#461A26;
+    --violet:#A88DFF; --violet-soft:#2C2253;
+    --teal:#3DCFDF; --teal-soft:#0F3740;
+    --cell:#161F36; --sq0:#2A3452; --sq1:#1A2239;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0C1221; --surface:#131B2F; --surface2:#19223A; --line:#27324F; --grid:#172039; --edge:#3D4A6E;
+  --ink:#E6EBF7; --ink2:#A9B4CF; --ink3:#6F7C9C;
+  --accent:#7392FF; --accent-soft:#1E2B5A; --on-accent:#0C1221;
+  --amber:#F3B443; --amber-soft:#43320F;
+  --green:#3CCB92; --green-soft:#113A2B;
+  --red:#FF6B81; --red-soft:#461A26;
+  --violet:#A88DFF; --violet-soft:#2C2253;
+  --teal:#3DCFDF; --teal-soft:#0F3740;
+  --cell:#161F36; --sq0:#2A3452; --sq1:#1A2239;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- layout ---------- */
+.app{display:grid;grid-template-columns:258px minmax(0,1fr);min-height:100vh}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);align-self:start;height:100vh;overflow:auto;background:var(--surface);border-right:1px solid var(--line);padding:20px 12px 20px;display:flex;flex-direction:column;gap:18px}
+.brand{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--ink);padding:0 8px}
+.brand b{display:block;font-family:var(--display);font-weight:800;font-size:18px;line-height:1.1;letter-spacing:-.01em}
+.brand small{color:var(--ink3);font-size:12px}
+.logo{width:38px;height:38px;flex:none}
+.toc{display:flex;flex-direction:column;gap:14px}
+.grp{display:flex;flex-direction:column;gap:1px}
+.grp h3{margin:0 0 3px;padding:0 8px;font:600 11px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.toc a{display:flex;align-items:baseline;gap:8px;padding:6px 8px;border-radius:8px;color:var(--ink2);text-decoration:none;font-size:14px;line-height:1.3}
+.toc a .sn{font:500 11px var(--mono);color:var(--ink3);min-width:20px}
+.toc a:hover{background:var(--surface2);color:var(--ink)}
+.toc a[aria-current="page"]{background:var(--accent-soft);color:var(--ink);font-weight:600}
+.toc a[aria-current="page"] .sn{color:var(--accent)}
+.keys{margin-top:auto;font-size:12px;color:var(--ink3);padding:0 8px;line-height:1.9}
+kbd{font:600 11px var(--mono);border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--surface2);color:var(--ink2)}
+main{padding-inline:clamp(16px,2.6vw,34px);padding-block:20px 36px;min-width:0}
+.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+
+/* ---------- topic header ---------- */
+.eyebrow{font:600 12px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(26px,3vw,36px);line-height:1.05;letter-spacing:-.02em;margin:4px 0 0;text-wrap:balance}
+.desc{color:var(--ink2);max-width:82ch;margin:8px 0 0;font-size:15.5px}
+.desc dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:4px 14px}
+.desc dt{font-weight:600;color:var(--ink)}
+.desc dd{margin:0}
+.ex{font-size:14px;color:var(--ink2);margin:8px 0 0}
+.ex span{font:600 11px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin-right:8px}
+.bar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.seg{display:inline-flex;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;color:var(--ink2);font-weight:500;font-size:14px;padding:6px 14px;border-radius:7px;cursor:pointer}
+.seg button:hover{color:var(--ink);background:var(--surface2)}
+.seg button[aria-selected="true"],.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.opts{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:13px;color:var(--ink2)}
+.optbtn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 12px;cursor:pointer;font-size:14px}
+.optbtn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ---------- lab ---------- */
+.lab{display:grid;grid-template-columns:minmax(0,1fr) 316px;grid-template-areas:"stage side" "narr side" "ctrl ctrl";gap:12px 16px;align-items:start}
+.stagebox{grid-area:stage;min-width:0;background-color:var(--surface);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px;background-position:-1px -1px;border:1px solid var(--line);border-radius:14px;padding:10px 10px 8px;display:flex;flex-direction:column;gap:6px}
+.stage{min-width:0}
+.stage svg{display:block;width:100%;height:auto;max-height:min(62vh,540px)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--ink2);padding:0 4px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;border:1.5px solid var(--edge);background:var(--cell);vertical-align:-2px;margin-right:6px}
+.legend i.cmp{background:var(--amber-soft);border-color:var(--amber)}
+.legend i.ok{background:var(--green-soft);border-color:var(--green)}
+.legend i.bad{background:var(--red-soft);border-color:var(--red)}
+.legend i.act{background:var(--accent-soft);border-color:var(--accent)}
+.legend i.vis{background:var(--violet-soft);border-color:var(--violet)}
+.legend i.tealk{background:var(--teal-soft);border-color:var(--teal)}
+.narr{grid-area:narr;font-size:17px;line-height:1.5;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-height:3.6em}
+.narr b{font-weight:700;color:var(--ink)}
+.narr .g{color:var(--green)}
+.narr .r{color:var(--red)}
+.side{grid-area:side;display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ph{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding:9px 12px 7px;border-bottom:1px solid var(--line)}
+.code ol{list-style:none;margin:0;padding:6px 0;counter-reset:ln;font:13px/1.6 var(--mono)}
+.code li{counter-increment:ln;display:grid;grid-template-columns:2.4em minmax(0,1fr);padding:1px 10px 1px 0;white-space:pre-wrap;color:var(--ink2);transition:background .25s,color .25s}
+.code li::before{content:counter(ln);color:var(--ink3);text-align:right;padding-right:.9em;font-size:11px}
+.code li.on{background:var(--accent-soft);color:var(--ink);font-weight:600}
+.code li.on::before{content:"▶";color:var(--accent)}
+.code .cm{color:var(--ink3);font-weight:400}
+.vl{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;min-height:44px}
+.var{font:13px var(--mono);background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--ink2)}
+.var b{color:var(--ink);font-weight:700}
+.ctrl{grid-area:ctrl;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.btns{display:flex;gap:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;min-width:40px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer;font-weight:600;font-size:14px}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn svg{width:18px;height:18px}
+.btn.play{background:var(--accent);border-color:var(--accent);color:var(--on-accent);min-width:108px}
+.prog{flex:1 1 220px;display:flex;align-items:center;gap:12px;min-width:0}
+.prog input{flex:1;min-width:0;accent-color:var(--accent)}
+.cnt{font:13px var(--mono);color:var(--ink2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.spd{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink3)}
+.spd .seg button{padding:4px 9px;font:600 12px var(--mono)}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:4px}
+.pager a{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);min-width:0;max-width:48%}
+.pager a small{font:600 11px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.pager a:hover{border-color:var(--accent)}
+.pager a.nx{margin-left:auto;text-align:right}
+
+@media (max-width:1150px){.lab{grid-template-columns:minmax(0,1fr) 270px}}
+@media (max-width:900px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:12px 16px;gap:10px}
+  .toc{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:4px}
+  .grp{flex-direction:row;flex:none;gap:4px}
+  .grp h3{display:none}
+  .toc a{white-space:nowrap;border:1px solid var(--line)}
+  .keys{display:none}
+  .lab{grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "narr" "ctrl" "side"}
+  .narr{font-size:16px}
+  .desc dl{grid-template-columns:1fr}
+}
+
+/* ---------- SVG visuals ---------- */
+.viz{font-family:var(--mono);overflow:visible}
+.viz text{fill:var(--ink);text-anchor:middle;font-size:16px}
+.viz .l{text-anchor:start}
+.viz .r{text-anchor:end}
+.viz .lb{font-weight:600}
+.viz .lg{font-size:22px}
+.viz .xl{font-size:26px;font-weight:700}
+.viz .sm{font-size:13px;fill:var(--ink2)}
+.viz .mono{font-size:14px}
+.viz .b{font-weight:700}
+.viz .cap{font-size:12px;font-weight:600;letter-spacing:.1em;fill:var(--ink3)}
+.viz .nd{font-size:18px}
+.viz .gtxt{fill:var(--green);font-weight:700}
+.viz .rtxt{fill:var(--red);font-weight:700}
+.viz .atxt{fill:var(--accent);font-weight:700}
+.viz .chg{fill:var(--amber);font-weight:700}
+.it{transition:transform .55s cubic-bezier(.45,.05,.25,1),opacity .35s;animation:fadein .35s ease-out}
+.it.fresh{transition:none}
+.it.hide{opacity:0}
+.it.dim{opacity:.28}
+.it.ghost{opacity:.3}
+@keyframes fadein{from{opacity:0}}
+.bx{fill:var(--cell);stroke:var(--edge);stroke-width:1.6;transition:fill .3s,stroke .3s}
+.cmp>.bx{fill:var(--amber-soft);stroke:var(--amber);stroke-width:2.6}
+.ok>.bx{fill:var(--green-soft);stroke:var(--green);stroke-width:2.2}
+.bad>.bx{fill:var(--red-soft);stroke:var(--red);stroke-width:2.4}
+.act>.bx{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.6}
+.vis>.bx{fill:var(--violet-soft);stroke:var(--violet);stroke-width:2.2}
+.k1>.bx{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.2}
+.k2>.bx{fill:var(--violet-soft);stroke:var(--violet);stroke-width:2.2}
+.k3>.bx{fill:var(--teal-soft);stroke:var(--teal);stroke-width:2.2}
+.bst>.bx{stroke:var(--green);stroke-width:2.2;stroke-dasharray:5 4}
+.ln{stroke:var(--edge);stroke-width:2.6;stroke-linecap:round;transition:stroke .3s,stroke-width .3s}
+.ah{fill:var(--edge);transition:fill .3s}
+.wb{fill:var(--surface);stroke:var(--edge);stroke-width:1.2;transition:fill .3s,stroke .3s}
+.viz .wt{font-size:13px;font-weight:700;fill:var(--ink2)}
+.ed.cmp .ln{stroke:var(--amber);stroke-width:5}
+.ed.cmp .ah{fill:var(--amber)}
+.ed.cmp .wb{stroke:var(--amber);fill:var(--amber-soft)}
+.ed.act .ln{stroke:var(--accent);stroke-width:4.5}
+.ed.act .ah{fill:var(--accent)}
+.ed.act .wb{stroke:var(--accent)}
+.ed.ok .ln{stroke:var(--green);stroke-width:5}
+.ed.ok .ah{fill:var(--green)}
+.ed.ok .wb{stroke:var(--green);fill:var(--green-soft)}
+.ed.bad .ln{stroke:var(--red);stroke-width:4.5;stroke-dasharray:8 6}
+.ed.bad .wb{stroke:var(--red);fill:var(--red-soft)}
+.ed.rej .ln{stroke:var(--red);stroke-width:2.5;stroke-dasharray:4 6;opacity:.55}
+.ed.bst .ln{stroke:var(--green);stroke-width:3.5;stroke-dasharray:8 6}
+.ptr{fill:var(--accent)}
+.base{stroke:var(--ink3);stroke-width:2.5;stroke-linecap:round}
+.brk{fill:none;stroke:var(--ink3);stroke-width:2}
+.bdg{fill:var(--ink)}
+.viz .bdt{fill:var(--bg);font-size:12px;font-weight:700}
+.pill{fill:var(--surface);stroke:var(--edge);stroke-width:1.4}
+.cmp>.pill{fill:var(--amber-soft);stroke:var(--amber);stroke-width:2.4}
+.sq{stroke:none;transition:fill .3s}
+.sq0>.sq{fill:var(--sq0)}
+.sq1>.sq{fill:var(--sq1)}
+.att>.sq{fill:var(--red-soft)}
+.dead>.sq{fill:var(--red-soft);stroke:var(--red);stroke-width:2}
+.qn{fill:var(--ink);transition:fill .3s}
+.cmp .qn{fill:var(--amber)}
+.bad .qn{fill:var(--red)}
+.ok .qn{fill:var(--green)}
+.atkl{stroke:var(--red);stroke-width:3;stroke-dasharray:6 5;stroke-linecap:round}
+.bit rect{fill:var(--cell);stroke:var(--edge);stroke-width:1.2}
+.viz .bit text{font-size:13px;fill:var(--ink3)}
+.bit.b1 rect{fill:var(--accent);stroke:var(--accent)}
+.viz .bit.b1 text{fill:var(--on-accent);font-weight:700}
+.bit.oa rect{fill:var(--accent-soft);stroke:var(--accent)}
+.bit.ob rect{fill:var(--violet-soft);stroke:var(--violet)}
+.viz .bit.oa text,.viz .bit.ob text{fill:var(--ink)}
+.viz .bit.oa.b1 text,.viz .bit.ob.b1 text{font-weight:800}
+.bit.mu rect{fill:var(--red);stroke:var(--red)}
+.viz .bit.mu text{fill:#fff;font-weight:700}
+.fbar{fill:var(--green)}
+.cut{stroke:var(--red);stroke-width:3;stroke-linecap:round}
+.cmp .rowbg{fill:var(--amber-soft);stroke:var(--amber)}
+.ok .rowbg{fill:var(--green-soft);stroke:var(--green)}
+.rowbg{fill:transparent;stroke:none;stroke-width:1.5}
+.viz .tag{font-size:12px;fill:var(--amber);font-weight:700}
+.axis{stroke:var(--edge);stroke-width:1.5}
+.lbest{fill:none;stroke:var(--accent);stroke-width:2.6;stroke-linejoin:round}
+.lavg{fill:none;stroke:var(--ink3);stroke-width:2;stroke-dasharray:5 4}
+.dbest{fill:var(--accent)}
+.sqf{fill:var(--cell);stroke:var(--edge);stroke-width:1.6}
+.qc{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.6}
+.din{fill:none;stroke:var(--accent);stroke-linecap:round}
+.dout{fill:none;stroke:var(--amber);stroke-linecap:round}
+.piline{stroke:var(--green);stroke-width:1.6;stroke-dasharray:5 4}
+.estl{fill:none;stroke:var(--accent);stroke-width:2.4;stroke-linejoin:round}
+.fd>.bx{fill:var(--accent);stroke:var(--accent)}
+.viz .fd text{fill:var(--on-accent)}
+.star{fill:var(--amber);stroke:var(--amber);stroke-width:1;stroke-linejoin:round}
+.barv{fill:var(--accent)}
+.cmp .barv{fill:var(--amber)}
+.hbar{fill:var(--violet)}
+.act .hbar{fill:var(--amber)}
+.avgl{stroke:var(--red);stroke-width:2.2;stroke-dasharray:7 5}
+.arcp{fill:none;stroke:var(--amber);stroke-width:2.6;stroke-linecap:round}
+.arch{fill:var(--amber)}
+@media (prefers-reduced-motion: reduce){
+  .it{transition:none!important;animation:none!important}
+  .code li{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="nav">
+    <a class="brand" href="#structure">
+      <svg class="logo" viewBox="0 0 38 38" aria-hidden="true">
+        <rect x="0.5" y="0.5" width="37" height="37" rx="10" fill="var(--accent-soft)" stroke="var(--accent)"/>
+        <path d="M19 10 L11 21 M19 10 L27 21 M11 21 L15 29" stroke="var(--accent)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="19" cy="10" r="4" fill="var(--accent)"/><circle cx="11" cy="21" r="4" fill="var(--accent)"/>
+        <circle cx="27" cy="21" r="4" fill="var(--amber)"/><circle cx="15" cy="29" r="3.4" fill="var(--green)"/>
+      </svg>
+      <span><b>Algorithm Strategies</b><small>Step-by-step lab · slides 43–48</small></span>
+    </a>
+    <nav class="toc" id="toc" aria-label="Topics"></nav>
+    <div class="keys"><b>Keyboard</b><br><kbd>→</kbd> next step · <kbd>←</kbd> back<br><kbd>Space</kbd> play / pause · <kbd>Home</kbd> restart<br><kbd>PgDn</kbd> / <kbd>PgUp</kbd> next / previous topic</div>
+  </aside>
+  <main><div class="wrap" id="main"></div></main>
+</div>
+
+<script>
+'use strict';
+/* =========================================================
+   Drawing helpers
+   ========================================================= */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const r1 = n => Math.round(n * 10) / 10;
+const T = (x, y, s, c = 'lb') => `<text x="${r1(x)}" y="${r1(y)}" dy=".35em" class="${c}">${s}</text>`;
+const R = (w, h, c = 'bx', rx = 7) => `<rect class="${c}" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="${rx}"/>`;
+const CELL = (w, h, s, c = 'lb') => R(w, h) + T(0, 0, s, c);
+const NODE = (r, s) => `<circle class="bx" r="${r}"/>` + T(0, 0, s, 'lb nd');
+const inf = v => v === Infinity ? '∞' : v;
+const ek = (u, v) => u < v ? u + v : v + u;
+const clone = o => JSON.parse(JSON.stringify(o));
+const PTR = (lab) => `<path class="ptr" d="M0 -12 L8 1 H-8Z"/>` + T(0, 14, lab, 'mono b');
+
+function EDGE(x1, y1, x2, y2, o = {}) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, px = -uy, py = ux;
+  const off = o.off || 0, r = o.r || 0;
+  const ax = x1 + px * off + ux * r, ay = y1 + py * off + uy * r;
+  const bx = x2 + px * off - ux * r, by = y2 + py * off - uy * r;
+  let ex = bx, ey = by, head = '';
+  if (o.dir) {
+    ex = bx - ux * 12; ey = by - uy * 12;
+    head = `<polygon class="ah" points="${r1(bx)},${r1(by)} ${r1(ex + px * 6.5)},${r1(ey + py * 6.5)} ${r1(ex - px * 6.5)},${r1(ey - py * 6.5)}"/>`;
+  }
+  let s = `<line class="ln" x1="${r1(ax)}" y1="${r1(ay)}" x2="${r1(ex)}" y2="${r1(ey)}"/>` + head;
+  if (o.w != null) {
+    const t = o.t ?? .5, lo = o.lo || 0;
+    const mx = ax + (bx - ax) * t + px * lo, my = ay + (by - ay) * t + py * lo;
+    const w = String(o.w).length * 9 + 14;
+    s += `<rect class="wb" x="${r1(mx - w / 2)}" y="${r1(my - 11)}" width="${w}" height="22" rx="11"/>` + T(mx, my, o.w, 'wt');
+  }
+  return s;
+}
+
+/* keyed SVG renderer: items keep their DOM node between steps, so moves animate */
+function paint(stage, vb, items) {
+  let svg = stage._svg;
+  if (!svg || stage._vb !== vb) {
+    stage.textContent = '';
+    svg = document.createElementNS(SVGNS, 'svg');
+    svg.setAttribute('viewBox', vb);
+    svg.setAttribute('class', 'viz');
+    svg.setAttribute('role', 'img');
+    svg._L = [0, 1, 2, 3].map(() => svg.appendChild(document.createElementNS(SVGNS, 'g')));
+    svg._m = new Map();
+    stage.appendChild(svg); stage._svg = svg; stage._vb = vb;
+  }
+  const m = svg._m, seen = new Set();
+  for (const it of items) {
+    if (!it) continue;
+    seen.add(it.k);
+    let g = m.get(it.k);
+    if (!g) {
+      g = document.createElementNS(SVGNS, 'g'); g._f = true; m.set(it.k, g);
+      svg._L[it.z ?? 1].appendChild(g);
+      requestAnimationFrame(() => requestAnimationFrame(() => { g._f = false; g.classList.remove('fresh'); }));
+    }
+    g.setAttribute('class', 'it ' + (it.c || '') + (g._f ? ' fresh' : ''));
+    g.style.transform = `translate(${r1(it.x || 0)}px,${r1(it.y || 0)}px)`;
+    if (g._h !== it.h) { g.innerHTML = it.h; g._h = it.h; }
+  }
+  for (const [k, g] of m) if (!seen.has(k)) { g.remove(); m.delete(k); }
+}
+
+function rng(seed) {
+  return function () {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function shuffle(a, R) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function adjOf(G) {
+  const a = {}; for (const n in G.N) a[n] = [];
+  G.E.forEach(([u, v, w]) => { a[u].push([v, w]); a[v].push([u, w]); });
+  for (const n in a) a[n].sort((x, y) => x[0] < y[0] ? -1 : 1);
+  return a;
+}
+function gItems(G, o = {}) {
+  const r = o.r || 25, it = [];
+  G.E.forEach(e => {
+    const [u, v, w] = e, a = G.N[u], b = G.N[v], off = o.off ? o.off(e) : 0;
+    it.push({ k: 'e' + u + v, z: 0, c: 'ed ' + (o.ec ? o.ec(e) || '' : ''),
+      h: EDGE(a[0], a[1], b[0], b[1], { w: o.noW ? null : w, r, dir: o.dir, off, lo: off ? off * 1.9 : 0, t: o.wt ? o.wt(e) : .5 }) });
+  });
+  for (const n in G.N) { const p = G.N[n]; it.push({ k: 'n' + n, x: p[0], y: p[1], c: 'nd ' + (o.nc ? o.nc(n) || '' : ''), h: NODE(r, n) }); }
+  return it;
+}
+
+/* =========================================================
+   1. Algorithm structure: iterative vs recursive (5!)
+   ========================================================= */
+const factIter = {
+  vb: '0 0 800 360',
+  code: ['function fact(n):', '  result ← 1', '  for i ← 1 to n:', '    result ← result × i', '  return result'],
+  legend: [['act', 'current i'], ['ok', 'already multiplied in']],
+  build() {
+    const n = 5, S = []; let r = 1;
+    S.push({ line: 0, i: 0, r: null, msg: 'We call <b>fact(5)</b>. The iterative version is one function call with one loop inside it.', vars: { n } });
+    S.push({ line: 1, i: 0, r: 1, msg: 'Start with <b>result = 1</b> (multiplying by 1 changes nothing).', vars: { n, result: 1 } });
+    for (let i = 1; i <= n; i++) {
+      S.push({ line: 2, i, r, msg: `Next loop iteration: <b>i = ${i}</b>.`, vars: { n, i, result: r } });
+      const p = r; r *= i;
+      S.push({ line: 3, i, r, f: `${p} × ${i} = ${r}`, msg: `Update the same variable: result = ${p} × ${i} = <b>${r}</b>.`, vars: { n, i, result: r } });
+    }
+    S.push({ line: 4, i: n + 1, r, end: 1, msg: `The loop stops after ${n} iterations. Return <b>${r}</b>. It only needed one variable, no matter how big n is.`, vars: { n, result: r } });
+    return S;
+  },
+  render(s) {
+    const it = [], X = i => 180 + (i - 1) * 110;
+    it.push({ k: 'cap', x: 400, y: 36, h: T(0, 0, 'LOOP COUNTER i', 'cap') });
+    for (let i = 1; i <= 5; i++) it.push({ k: 'c' + i, x: X(i), y: 96, c: (i < s.i || s.end) ? 'ok' : i === s.i ? 'act' : '', h: CELL(80, 60, i, 'lb lg') });
+    it.push({ k: 'ptr', x: X(Math.min(Math.max(s.i, 1), 5)), y: 150, c: s.i >= 1 && !s.end ? '' : 'hide', h: PTR('i') });
+    it.push({ k: 'rb', x: 400, y: 250, c: s.r == null ? 'dim' : s.end ? 'ok' : 'act', h: R(280, 72) + T(0, 0, s.r == null ? 'result = ?' : 'result = ' + s.r, 'xl') });
+    it.push({ k: 'f', x: 400, y: 318, c: s.f ? '' : 'hide', h: T(0, 0, s.f || '', 'mono sm') });
+    return it;
+  }
+};
+
+const factRec = {
+  vb: '0 0 800 400',
+  code: ['function fact(n):', '  if n ≤ 1:', '    return 1            ▸ base case', '  return n × fact(n − 1)  ▸ smaller instance'],
+  legend: [['act', 'running now'], ['vis', 'waiting for a smaller call'], ['ok', 'returning its answer']],
+  build() {
+    const S = [], fr = [];
+    const snap = o => S.push({ fr: clone(fr), ...o, vars: o.vars || { 'stack depth': fr.length } });
+    snap({ line: -1, msg: 'The recursive version: fact(n) = n × fact(n − 1), and fact(1) = 1. Watch the call stack grow and shrink.' });
+    function rec(n) {
+      fr.forEach(f => f.c = 'vis');
+      const me = { n, t: 'running…', c: 'act' }; fr.push(me);
+      snap({ line: 0, msg: `Call <b>fact(${n})</b>. A new frame is pushed on the call stack.` });
+      if (n <= 1) {
+        me.t = 'n ≤ 1 → base case';
+        snap({ line: 1, msg: `${n} ≤ 1, so this is the <b>base case</b>. No more calls are needed.` });
+        me.t = 'returns 1'; me.c = 'ok';
+        snap({ line: 2, msg: `fact(${n}) returns <b>1</b> and its frame is popped.` });
+        fr.pop(); return 1;
+      }
+      me.t = `${n} × fact(${n - 1}) = ?`;
+      snap({ line: 1, msg: `${n} > 1, so fact(${n}) needs the answer to the smaller problem <b>fact(${n - 1})</b>. It pauses and waits.` });
+      const v = rec(n - 1);
+      me.t = `${n} × ${v} = ${n * v}`; me.c = 'ok';
+      snap({ line: 3, msg: `fact(${n - 1}) returned ${v}, so fact(${n}) = ${n} × ${v} = <b>${n * v}</b>.` });
+      fr.pop(); return n * v;
+    }
+    const r = rec(5);
+    snap({ line: -1, res: r, msg: `Done: fact(5) = <b>${r}</b>. Same answer as the loop, but the stack had to hold <b>5 frames</b> at its deepest point.`, vars: { result: r, 'max depth': 5 } });
+    return S;
+  },
+  render(s) {
+    const it = [{ k: 'cap', x: 300, y: 24, h: T(0, 0, 'CALL STACK (NEWEST ON TOP)', 'cap') }];
+    s.fr.forEach((f, i) => it.push({ k: 'f' + f.n, x: 300, y: 336 - i * 58, c: f.c, h: R(380, 48) + T(-172, 0, `fact(${f.n})`, 'lb l') + T(172, 0, esc(f.t), 'mono r') }));
+    if (s.fr.length) it.push({ k: 'top', x: 505, y: 336 - (s.fr.length - 1) * 58, h: T(0, 0, '← top', 'sm l') });
+    it.push({ k: 'base', x: 300, y: 372, z: 0, h: `<line class="base" x1="-205" x2="205" y1="0" y2="0"/>` });
+    if (s.res != null) it.push({ k: 'res', x: 300, y: 200, c: 'ok', h: R(300, 72) + T(0, 0, 'fact(5) = ' + s.res, 'xl') });
+    return it;
+  }
+};
+
+/* =========================================================
+   2. Problem type: satisfying vs optimal (routes)
+   ========================================================= */
+const RG = { N: { A: [70, 200], B: [215, 80], C: [215, 320], D: [395, 80], E: [395, 320], F: [530, 200] },
+  E: [['A', 'B', 4], ['A', 'C', 2], ['B', 'C', 1], ['B', 'D', 5], ['C', 'E', 10], ['D', 'E', 2], ['D', 'F', 6], ['E', 'F', 3]] };
+const ROUTES = (() => {
+  const adj = adjOf(RG), out = [];
+  (function go(u, path, c) {
+    if (u === 'F') { out.push({ p: [...path], c }); return; }
+    for (const [v, w] of adj[u]) if (!path.includes(v)) { path.push(v); go(v, path, c + w); path.pop(); }
+  })('A', ['A'], 0);
+  return out;
+})();
+function routeRender(s) {
+  const P = s.path, on = new Set(), cls = s.done ? 'ok' : 'act';
+  if (P) for (let i = 0; i < P.length - 1; i++) on.add(ek(P[i], P[i + 1]));
+  const it = gItems(RG, { nc: n => P && P.includes(n) ? cls : '', ec: e => on.has(e[0] + e[1]) ? cls : '' });
+  it.push({ k: 'hl', x: 70, y: 242, h: T(0, 0, 'start', 'sm') }, { k: 'ul', x: 530, y: 242, h: T(0, 0, 'goal', 'sm') });
+  it.push({ k: 'lt', x: 690, y: 26, h: T(0, 0, 'ROUTES CHECKED', 'cap') });
+  s.found.forEach(k => {
+    const r = ROUTES[k];
+    it.push({ k: 'r' + k, x: 690, y: 62 + k * 34, c: k === s.best ? (s.done ? 'ok' : 'bst') : k === s.cur ? 'act' : '',
+      h: R(206, 28) + T(-94, 0, '#' + (k + 1), 'sm l') + T(-68, 0, r.p.join('→'), 'mono l') + T(95, 0, r.c, 'lb r') });
+  });
+  return it;
+}
+const satisfying = {
+  vb: '0 0 800 400',
+  code: ['for each route r from A to F:', '  if r reaches F:        ▸ feasible', '    return r             ▸ stop at the first one'],
+  legend: [['act', 'route being tried'], ['ok', 'accepted answer']],
+  build() {
+    const P = ROUTES[0];
+    return [
+      { line: -1, path: null, found: [], msg: 'Goal: <b>any</b> route from A to F. A satisfying algorithm accepts the first route that works.', vars: { routes: 0 } },
+      { line: [0, 1], path: P.p, found: [0], cur: 0, msg: `First route found: ${P.p.join(' → ')}. It reaches F, so it is <b>feasible</b>.`, vars: { routes: 1, cost: P.c } },
+      { line: 2, path: P.p, found: [0], best: 0, done: 1, msg: `Stop here and return it. The answer works, but it costs <b>${P.c}</b>. Nobody checked whether a cheaper route exists. Switch to the <b>Optimal</b> tab to compare.`, vars: { answer: P.c } }
+    ];
+  },
+  render: routeRender
+};
+const optimal = {
+  vb: '0 0 800 400',
+  code: ['best ← none', 'for each route r from A to F:', '  if cost(r) < cost(best):', '    best ← r', 'return best          ▸ only after checking all'],
+  legend: [['act', 'route being tried'], ['bst', 'best so far'], ['ok', 'optimal answer']],
+  build() {
+    const S = []; let best = -1, bc = Infinity;
+    S.push({ line: 0, path: null, found: [], msg: 'Goal: the <b>cheapest</b> route from A to F. To be sure it is the best, we must compare every route.', vars: { best: '∞' } });
+    ROUTES.forEach((r, k) => {
+      const nb = r.c < bc;
+      if (nb) { best = k; bc = r.c; }
+      S.push({ line: nb ? [1, 2, 3] : [1, 2], path: r.p, found: [...Array(k + 1).keys()], cur: k, best,
+        msg: `Route #${k + 1}: ${r.p.join(' → ')} costs ${r.c}. ${nb ? `<b class="g">New best!</b>` : `Not better than ${bc}.`}`, vars: { checked: k + 1, best: bc } });
+    });
+    S.push({ line: 4, path: ROUTES[best].p, found: [...ROUTES.keys()], best, done: 1,
+      msg: `All ${ROUTES.length} routes checked. The optimal route is ${ROUTES[best].p.join(' → ')} with cost <b>${bc}</b> (the satisfying answer cost ${ROUTES[0].c}).`, vars: { checked: ROUTES.length, best: bc } });
+    return S;
+  },
+  render: routeRender
+};
+
+/* =========================================================
+   3. Brute force: naive string matching + TSP
+   ========================================================= */
+const TX = 'CACATCHCAT', PT = 'CAT';
+const naiveMatch = {
+  vb: '0 0 800 360',
+  code: ['for s ← 0 to n − m:', '  j ← 0', '  while j < m and T[s+j] = P[j]:', '    j ← j + 1', '  if j = m: report match at s'],
+  legend: [['ok', 'characters equal'], ['bad', 'mismatch'], ['vis', 'match found']],
+  build() {
+    const n = TX.length, m = PT.length, S = [], found = []; let comps = 0;
+    S.push({ s: 0, st: null, found: [], line: -1, msg: `Find every place where the pattern <b>"${PT}"</b> appears in the text. Brute force tries every shift s = 0 … ${n - m}.`, vars: { n, m } });
+    for (let s = 0; s <= n - m; s++) {
+      S.push({ s, st: [], found: [...found], line: [0, 1], msg: `Shift <b>s = ${s}</b>: slide the pattern under T[${s}].`, vars: { s, comparisons: comps } });
+      let j = 0; const st = [];
+      while (j < m) {
+        comps++; const ok = TX[s + j] === PT[j]; st.push(ok);
+        S.push({ s, st: [...st], found: [...found], line: ok ? [2, 3] : 2,
+          msg: `Compare T[${s + j}] = '${TX[s + j]}' with P[${j}] = '${PT[j]}' → ${ok ? '<b class="g">equal</b>' : '<b class="r">different</b>, give up on this shift'}.`, vars: { s, j, comparisons: comps } });
+        if (!ok) break; j++;
+      }
+      if (j === m) { found.push(s); S.push({ s, st: [...st], found: [...found], line: 4, msg: `All ${m} characters match → <b>pattern found at s = ${s}</b>.`, vars: { s, comparisons: comps } }); }
+    }
+    S.push({ s: n - m, st: null, found: [...found], end: 1, line: -1,
+      msg: `Done. Matches at s = ${found.join(' and ')}. Brute force used <b>${comps} comparisons</b>. Worst case: (n − m + 1) × m = ${(n - m + 1) * m}, so O(n·m).`, vars: { comparisons: comps } });
+    return S;
+  },
+  render(s) {
+    const X = i => 130 + i * 60, it = [];
+    it.push({ k: 'lT', x: 64, y: 120, h: T(0, 0, 'TEXT', 'cap') }, { k: 'lP', x: 64, y: 206, h: T(0, 0, 'PATTERN', 'cap') });
+    const inF = i => s.found.some(f => i >= f && i < f + PT.length);
+    for (let i = 0; i < TX.length; i++) {
+      let c = inF(i) ? 'vis' : '';
+      const d = i - s.s; if (s.st && d >= 0 && d < s.st.length) c = s.st[d] ? 'ok' : 'bad';
+      it.push({ k: 'i' + i, x: X(i), y: 78, h: T(0, 0, i, 'sm') });
+      it.push({ k: 't' + i, x: X(i), y: 120, c, h: CELL(50, 54, TX[i], 'lb lg') });
+    }
+    for (let j = 0; j < PT.length; j++) {
+      let c = ''; if (s.st && j < s.st.length) c = s.st[j] ? 'ok' : 'bad'; if (s.end) c = 'hide';
+      it.push({ k: 'p' + j, x: X(s.s + j), y: 206, c, h: CELL(50, 54, PT[j], 'lb lg') });
+    }
+    it.push({ k: 'sh', x: X(s.s + 1), y: 256, c: s.end ? 'hide' : '', h: T(0, 0, 's = ' + s.s, 'mono b') });
+    it.push({ k: 'fd', x: 400, y: 318, h: T(0, 0, s.found.length ? 'Matches at s = ' + s.found.join(', ') : 'No match yet', 'lb') });
+    return it;
+  }
+};
+
+const TC = { A: [110, 95], B: [330, 50], C: [530, 175], D: [420, 345], E: [135, 300] };
+const TG = { N: TC, E: [] };
+(() => { const ks = Object.keys(TC); for (let i = 0; i < ks.length; i++) for (let j = i + 1; j < ks.length; j++) { const a = TC[ks[i]], b = TC[ks[j]]; TG.E.push([ks[i], ks[j], Math.round(Math.hypot(a[0] - b[0], a[1] - b[1]) / 10)]); } })();
+const TW = {}; TG.E.forEach(([u, v, w]) => TW[u + v] = w);
+function perms(a) { if (a.length <= 1) return [a]; const out = []; a.forEach((x, i) => perms([...a.slice(0, i), ...a.slice(i + 1)]).forEach(p => out.push([x, ...p]))); return out; }
+const tsp = {
+  vb: '0 0 800 400',
+  code: ['best ← ∞', 'for each order of the cities (start at A):', '  len ← length of the round trip', '  if len < best:', '    best ← len; bestTour ← tour', 'return bestTour'],
+  legend: [['act', 'tour being checked'], ['bst', 'best tour so far (dashed)'], ['ok', 'optimal tour']],
+  build() {
+    const S = [], P = perms(['B', 'C', 'D', 'E']); let best = Infinity, bt = null;
+    S.push({ line: 0, tour: null, best: null, k: 0, n: P.length, msg: `A salesman starts at A, visits every city once and returns. Brute force: try all ${P.length} orders (4! = 24) and keep the shortest.`, vars: { tours: P.length } });
+    P.forEach((p, k) => {
+      const tour = ['A', ...p, 'A']; let len = 0;
+      for (let i = 0; i < tour.length - 1; i++) len += TW[ek(tour[i], tour[i + 1])];
+      const nb = len < best; if (nb) { best = len; bt = tour; }
+      S.push({ line: nb ? [2, 3, 4] : [2, 3], tour, len, best: bt, bl: best, k: k + 1, n: P.length, nb,
+        msg: `Tour ${k + 1}/${P.length}: ${tour.join('→')} has length ${len}. ${nb ? '<b class="g">New best!</b>' : `Best is still ${best}.`}`, vars: { tour: k + 1, length: len, best } });
+    });
+    S.push({ line: 5, tour: bt, best: bt, bl: best, k: P.length, n: P.length, done: 1,
+      msg: `All 24 tours checked. The shortest is ${bt.join('→')} with length <b>${best}</b>. Correct, but the work grows like (n−1)!, which explodes quickly.`, vars: { best } });
+    return S;
+  },
+  render(s) {
+    const on = new Set(), bon = new Set();
+    if (s.tour) for (let i = 0; i < s.tour.length - 1; i++) on.add(ek(s.tour[i], s.tour[i + 1]));
+    if (s.best) for (let i = 0; i < s.best.length - 1; i++) bon.add(ek(s.best[i], s.best[i + 1]));
+    const it = gItems(TG, { r: 22, nc: n => s.done ? 'ok' : (s.tour ? 'act' : ''),
+      ec: e => { const k = e[0] + e[1]; if (s.done) return on.has(k) ? 'ok' : 'dim'; if (on.has(k)) return 'act'; if (bon.has(k)) return 'bst'; return 'dim'; } });
+    it.push({ k: 'st', x: 110, y: 134, h: T(0, 0, 'start', 'sm') });
+    const X = 612;
+    it.push({ k: 'r1', x: X, y: 40, h: T(0, 0, s.tour ? `TOUR ${s.k} OF ${s.n}` : `${s.n} TOURS TO CHECK`, 'cap l') });
+    it.push({ k: 'r2', x: X, y: 72, c: s.tour ? '' : 'hide', h: T(0, 0, s.tour ? s.tour.join('→') : '', 'mono b l') });
+    it.push({ k: 'r3', x: X, y: 102, c: s.tour ? '' : 'hide', h: T(0, 0, 'length ' + (s.len ?? s.bl), 'mono l') });
+    it.push({ k: 'r4', x: X, y: 130, c: s.bl ? '' : 'hide', h: T(0, 0, 'best so far ' + (s.bl ?? ''), 'mono l gtxt') });
+    it.push({ k: 'g0', x: X, y: 196, h: T(0, 0, 'CITIES → TOURS', 'cap l') });
+    [['5', '24'], ['8', '5,040'], ['10', '362,880'], ['15', '8.7 × 10¹⁰'], ['20', '1.2 × 10¹⁷']].forEach(([a, b], i) =>
+      it.push({ k: 'g' + (i + 1), x: X, y: 226 + i * 28, h: T(0, 0, a, 'mono l') + T(176, 0, b, 'mono r' + (i === 0 ? ' atxt' : '')) }));
+    return it;
+  }
+};
+
+/* =========================================================
+   4. Greedy: Kruskal + Dijkstra
+   ========================================================= */
+const G2 = { N: { A: [90, 95], B: [300, 60], C: [510, 100], D: [100, 305], E: [310, 245], F: [510, 315] },
+  E: [['A', 'B', 4], ['A', 'D', 1], ['B', 'C', 6], ['B', 'D', 3], ['B', 'E', 2], ['C', 'E', 5], ['C', 'F', 3], ['D', 'E', 7], ['E', 'F', 4]] };
+const kruskal = {
+  vb: '0 0 800 400',
+  code: ['sort edges by weight          ▸ cheapest first', 'T ← empty tree', 'for each edge (u, v) in that order:', '  if u and v are in different sets:  ▸ no cycle', '    add (u, v) to T; union(u, v)', '  if T has n − 1 edges: stop'],
+  legend: [['cmp', 'edge being considered'], ['ok', 'edge added to the tree'], ['bad', 'rejected (would make a cycle)'], ['k1', 'node groups (sets)']],
+  build() {
+    const nodes = Object.keys(G2.N);
+    const sorted = G2.E.map(e => ({ u: e[0], v: e[1], w: e[2], key: e[0] + e[1] })).sort((a, b) => a.w - b.w);
+    const par = {}, col = {}; nodes.forEach(n => par[n] = n);
+    const find = x => par[x] === x ? x : (par[x] = find(par[x]));
+    let next = 1, W = 0, cnt = 0; const st = {}; const S = [];
+    const sets = () => { const g = {}; nodes.forEach(n => (g[find(n)] = g[find(n)] || []).push(n)); return Object.values(g).map(a => '{' + a.join(',') + '}').join(' '); };
+    const nc = () => { const o = {}; nodes.forEach(n => { const c = col[find(n)]; if (c) o[n] = c; }); return o; };
+    const snap = o => S.push({ st: { ...st }, nc: nc(), W, cnt, sortedView: true, ...o, vars: { sets: sets(), 'tree weight': W } });
+    snap({ line: -1, sortedView: false, msg: 'Goal: connect all 6 nodes using the smallest total edge weight (a <b>minimum spanning tree</b>). Each node starts in its own set.' });
+    snap({ line: [0, 1], msg: 'First, sort all edges from cheapest to most expensive (see the list).' });
+    for (let i = 0; i < sorted.length; i++) {
+      const e = sorted[i]; st[e.key] = 'cmp';
+      snap({ line: [2, 3], cur: e.key, msg: `Greedy choice: the cheapest edge left is <b>${e.u}–${e.v} (${e.w})</b>. Are ${e.u} and ${e.v} in different sets?` });
+      const ru = find(e.u), rv = find(e.v);
+      if (ru !== rv) {
+        const c = col[ru] || col[rv] || next++; par[rv] = ru; col[ru] = c; st[e.key] = 'ok'; W += e.w; cnt++;
+        snap({ line: 4, cur: e.key, msg: `Yes → <b class="g">add ${e.u}–${e.v}</b> and merge their sets. Tree weight is now ${W}.` });
+      } else {
+        st[e.key] = 'bad';
+        snap({ line: 3, cur: e.key, msg: `No: ${e.u} and ${e.v} are already connected, so this edge would close a <b class="r">cycle</b>. Skip it.` });
+        st[e.key] = 'rej';
+      }
+      if (cnt === nodes.length - 1) {
+        for (let k = i + 1; k < sorted.length; k++) st[sorted[k].key] = 'dim';
+        snap({ line: 5, done: 1, msg: `The tree has ${cnt} edges = n − 1, so every node is connected. Total weight <b>${W}</b>. For MSTs, this greedy choice is proven to give the optimum.` });
+        break;
+      }
+    }
+    return S;
+  },
+  render(s) {
+    const sorted = G2.E.map(e => e[0] + e[1]).sort((a, b) => G2.E.find(e => e[0] + e[1] === a)[2] - G2.E.find(e => e[0] + e[1] === b)[2]);
+    const it = gItems(G2, { nc: n => s.nc[n] ? 'k' + s.nc[n] : '', ec: e => s.st[e[0] + e[1]] || '' });
+    it.push({ k: 'lt', x: 695, y: 24, h: T(0, 0, s.sortedView ? 'EDGES, CHEAPEST FIRST' : 'EDGES (UNSORTED)', 'cap') });
+    G2.E.forEach((e, oi) => {
+      const key = e[0] + e[1], pos = s.sortedView ? sorted.indexOf(key) : oi, c = s.st[key];
+      it.push({ k: 'l' + key, x: 695, y: 58 + pos * 33, c: c === 'rej' ? 'bad dim' : c || '', h: R(170, 27) + T(-70, 0, `${e[0]}–${e[1]}`, 'lb l') + T(70, 0, e[2], 'lb r') });
+    });
+    it.push({ k: 'tw', x: 695, y: 370, h: T(0, 0, `tree weight = ${s.W}`, 'lb' + (s.done ? ' gtxt' : '')) });
+    return it;
+  }
+};
+
+const dijkstra = {
+  vb: '0 0 800 400',
+  code: ['dist[A] ← 0; all others ← ∞', 'while unvisited nodes remain:', '  u ← unvisited node with smallest dist  ▸ greedy', '  mark u visited (dist[u] is final)', '  for each neighbor v of u:', '    if dist[u] + w(u,v) < dist[v]:', '      dist[v] ← dist[u] + w(u,v); prev[v] ← u'],
+  legend: [['act', 'node chosen now'], ['ok', 'visited: distance is final'], ['cmp', 'edge being relaxed / updated distance']],
+  build() {
+    const N = Object.keys(G2.N), adj = adjOf(G2), d = {}, p = {}, vis = {}, S = [];
+    N.forEach(n => { d[n] = Infinity; p[n] = null; }); d.A = 0;
+    const snap = o => S.push({ d: { ...d }, p: { ...p }, vis: { ...vis }, ...o, vars: { dist: N.map(n => n + ':' + inf(d[n])).join(' ') } });
+    snap({ line: -1, msg: 'Find the shortest distance from <b>A</b> to every other node.' });
+    snap({ line: 0, msg: 'Start: dist[A] = 0 and every other node is ∞ (not reached yet).' });
+    for (;;) {
+      const u = N.filter(n => !vis[n]).sort((a, b) => d[a] === d[b] ? 0 : d[a] < d[b] ? -1 : 1)[0];
+      if (!u || d[u] === Infinity) break;
+      vis[u] = true;
+      snap({ line: [1, 2, 3], u, msg: `Greedy choice: the closest unvisited node is <b>${u}</b> (dist ${d[u]}). Its distance is now final.` });
+      for (const [v, w] of adj[u]) {
+        if (vis[v]) continue;
+        const nd = d[u] + w;
+        if (nd < d[v]) { const old = d[v]; d[v] = nd; p[v] = u; snap({ line: [4, 5, 6], u, e: ek(u, v), upd: v, msg: `Edge ${u}–${v}: ${d[u]} + ${w} = ${nd} < ${inf(old)} → <b>dist[${v}] = ${nd}</b> (via ${u}).` }); }
+        else snap({ line: [4, 5], u, e: ek(u, v), msg: `Edge ${u}–${v}: ${d[u]} + ${w} = ${nd}, not better than ${d[v]}. Keep the old distance.` });
+      }
+    }
+    const path = v => v === 'A' ? 'A' : path(p[v]) + '→' + v;
+    snap({ line: -1, done: 1, msg: `Done. The green edges form the shortest-path tree from A. Example: the shortest way to F is ${path('F')} with length <b>${d.F}</b>.` });
+    return S;
+  },
+  render(s) {
+    const tree = new Set(); for (const v in s.p) if (s.p[v]) tree.add(ek(s.p[v], v));
+    const it = gItems(G2, { nc: n => s.u === n ? 'act' : s.vis[n] ? 'ok' : '',
+      ec: e => { const k = e[0] + e[1]; if (k === s.e) return 'cmp'; if (tree.has(k)) return s.done ? 'ok' : 'act'; return s.done ? 'dim' : ''; } });
+    for (const n in G2.N) { const q = G2.N[n]; it.push({ k: 'd' + n, x: q[0], y: q[1] + (q[1] < 200 ? -44 : 44), z: 2, c: s.upd === n ? 'cmp' : '', h: R(52, 24, 'pill', 12) + T(0, 0, inf(s.d[n]), 'mono b') }); }
+    it.push({ k: 'th', x: 695, y: 26, h: T(-62, 0, 'NODE', 'cap') + T(4, 0, 'DIST', 'cap') + T(66, 0, 'VIA', 'cap') });
+    Object.keys(G2.N).forEach((n, i) => it.push({ k: 't' + n, x: 695, y: 62 + i * 38, c: s.u === n ? 'act' : s.upd === n ? 'cmp' : s.vis[n] ? 'ok' : '',
+      h: R(180, 30) + T(-62, 0, n, 'lb') + T(4, 0, inf(s.d[n]), 'lb') + T(66, 0, s.p[n] || '–', 'mono') }));
+    return it;
+  }
+};
+
+/* =========================================================
+   5. Divide and conquer: merge sort + quick sort
+   ========================================================= */
+const MA = [38, 27, 43, 3, 9, 82, 10];
+const MSEG = []; (function sg(lo, hi, d) { (MSEG[d] = MSEG[d] || []).push([lo, hi]); if (lo < hi) { const m = (lo + hi) >> 1; sg(lo, m, d + 1); sg(m + 1, hi, d + 1); } })(0, MA.length - 1, 0);
+const MCW = 66, MGAP = 22, MMAX = Math.max(...MSEG.map(a => a.length));
+function msX(d, pos) {
+  const k = MSEG[d].findIndex(([a, b]) => pos >= a && pos <= b);
+  const total = MA.length * MCW + (MMAX - 1) * MGAP, shift = ((MMAX - 1) - (MSEG[d].length - 1)) * MGAP / 2;
+  return (800 - total) / 2 + MCW / 2 + pos * MCW + k * MGAP + shift;
+}
+const mergeSort = {
+  vb: '0 0 800 380',
+  code: ['mergeSort(A, lo, hi):', '  if lo ≥ hi: return      ▸ 1 element = sorted', '  mid ← ⌊(lo + hi) / 2⌋', '  mergeSort(A, lo, mid)     ▸ divide', '  mergeSort(A, mid+1, hi)', '  merge(A, lo, mid, hi)     ▸ combine'],
+  legend: [['act', 'part being divided'], ['cmp', 'compared while merging'], ['ok', 'sorted part']],
+  build() {
+    const el = MA.map((v, id) => ({ v, id, d: 0, p: id })), S = [];
+    const snap = o => S.push({ el: el.map(e => ({ ...e })), ...o });
+    const vals = (lo, hi, d) => el.filter(e => e.d === d && e.p >= lo && e.p <= hi).sort((a, b) => a.p - b.p).map(e => e.v).join(', ');
+    snap({ line: -1, msg: 'Merge sort: <b>divide</b> the array in half until every piece has one element, then <b>combine</b> (merge) sorted pieces back together.' });
+    function ms(lo, hi, d) {
+      if (lo >= hi) return;
+      const m = (lo + hi) >> 1;
+      const L = vals(lo, m, d), Rr = vals(m + 1, hi, d);
+      el.forEach(e => { if (e.d === d && e.p >= lo && e.p <= hi) e.d = d + 1; });
+      snap({ line: [2, 3, 4], hl: [lo, hi, d + 1], msg: `Divide [${L}, ${Rr}] into [${L}] and [${Rr}].` });
+      ms(lo, m, d + 1); ms(m + 1, hi, d + 1);
+      const A = el.filter(e => e.d === d + 1 && e.p >= lo && e.p <= m).sort((a, b) => a.p - b.p);
+      const B = el.filter(e => e.d === d + 1 && e.p > m && e.p <= hi).sort((a, b) => a.p - b.p);
+      let k = lo;
+      while (A.length || B.length) {
+        if (A.length && B.length) {
+          const a = A[0], b = B[0], t = a.v <= b.v ? A.shift() : B.shift(), o = t === a ? b : a;
+          t.d = d; t.p = k++;
+          snap({ line: 5, cmp: [o.id], take: t.id, msg: `Merge: compare ${a.v} and ${b.v} → <b>${t.v}</b> is smaller, it goes up next.` });
+        } else {
+          const rest = A.length ? A : B, vs = rest.map(e => e.v).join(', ');
+          rest.forEach(e => { e.d = d; e.p = k++; }); rest.length = 0;
+          snap({ line: 5, msg: `One side is empty → copy the rest (${vs}) up in order.` });
+        }
+      }
+      snap({ line: 5, okR: [lo, hi, d], msg: `Merged into [${vals(lo, hi, d)}]. Combining two sorted halves takes just one pass.` });
+    }
+    ms(0, MA.length - 1, 0);
+    snap({ line: -1, all: 1, msg: 'Sorted! About log₂ n levels of dividing, and n steps of merging per level → <b>O(n log n)</b>.' });
+    return S;
+  },
+  render(s) {
+    const it = [];
+    for (let d = 0; d < MSEG.length; d++) it.push({ k: 'lv' + d, x: 22, y: 50 + d * 92, h: T(0, 0, 'L' + d, 'cap') });
+    s.el.forEach(e => {
+      let c = '';
+      if (s.all) c = 'ok';
+      else if (s.take === e.id) c = 'ok';
+      else if (s.cmp && s.cmp.includes(e.id)) c = 'cmp';
+      else if (s.okR && e.d === s.okR[2] && e.p >= s.okR[0] && e.p <= s.okR[1]) c = 'ok';
+      else if (s.hl && e.d === s.hl[2] && e.p >= s.hl[0] && e.p <= s.hl[1]) c = 'act';
+      it.push({ k: 'v' + e.id, x: msX(e.d, e.p), y: 50 + e.d * 92, c, h: CELL(56, 52, e.v, 'lb lg') });
+    });
+    return it;
+  }
+};
+
+const QA = [7, 2, 1, 6, 8, 5, 3, 4];
+const quickSort = {
+  vb: '0 0 800 360',
+  code: ['quickSort(A, lo, hi):', '  if lo ≥ hi: return', '  pivot ← A[hi]; i ← lo − 1', '  for j ← lo to hi − 1:', '    if A[j] ≤ pivot: i ← i+1; swap A[i], A[j]', '  swap A[i+1], A[hi]      ▸ pivot is placed', '  quickSort(lo, i); quickSort(i+2, hi)'],
+  legend: [['vis', 'pivot'], ['cmp', 'A[j] being compared'], ['act', '≤ pivot (small side)'], ['ok', 'in its final place']],
+  build() {
+    const a = QA.map((v, id) => ({ v, id })), sorted = new Set(), S = [];
+    const snap = o => S.push({ ord: a.map(e => e.id), sorted: [...sorted], ...o });
+    snap({ line: -1, lo: 0, hi: QA.length - 1, msg: 'Quick sort: pick a <b>pivot</b>, move smaller values to its left and bigger values to its right, then sort each side the same way.' });
+    function qs(lo, hi) {
+      if (lo > hi) return;
+      if (lo === hi) { sorted.add(a[lo].id); snap({ line: 1, lo, hi, msg: `Sub-array [${lo}..${hi}] has one element (${a[lo].v}), so it is already sorted.` }); return; }
+      const pv = a[hi]; let i = lo - 1;
+      snap({ line: 2, lo, hi, piv: pv.id, i, msg: `Sort indexes ${lo}..${hi}. Pivot = last element = <b>${pv.v}</b>.`, vars: { pivot: pv.v, i } });
+      for (let j = lo; j < hi; j++) {
+        const x = a[j];
+        if (x.v <= pv.v) {
+          i++; const sw = i !== j; [a[i], a[j]] = [a[j], a[i]];
+          snap({ line: [3, 4], lo, hi, piv: pv.id, i, j, cmp: x.id, msg: sw ? `${x.v} ≤ ${pv.v} → i = ${i}, <b>swap</b> ${x.v} into the small side.` : `${x.v} ≤ ${pv.v} → i = ${i}. It is already on the small side.`, vars: { pivot: pv.v, i, j } });
+        } else snap({ line: [3, 4], lo, hi, piv: pv.id, i, j, cmp: x.id, msg: `${x.v} > ${pv.v} → leave it on the big side.`, vars: { pivot: pv.v, i, j } });
+      }
+      [a[i + 1], a[hi]] = [a[hi], a[i + 1]]; sorted.add(pv.id);
+      snap({ line: 5, lo, hi, piv: pv.id, i, msg: `Swap the pivot to index ${i + 1}. <b>${pv.v}</b> is in its final place: smaller values on its left, bigger on its right.`, vars: { pivot: pv.v } });
+      qs(lo, i); qs(i + 2, hi);
+    }
+    qs(0, QA.length - 1);
+    snap({ line: -1, lo: 0, hi: QA.length - 1, done: 1, msg: 'Sorted! Average time <b>O(n log n)</b>. If the pivot is always the smallest or largest value, it degrades to O(n²).' });
+    return S;
+  },
+  render(s) {
+    const X = p => 120 + p * 80, it = [];
+    s.ord.forEach((id, p) => {
+      let c = '';
+      if (s.done || s.sorted.includes(id)) c = 'ok';
+      else if (p < s.lo || p > s.hi) c = 'dim';
+      else if (id === s.piv) c = 'vis';
+      else if (id === s.cmp) c = 'cmp';
+      else if (s.i != null && p >= s.lo && p <= s.i) c = 'act';
+      it.push({ k: 'v' + id, x: X(p), y: 140, c, h: CELL(62, 62, QA[id], 'lb lg') });
+      it.push({ k: 'ix' + p, x: X(p), y: 86, h: T(0, 0, p, 'sm') });
+    });
+    if (!s.done) {
+      it.push({ k: 'br', z: 0, h: `<path class="brk" d="M${X(s.lo) - 34} 184 v10 H${X(s.hi) + 34} v-10"/>` });
+      it.push({ k: 'brl', x: (X(s.lo) + X(s.hi)) / 2, y: 212, h: T(0, 0, `sub-array [${s.lo}..${s.hi}]`, 'sm') });
+    }
+    it.push({ k: 'pj', x: X(s.j ?? 0), y: 256, c: s.j != null ? '' : 'hide', h: PTR('j') });
+    it.push({ k: 'pi', x: X(Math.max(s.i ?? 0, 0)), y: 304, c: s.i != null && s.i >= s.lo && !s.done ? '' : 'hide', h: PTR('i') });
+    return it;
+  }
+};
+
+/* =========================================================
+   6. Dynamic programming: Fibonacci + Bellman-Ford
+   ========================================================= */
+const FT = []; (() => {
+  let id = 0;
+  (function mk(n, d, parent) { const nd = { id: id++, n, d, parent, kids: [] }; FT.push(nd); if (n > 1) nd.kids = [mk(n - 1, d + 1, nd.id), mk(n - 2, d + 1, nd.id)]; return nd.id; })(5, 0, null);
+  let lc = 0; (function lay(i) { const nd = FT[i]; if (!nd.kids.length) nd.x = lc++; else { nd.kids.forEach(lay); nd.x = (FT[nd.kids[0]].x + FT[nd.kids[1]].x) / 2; } })(0);
+})();
+const FX = x => 70 + x * (660 / 7), FY = d => 40 + d * 82;
+const fibTree = {
+  vb: '0 0 800 400',
+  code: ['fib(n):', '  if n ≤ 1: return n', '  return fib(n − 1) + fib(n − 2)'],
+  legend: [['act', 'call in progress'], ['ok', 'first time this value is computed'], ['bad', 'computed again (wasted work)']],
+  build() {
+    const st = FT.map(() => ({ s: 0 })), seen = new Set(), S = []; let calls = 0, rep = 0;
+    const snap = o => S.push({ st: clone(st), ...o, vars: { calls, 'repeated calls': rep } });
+    snap({ line: -1, msg: 'Plain recursion for <b>fib(5)</b>, <b>without</b> storing results. Watch how the same sub-problems get solved again and again.' });
+    function run(i) {
+      const nd = FT[i], again = seen.has(nd.n); calls++; if (again) rep++;
+      if (nd.n <= 1) {
+        st[i] = { s: 2, v: nd.n, rep: again }; seen.add(nd.n);
+        snap({ line: 1, cur: i, msg: `fib(${nd.n}) is a base case → returns ${nd.n}.${again ? ' <b class="r">We already knew this answer.</b>' : ''}` });
+        return nd.n;
+      }
+      st[i] = { s: 1, rep: again };
+      snap({ line: 2, cur: i, msg: `Call fib(${nd.n}). It needs fib(${nd.n - 1}) and fib(${nd.n - 2}).${again ? ` <b class="r">fib(${nd.n}) was already solved earlier. Solving it again!</b>` : ''}` });
+      const v = run(nd.kids[0]) + run(nd.kids[1]);
+      st[i] = { s: 2, v, rep: again }; seen.add(nd.n);
+      snap({ line: 2, cur: i, msg: `fib(${nd.n}) = fib(${nd.n - 1}) + fib(${nd.n - 2}) = <b>${v}</b>.` });
+      return v;
+    }
+    const v = run(0);
+    snap({ line: -1, msg: `fib(5) = ${v}, but it took <b>${calls} calls</b> for only 6 different sub-problems. ${rep} calls (red) repeat old work. fib(30) would need 2,692,537 calls. Dynamic programming stores each answer once.` });
+    return S;
+  },
+  render(s) {
+    const it = [];
+    FT.forEach(nd => {
+      const st = s.st[nd.id]; if (!st.s) return;
+      const x = FX(nd.x), y = FY(nd.d);
+      if (nd.parent != null) { const p = FT[nd.parent]; it.push({ k: 'e' + nd.id, z: 0, c: 'ed', h: EDGE(FX(p.x), FY(p.d), x, y, { r: 24 }) }); }
+      it.push({ k: 'n' + nd.id, x, y, c: st.s === 1 ? 'act' : st.rep ? 'bad' : 'ok',
+        h: R(70, 48, 'bx', 10) + T(0, -10, `fib(${nd.n})`, 'mono b') + T(0, 11, st.s === 2 ? '= ' + st.v : '…', 'sm b') });
+    });
+    return it;
+  }
+};
+
+const fibDP = {
+  vb: '0 0 800 360',
+  code: ['F[0] ← 0; F[1] ← 1', 'for i ← 2 to n:', '  F[i] ← F[i − 1] + F[i − 2]   ▸ reuse stored', 'return F[n]'],
+  legend: [['cmp', 'stored values being reused'], ['act', 'value being computed'], ['ok', 'stored in the table']],
+  build() {
+    const n = 10, F = [], S = [];
+    S.push({ line: -1, F: [], msg: 'Dynamic Fibonacci: keep a table F and fill it from small to large. Each value is computed <b>once</b> and then reused.', vars: { n } });
+    F[0] = 0; F[1] = 1;
+    S.push({ line: 0, F: [...F], cur: 1, msg: 'Store the base cases: F[0] = 0 and F[1] = 1.', vars: { n, additions: 0 } });
+    for (let i = 2; i <= n; i++) {
+      F[i] = F[i - 1] + F[i - 2];
+      S.push({ line: [1, 2], F: [...F], cur: i, src: true, f: `F[${i}] = F[${i - 1}] + F[${i - 2}] = ${F[i - 1]} + ${F[i - 2]} = ${F[i]}`, msg: `i = ${i}: look up F[${i - 1}] = ${F[i - 1]} and F[${i - 2}] = ${F[i - 2]} in the table → F[${i}] = <b>${F[i]}</b>.`, vars: { i, additions: i - 1 } });
+    }
+    S.push({ line: 3, F: [...F], done: 1, f: `fib(10) = ${F[n]}`, msg: `Return F[10] = <b>${F[n]}</b> after only <b>9 additions</b>, O(n). Plain recursion for fib(10) makes 177 calls, and the gap grows exponentially.`, vars: { additions: 9 } });
+    return S;
+  },
+  render(s) {
+    const X = i => 70 + i * 66, it = [];
+    it.push({ k: 'cap', x: 400, y: 30, h: T(0, 0, 'TABLE F (STORED RESULTS)', 'cap') });
+    for (let i = 0; i <= 10; i++) {
+      const has = s.F[i] != null;
+      let c = has ? 'ok' : '';
+      if (s.src && (i === s.cur - 1 || i === s.cur - 2)) c = 'cmp';
+      if (i === s.cur && !s.done) c = 'act';
+      it.push({ k: 'c' + i, x: X(i), y: 180, c, h: CELL(56, 56, has ? s.F[i] : '', 'lb lg') });
+      it.push({ k: 'i' + i, x: X(i), y: 226, h: T(0, 0, i, 'sm') });
+    }
+    const arc = (w, hgt) => `<path class="arcp" d="M${-w} -32 Q ${-w / 2} ${-32 - hgt} -4 -36"/><path class="arch" d="M-4 -30 l-6 -10 l9 1z"/>`;
+    const show = s.src && !s.done;
+    it.push({ k: 'a1', x: X(s.cur || 2), y: 180, z: 2, c: show ? '' : 'hide', h: arc(66, 44) });
+    it.push({ k: 'a2', x: X(s.cur || 2), y: 180, z: 2, c: show ? '' : 'hide', h: arc(132, 90) });
+    it.push({ k: 'f', x: 400, y: 290, c: s.f ? '' : 'hide', h: T(0, 0, s.f || '', 'mono b' + (s.done ? ' gtxt' : '')) });
+    return it;
+  }
+};
+
+const BG = { N: { s: [60, 210], t: [240, 90], x: [450, 90], y: [240, 330], z: [450, 330] },
+  E: [['t', 'x', 5], ['t', 'y', 8], ['t', 'z', -4], ['x', 't', -2], ['y', 'x', -3], ['y', 'z', 9], ['z', 'x', 7], ['z', 's', 2], ['s', 't', 6], ['s', 'y', 7]] };
+const BPO = { s: [0, -46], t: [0, -46], x: [0, -46], y: [0, 46], z: [0, 46] };
+const bellman = {
+  vb: '0 0 800 400',
+  code: ['d[s] ← 0; others ← ∞', 'for k ← 1 to |V| − 1:           ▸ pass k', '  for each edge u → v (weight w):', '    if d[u] + w < d[v]:', '      d[v] ← d[u] + w', '  store d as row k; stop if nothing changed'],
+  legend: [['cmp', 'edge being relaxed / value just improved'], ['act', 'table row just stored'], ['ok', 'final shortest paths']],
+  build() {
+    const V = Object.keys(BG.N), d = {}, p = {}, rows = [], S = [];
+    V.forEach(v => { d[v] = Infinity; p[v] = null; }); d.s = 0;
+    const snap = o => S.push({ d: { ...d }, p: { ...p }, rows: rows.map(r => [...r]), ...o });
+    rows.push(V.map(v => inf(d[v])));
+    snap({ line: -1, msg: 'Shortest paths from <b>s</b>. Some edges are <b>negative</b>, so Dijkstra’s greedy choice can be wrong. Bellman–Ford uses dynamic programming instead.' });
+    snap({ line: 0, rowHi: 0, msg: 'Row 0 of the table: d[s] = 0, all others ∞. That is the best we can do using 0 edges.', vars: { pass: 0 } });
+    for (let k = 1; k < V.length; k++) {
+      let changed = false;
+      for (const [u, v, w] of BG.E) {
+        const key = 'e' + u + v;
+        if (d[u] === Infinity) { snap({ line: [2, 3], e: key, k, msg: `Pass ${k}, edge ${u}→${v}: ${u} is not reached yet (∞), nothing to do.`, vars: { pass: k } }); continue; }
+        const nd = d[u] + w;
+        if (nd < d[v]) { const old = d[v]; d[v] = nd; p[v] = u; changed = true; snap({ line: [3, 4], e: key, k, upd: v, msg: `Pass ${k}, edge ${u}→${v}: ${d[u]} + ${w < 0 ? '(' + w + ')' : w} = ${nd} < ${inf(old)} → <b>d[${v}] = ${nd}</b>.`, vars: { pass: k } }); }
+        else snap({ line: [2, 3], e: key, k, msg: `Pass ${k}, edge ${u}→${v}: ${d[u]} + ${w < 0 ? '(' + w + ')' : w} = ${nd}, not better than ${d[v]}.`, vars: { pass: k } });
+      }
+      rows.push(V.map(v => inf(d[v])));
+      if (!changed) { snap({ line: 5, rowHi: k, k, msg: `Pass ${k} changed nothing, so the stored table is final. Stop early.`, vars: { pass: k } }); break; }
+      snap({ line: 5, rowHi: k, k, msg: `End of pass ${k}: store the distances as row ${k}. The next pass starts from these stored results.`, vars: { pass: k } });
+    }
+    snap({ line: -1, done: 1, msg: `Final distances: t = ${d.t}, x = ${d.x}, y = ${d.y}, z = ${d.z}. Every pass reused the stored results of the previous one instead of recomputing paths.` });
+    return S;
+  },
+  render(s) {
+    const it = gItems(BG, { r: 25, dir: true,
+      off: e => BG.E.some(f => f[0] === e[1] && f[1] === e[0]) ? 8 : 0,
+      wt: e => ({ tz: .3, yx: .3, zs: .72 })[e[0] + e[1]] ?? .5,
+      nc: n => s.upd === n ? 'cmp' : s.done ? 'ok' : '',
+      ec: e => { if ('e' + e[0] + e[1] === s.e) return 'cmp'; if (s.done) return s.p[e[1]] === e[0] ? 'ok' : 'dim'; return ''; } });
+    for (const v in BG.N) { const q = BG.N[v], o = BPO[v]; it.push({ k: 'd' + v, x: q[0] + o[0], y: q[1] + o[1], z: 2, c: s.upd === v ? 'cmp' : '', h: R(50, 24, 'pill', 12) + T(0, 0, inf(s.d[v]), 'mono b') }); }
+    const V = Object.keys(BG.N), CX = i => 606 + i * 40;
+    it.push({ k: 'th', x: 0, y: 36, h: T(560, 0, 'k', 'cap') + V.map((v, i) => T(CX(i), 0, v, 'lb')).join('') });
+    s.rows.forEach((row, k) => {
+      const prev = s.rows[k - 1];
+      it.push({ k: 'row' + k, x: 0, y: 72 + k * 34, c: k === s.rowHi ? 'act' : '',
+        h: T(560, 0, k, 'mono') + row.map((val, i) => `<g transform="translate(${CX(i)},0)">${R(36, 28)}${T(0, 0, val, 'mono' + (prev && prev[i] !== val ? ' chg' : ''))}</g>`).join('') });
+    });
+    ['After pass k, every path with', 'at most k edges is covered.', 'Orange = improved in that pass.'].forEach((t, i) =>
+      it.push({ k: 'nt' + i, x: 546, y: 282 + i * 22, h: T(0, 0, t, 'sm l') }));
+    return it;
+  }
+};
+
+/* =========================================================
+   7/8. DFS and BFS
+   ========================================================= */
+const G3 = { N: { A: [290, 50], B: [160, 150], C: [420, 150], D: [80, 255], E: [290, 255], F: [480, 255], G: [185, 350] },
+  E: [['A', 'B'], ['A', 'C'], ['B', 'D'], ['B', 'E'], ['C', 'E'], ['C', 'F'], ['D', 'G'], ['E', 'G']] };
+const dfs = {
+  vb: '0 0 800 400',
+  code: ['dfs(u):', '  mark u visited; push u on the stack', '  for each neighbor v of u:', '    if v is not visited:', '      dfs(v)                ▸ go deeper', '  pop u                     ▸ backtrack'],
+  legend: [['act', 'current node (top of stack)'], ['vis', 'on the stack, waiting'], ['ok', 'finished'], ['cmp', 'edge being checked']],
+  build() {
+    const adj = adjOf(G3), vis = {}, fin = {}, stack = [], order = [], tree = {}, S = [];
+    const snap = o => S.push({ vis: { ...vis }, fin: { ...fin }, stack: [...stack], order: [...order], tree: { ...tree }, ...o, vars: { order: order.join(' ') || '—', 'stack size': stack.length } });
+    snap({ line: -1, msg: 'Depth-first search from <b>A</b>. Neighbors are checked in alphabetical order.' });
+    (function go(u, from) {
+      vis[u] = 1; stack.push(u); order.push(u); if (from) tree[ek(from, u)] = 1;
+      snap({ line: from ? [4, 0, 1] : [0, 1], msg: from ? `${u} is not visited → <b>go deeper</b>. Visit ${u} and push it on the stack.` : `Visit <b>${u}</b> and push it on the stack.` });
+      for (const [v] of adj[u]) {
+        if (vis[v]) { snap({ line: [2, 3], e: ek(u, v), msg: `Check ${u} → ${v}: ${v} is already visited, skip it.` }); continue; }
+        snap({ line: [2, 3], e: ek(u, v), msg: `Check ${u} → ${v}: not visited yet.` });
+        go(v, u);
+      }
+      fin[u] = 1; stack.pop();
+      snap({ line: 5, msg: stack.length ? `${u} has no unvisited neighbors left → <b>backtrack</b> to ${stack[stack.length - 1]}.` : `${u} is finished and the stack is empty. Done! Visit order: <b>${order.join(' → ')}</b>.` });
+    })('A', null);
+    return S;
+  },
+  render(s) {
+    const top = s.stack[s.stack.length - 1];
+    const it = gItems(G3, { noW: true, nc: n => n === top ? 'act' : s.stack.includes(n) ? 'vis' : s.fin[n] ? 'ok' : '',
+      ec: e => { const k = e[0] + e[1]; if (k === s.e) return 'cmp'; return s.tree[k] ? 'act' : ''; } });
+    s.order.forEach((n, i) => it.push({ k: 'o' + n, x: G3.N[n][0] + 28, y: G3.N[n][1] - 26, z: 2, h: `<circle class="bdg" r="11"/>` + T(0, 0, i + 1, 'bdt') }));
+    it.push({ k: 'sc', x: 690, y: 30, h: T(0, 0, 'STACK', 'cap') });
+    it.push({ k: 'sb', x: 690, y: 384, z: 0, h: `<line class="base" x1="-70" x2="70" y1="0" y2="0"/>` });
+    s.stack.forEach((n, i) => it.push({ k: 's' + n, x: 690, y: 360 - i * 42, c: n === top ? 'act' : 'vis', h: CELL(120, 34, n) }));
+    return it;
+  }
+};
+const bfs = {
+  vb: '0 0 800 400',
+  code: ['queue ← [A]; level[A] ← 0', 'while the queue is not empty:', '  u ← take from the front      ▸ FIFO', '  for each neighbor v of u:', '    if v is not discovered:', '      level[v] ← level[u] + 1; add v to the back'],
+  legend: [['act', 'node taken from the queue'], ['vis', 'discovered, waiting in the queue'], ['ok', 'done'], ['cmp', 'edge being checked']],
+  build() {
+    const adj = adjOf(G3), lvl = { A: 0 }, q = ['A'], done = {}, tree = {}, order = [], S = [];
+    const snap = o => S.push({ lvl: { ...lvl }, q: [...q], done: { ...done }, tree: { ...tree }, ...o, vars: { order: order.join(' ') || '—', 'queue size': q.length } });
+    snap({ line: 0, msg: 'Breadth-first search from <b>A</b>. Put A in the queue with level 0.' });
+    while (q.length) {
+      const u = q.shift(); order.push(u);
+      snap({ line: [1, 2], u, msg: `Take <b>${u}</b> from the <b>front</b> of the queue (level ${lvl[u]}).` });
+      for (const [v] of adj[u]) {
+        if (v in lvl) { snap({ line: [3, 4], u, e: ek(u, v), msg: `Check ${u} → ${v}: already discovered, skip.` }); continue; }
+        lvl[v] = lvl[u] + 1; q.push(v); tree[ek(u, v)] = 1;
+        snap({ line: [4, 5], u, e: ek(u, v), msg: `Check ${u} → ${v}: new node → level ${lvl[v]}, add ${v} to the <b>back</b> of the queue.` });
+      }
+      done[u] = 1;
+    }
+    snap({ line: -1, fin: 1, msg: `Done. Visit order <b>${order.join(' → ')}</b>: level by level. The level of each node is the fewest edges from A, so BFS finds shortest paths in unweighted graphs.` });
+    return S;
+  },
+  render(s) {
+    const it = gItems(G3, { noW: true, nc: n => n === s.u ? 'act' : s.done[n] ? 'ok' : (n in s.lvl) ? 'vis' : '',
+      ec: e => { const k = e[0] + e[1]; if (k === s.e) return 'cmp'; return s.tree[k] ? (s.fin ? 'ok' : 'act') : (s.fin ? 'dim' : ''); } });
+    [50, 150, 255, 350].forEach((y, i) => it.push({ k: 'lv' + i, x: 22, y, h: T(0, 0, 'L' + i, 'cap') }));
+    for (const n in s.lvl) it.push({ k: 'lb' + n, x: G3.N[n][0] + 28, y: G3.N[n][1] - 26, z: 2, h: `<circle class="bdg" r="11"/>` + T(0, 0, s.lvl[n], 'bdt') });
+    it.push({ k: 'qc', x: 690, y: 30, h: T(0, 0, 'QUEUE  (FRONT ↑)', 'cap') });
+    s.q.forEach((n, i) => it.push({ k: 'q' + n, x: 690, y: 72 + i * 42, c: i === 0 ? 'act' : 'vis', h: CELL(120, 34, n) }));
+    return it;
+  }
+};
+
+/* =========================================================
+   9. Backtracking: N-Queens
+   ========================================================= */
+const QUEEN = sc => `<g transform="scale(${r1(sc * 100) / 100})"><path class="qn" d="M-20 12 L-25 -12 L-11 0 L0 -20 L11 0 L25 -12 L20 12 Z"/><rect class="qn" x="-21" y="15" width="42" height="7" rx="2"/><circle class="qn" cx="-25" cy="-14" r="4"/><circle class="qn" cx="0" cy="-23" r="4"/><circle class="qn" cx="25" cy="-14" r="4"/></g>`;
+const nQueens = {
+  vb: '0 0 800 400',
+  code: ['place(row):', '  if row = N: return true      ▸ solution', '  for col ← 1 to N:', '    if safe(row, col):', '      put a queen at (row, col)', '      if place(row + 1): return true', '      remove the queen          ▸ backtrack', '  return false                 ▸ dead end'],
+  legend: [['cmp', 'trying this square'], ['bad', 'attacked / dead end'], ['ok', 'solution']],
+  opts: [{ id: 'n', type: 'choice', label: 'Board', vals: [4, 5, 6], fmt: v => `${v}×${v}`, def: 4 }],
+  build(o) {
+    const N = o.n, q = [], S = []; let tries = 0, backs = 0;
+    const snap = x => S.push({ N, q: [...q], ...x, vars: { 'squares tried': tries, backtracks: backs } });
+    snap({ line: -1, msg: `Place ${N} queens on a ${N}×${N} board so that no two attack each other (same column or diagonal). One queen per row.` });
+    const attacker = (r, c) => { for (let k = 0; k < r; k++) if (q[k] === c || Math.abs(q[k] - c) === r - k) return k; return -1; };
+    (function place(r) {
+      if (r === N) { snap({ line: 1, sol: 1, msg: `Every row has a queen and none attack each other → <b class="g">solution found</b> after ${tries} tries and ${backs} backtracks.` }); return true; }
+      for (let c = 0; c < N; c++) {
+        tries++; const a = attacker(r, c);
+        if (a >= 0) { snap({ line: [2, 3], tr: { r, c }, atk: a, msg: `Row ${r + 1}, column ${c + 1}: attacked by the queen in row ${a + 1} ✗` }); continue; }
+        q[r] = c;
+        snap({ line: [3, 4], newq: r, msg: `Row ${r + 1}, column ${c + 1} is safe → place a queen${r + 1 < N ? ` and move on to row ${r + 2}` : ''}.` });
+        if (place(r + 1)) return true;
+        q.length = r; backs++;
+        snap({ line: 6, tr: { r, c, back: 1 }, msg: `The rows below hit a dead end. <b>Backtrack</b>: remove the queen from row ${r + 1}, column ${c + 1} and try the next column.` });
+      }
+      snap({ line: 7, dead: r, msg: `Row ${r + 1} has no safe column left → return to row ${r} and change its choice.` });
+      return false;
+    })(0);
+    return S;
+  },
+  render(s) {
+    const N = s.N, B = 340, cs = B / N, x0 = 50, y0 = 30, it = [];
+    const att = new Set();
+    s.q.forEach((c, r) => { for (let rr = r + 1; rr < N; rr++) for (let cc = 0; cc < N; cc++) if (cc === c || Math.abs(cc - c) === rr - r) att.add(rr + '_' + cc); });
+    for (let r = 0; r < N; r++) {
+      it.push({ k: 'rl' + r, x: x0 - 20, y: y0 + r * cs + cs / 2, h: T(0, 0, r + 1, 'sm') });
+      for (let c = 0; c < N; c++) it.push({ k: `c${N}_${r}_${c}`, z: 0, x: x0 + c * cs, y: y0 + r * cs,
+        c: ((r + c) % 2 ? 'sq1' : 'sq0') + (s.dead === r ? ' dead' : att.has(r + '_' + c) ? ' att' : ''), h: `<rect class="sq" width="${r1(cs)}" height="${r1(cs)}"/>` });
+    }
+    const cx = c => x0 + c * cs + cs / 2, cy = r => y0 + r * cs + cs / 2;
+    s.q.forEach((c, r) => it.push({ k: 'q' + r, z: 2, x: cx(c), y: cy(r), c: s.sol ? 'ok' : r === s.newq ? 'cmp' : '', h: QUEEN(cs / 90) }));
+    if (s.tr) it.push({ k: 'q' + s.tr.r, z: 2, x: cx(s.tr.c), y: cy(s.tr.r), c: s.tr.back ? 'bad ghost' : s.atk != null ? 'bad' : 'cmp', h: QUEEN(cs / 90) });
+    if (s.atk != null && s.tr) it.push({ k: 'atk', z: 3, h: `<line class="atkl" x1="${r1(cx(s.tr.c))}" y1="${r1(cy(s.tr.r))}" x2="${r1(cx(s.q[s.atk]))}" y2="${r1(cy(s.atk))}"/>` });
+    it.push({ k: 'lt', x: 450, y: 44, h: T(0, 0, 'QUEENS SO FAR', 'cap l') });
+    s.q.forEach((c, r) => it.push({ k: 'ql' + r, x: 450, y: 80 + r * 30, h: T(0, 0, `row ${r + 1} → column ${c + 1}`, 'mono l') }));
+    const v = s.vars;
+    it.push({ k: 'tr', x: 450, y: 300, h: T(0, 0, 'SQUARES TRIED', 'cap l') + T(150, 0, v['squares tried'], 'lb l') });
+    it.push({ k: 'bk', x: 450, y: 334, h: T(0, 0, 'BACKTRACKS', 'cap l') + T(150, 0, v.backtracks, 'lb l rtxt') });
+    return it;
+  }
+};
+
+/* =========================================================
+   10. Evolutionary: genetic algorithm (OneMax)
+   ========================================================= */
+function bitsH(row) {
+  let s = '';
+  row.b.forEach((b, i) => {
+    const c = ['bit', b ? 'b1' : 'b0', row.src ? 'o' + row.src[i] : '', row.mut && row.mut.includes(i) ? 'mu' : ''].join(' ');
+    s += `<g class="${c}"><rect x="${i * 22}" y="-13" width="19" height="26" rx="4"/><text x="${i * 22 + 9.5}" y="0" dy=".35em">${b}</text></g>`;
+  });
+  if (row.cut != null) s += `<line class="cut" x1="${row.cut * 22 - 1.5}" y1="-19" x2="${row.cut * 22 - 1.5}" y2="19"/>`;
+  return s;
+}
+function gaRow(row, tag, left) {
+  const f = row.b.reduce((a, b) => a + b, 0);
+  return `<rect class="rowbg" x="-34" y="-17" width="${left ? 390 : 350}" height="34" rx="8"/>` + T(-8, 0, tag, 'sm r') + bitsH(row) +
+    `<rect class="fbar" x="226" y="-7" width="${f * 5}" height="14" rx="3"/>` + T(284, 0, f, 'sm b l') + (row.p ? T(306, 0, row.p, 'tag l') : '') + (row.tag ? T(306, 0, row.tag, 'sm l') : '');
+}
+const genetic = {
+  vb: '0 0 800 410',
+  code: ['population ← random bit strings', 'repeat: fitness = number of 1s', '  keep the best 2 (elitism)', '  select parents (tournaments)', '  children ← crossover(parents)', '  mutate children (flip bits, 10%)', 'until a perfect string appears'],
+  legend: [['cmp', 'selected as parent'], ['ok', 'elite (kept as is)'], ['act', 'bits from parent 1'], ['vis', 'bits from parent 2'], ['bad', 'mutated bit']],
+  opts: [{ id: 'seed', type: 'seed', label: 'New random run', def: 5 }],
+  build(o) {
+    const R = rng(o.seed), L = 10, P = 6, MAXG = 20, S = [], hist = [];
+    const fit = b => b.reduce((a, c) => a + c, 0);
+    let pop = Array.from({ length: P }, () => Array.from({ length: L }, () => R() < .3 ? 1 : 0));
+    const snap = x => S.push({ hist: clone(hist), ...x });
+    snap({ line: 0, g: 1, L: pop.map(b => ({ b })), R: [], msg: 'Goal: evolve the string <b>1111111111</b>. Fitness = how many 1s a string has. Generation 1 is completely random.' });
+    for (let g = 1; g <= MAXG; g++) {
+      const f = pop.map(fit), best = Math.max(...f), avg = f.reduce((a, c) => a + c, 0) / P;
+      hist.push([best, avg]);
+      const vars = { generation: g, best: best + '/10', average: avg.toFixed(1) };
+      snap({ line: 1, g, L: pop.map(b => ({ b })), R: [], vars, msg: `Generation ${g}: measure fitness (green bars). Best = <b>${best}/10</b>, average = ${avg.toFixed(1)}.` });
+      if (best === L) {
+        snap({ line: 6, g, done: 1, L: pop.map(b => ({ b, c: fit(b) === L ? 'ok' : '' })), R: [], vars,
+          msg: `<b class="g">1111111111 found in generation ${g}.</b> Selection, crossover and mutation got there without trying all 1,024 possible strings.` });
+        return S;
+      }
+      if (g === MAXG) {
+        snap({ line: 6, g, done: 1, L: pop.map(b => ({ b, c: fit(b) === best ? 'ok' : '' })), R: [], vars,
+          msg: `Stopped after ${MAXG} generations. The best string has ${best}/10 ones: a good <b>approximate</b> answer. Try “New random run”.` });
+        return S;
+      }
+      const ord = [...pop.keys()].sort((a, b) => f[b] - f[a]);
+      const next = [{ b: [...pop[ord[0]]], tag: 'elite', c: 'ok' }, { b: [...pop[ord[1]]], tag: 'elite', c: 'ok' }];
+      snap({ line: 2, g, L: pop.map((b, i) => ({ b, c: i === ord[0] || i === ord[1] ? 'ok' : '' })), R: clone(next), vars,
+        msg: `Elitism: copy the two fittest strings (#${ord[0] + 1} and #${ord[1] + 1}) into the next generation unchanged.` });
+      const par = [], tx = [];
+      for (let k = 0; k < 4; k++) { const a = Math.floor(R() * P), b = Math.floor(R() * P), w = f[a] >= f[b] ? a : b; par.push(w); tx.push(`#${a + 1} vs #${b + 1} → #${w + 1}`); }
+      const tags = i => par.map((p, k) => p === i ? 'P' + (k + 1) : '').filter(Boolean).join(' ');
+      snap({ line: 3, g, L: pop.map((b, i) => ({ b, c: par.includes(i) ? 'cmp' : '', p: tags(i) })), R: clone(next), vars,
+        msg: `Selection by tournament: pick 2 at random, the fitter one becomes a parent. ${tx.join(' · ')}.` });
+      for (let k = 0; k < 2; k++) {
+        const A = pop[par[2 * k]], B = pop[par[2 * k + 1]], cut = 1 + Math.floor(R() * (L - 1));
+        next.push({ b: [...A.slice(0, cut), ...B.slice(cut)], src: A.map((_, i) => i < cut ? 'a' : 'b'), cut, tag: 'child' },
+                  { b: [...B.slice(0, cut), ...A.slice(cut)], src: A.map((_, i) => i < cut ? 'b' : 'a'), cut, tag: 'child' });
+        snap({ line: 4, g, L: pop.map((b, i) => ({ b, c: i === par[2 * k] || i === par[2 * k + 1] ? 'cmp' : '', p: tags(i) })), R: clone(next), vars,
+          msg: `Crossover P${2 * k + 1} × P${2 * k + 2}: cut after bit ${cut} (red line) and swap the tails. Blue bits come from P${2 * k + 1}, purple bits from P${2 * k + 2}.` });
+      }
+      let flips = 0;
+      for (let r = 2; r < P; r++) {
+        const m = []; next[r].b.forEach((bit, i) => { if (R() < .1) { next[r].b[i] = 1 - bit; m.push(i); flips++; } });
+        next[r].mut = m; delete next[r].src; delete next[r].cut;
+      }
+      snap({ line: 5, g, L: pop.map(b => ({ b })), R: clone(next), vars,
+        msg: flips ? `Mutation: ${flips} random bit${flips > 1 ? 's were' : ' was'} flipped (red). Mutation adds variety that crossover alone cannot create.` : 'Mutation: this time no bit was flipped (each bit has a 10% chance).' });
+      pop = next.map(r => r.b);
+    }
+return S;
+  },
+  render(s) {
+    const it = [];
+    it.push({ k: 'tl', x: 50, y: 30, h: T(0, 0, 'GENERATION ' + s.g, 'cap l') }, { k: 'tr', x: 450, y: 30, h: T(0, 0, 'NEXT GENERATION', 'cap l') });
+    s.L.forEach((row, r) => it.push({ k: 'L' + r, x: 50, y: 66 + r * 38, c: row.c || '', h: gaRow(row, '#' + (r + 1), true) }));
+    s.R.forEach((row, r) => it.push({ k: 'R' + r, x: 450, y: 66 + r * 38, c: row.c || '', h: gaRow(row, '', false) }));
+    const GX = g => 70 + (g - 1) * 36, GY = f => 398 - f * 8.4;
+    let ch = `<line class="axis" x1="60" y1="${GY(0)}" x2="760" y2="${GY(0)}"/><line class="axis" x1="60" y1="${GY(0)}" x2="60" y2="${GY(10)}"/>` +
+      T(52, GY(10), '10', 'sm r') + T(52, GY(0), '0', 'sm r') + T(66, 298, 'BEST (BLUE) AND AVERAGE (GREY) FITNESS PER GENERATION', 'cap l');
+    if (s.hist.length) {
+      ch += `<polyline class="lavg" points="${s.hist.map((h, i) => GX(i + 1) + ',' + r1(GY(h[1]))).join(' ')}"/>`;
+      ch += `<polyline class="lbest" points="${s.hist.map((h, i) => GX(i + 1) + ',' + GY(h[0])).join(' ')}"/>`;
+      s.hist.forEach((h, i) => ch += `<circle class="dbest" cx="${GX(i + 1)}" cy="${GY(h[0])}" r="3.5"/>`);
+    }
+    it.push({ k: 'chart', z: 0, h: ch });
+    return it;
+  }
+};
+
+/* =========================================================
+   11. Randomized: Monte Carlo pi + Las Vegas search
+   ========================================================= */
+const monteCarlo = {
+  vb: '0 0 800 400',
+  code: ['inside ← 0', 'repeat N times:', '  x, y ← random numbers in [0, 1)', '  if x² + y² ≤ 1: inside ← inside + 1', 'π ≈ 4 × inside / N          ▸ approximate'],
+  legend: [['act', 'dart inside the quarter circle'], ['cmp', 'dart outside']],
+  opts: [{ id: 'seed', type: 'seed', label: 'New random darts', def: 11 }],
+  build(o) {
+    const R = rng(o.seed), NS = [0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000], pts = [];
+    for (let i = 0; i < 5000; i++) { const x = R(), y = R(); pts.push([x, y, x * x + y * y <= 1]); }
+    const S = [], est = []; let inside = 0, n = 0;
+    NS.forEach(N => {
+      while (n < N) { if (pts[n][2]) inside++; n++; }
+      const e = N ? 4 * inside / N : null; if (e != null) est.push(e);
+      S.push({ N, inside, e, est: [...est], pts, line: N ? [1, 2, 3, 4] : 0,
+        msg: N === 0 ? 'Throw random darts at a 1 × 1 square. The quarter circle covers π/4 of the square, so about π/4 of the darts should land inside it.'
+          : `${N} dart${N > 1 ? 's' : ''}: ${inside} inside → π ≈ 4 × ${inside} / ${N} = <b>${e.toFixed(4)}</b> (off by ${Math.abs(e - Math.PI).toFixed(4)}).`,
+        vars: { N, inside, 'π estimate': e == null ? '—' : e.toFixed(4) } });
+    });
+    const last = S[S.length - 1];
+    S.push({ ...last, line: 4, msg: `More random samples → better estimate, but it is never exact. That is <b>Monte Carlo</b>: a fixed amount of work and an answer that is probably close. (π = 3.14159…)` });
+    return S;
+  },
+  render(s) {
+    const x0 = 40, y0 = 40, W = 320, it = [];
+    it.push({ k: 'sq', z: 0, h: `<rect class="sqf" x="${x0}" y="${y0}" width="${W}" height="${W}"/><path class="qc" d="M${x0} ${y0} A${W} ${W} 0 0 1 ${x0 + W} ${y0 + W} L${x0} ${y0 + W}Z"/>` + T(x0, y0 + W + 16, '0', 'sm') + T(x0 + W, y0 + W + 16, '1', 'sm') + T(x0 - 14, y0, '1', 'sm') });
+    const pi = [], po = [];
+    for (let i = 0; i < s.N; i++) { const [x, y, inn] = s.pts[i]; (inn ? pi : po).push(`M${r1(x0 + x * W)} ${r1(y0 + W - y * W)}h0`); }
+    const sw = s.N <= 20 ? 12 : s.N <= 200 ? 7 : s.N <= 1000 ? 5 : 3.5;
+    it.push({ k: 'din', z: 1, h: `<path class="din" stroke-width="${sw}" d="${pi.join('')}"/><path class="dout" stroke-width="${sw}" d="${po.join('')}"/>` });
+    const X = 420;
+    it.push({ k: 'n1', x: X, y: 52, h: T(0, 0, 'DARTS', 'cap l') + T(0, 30, s.N, 'xl l') });
+    it.push({ k: 'n2', x: X + 140, y: 52, h: T(0, 0, 'INSIDE', 'cap l') + T(0, 30, s.inside, 'xl l atxt') });
+    it.push({ k: 'n3', x: X, y: 140, h: T(0, 0, 'π ≈ 4 × inside / darts', 'mono l') + T(0, 36, s.e == null ? '—' : s.e.toFixed(4), 'xl l') });
+    const CX = i => 430 + i * 30, CY = e => 385 - (Math.min(Math.max(e, 2), 4) - 2) * 60;
+    let ch = `<line class="axis" x1="425" y1="385" x2="780" y2="385"/><line class="piline" x1="425" y1="${r1(CY(Math.PI))}" x2="780" y2="${r1(CY(Math.PI))}"/>` +
+      T(784, CY(Math.PI), 'π', 'sm l') + T(420, CY(4), '4', 'sm r') + T(420, CY(2), '2', 'sm r') + T(425, 244, 'ESTIMATE AS DARTS INCREASE', 'cap l');
+    if (s.est.length) ch += `<polyline class="estl" points="${s.est.map((e, i) => CX(i) + ',' + r1(CY(e))).join(' ')}"/>` + s.est.map((e, i) => `<circle class="dbest" cx="${CX(i)}" cy="${r1(CY(e))}" r="3"/>`).join('');
+    it.push({ k: 'ch', z: 0, h: ch });
+    return it;
+  }
+};
+
+const STAR = r => { let p = []; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .45 : r; p.push(r1(Math.cos(a) * rr) + ',' + r1(Math.sin(a) * rr)); } return `<polygon class="star" points="${p.join(' ')}"/>`; };
+const lasVegas = {
+  vb: '0 0 800 400',
+  code: ['input: 12 cards, 3 hide a ★ (random places)', 'repeat:', '  flip a random unopened card', '  if it shows ★: return it     ▸ always correct'],
+  legend: [['ok', 'star found'], ['bad', 'empty card']],
+  opts: [{ id: 'seed', type: 'seed', label: 'New random runs', def: 3 }],
+  build(o) {
+    const R = rng(o.seed), S = [], runs = [];
+    S.push({ line: 0, run: 0, open: [], stars: [], runs: [], msg: '12 face-down cards, 3 of them hide a ★. Task: find any ★. Strategy: flip random cards until you hit one. We repeat this 5 times.' });
+    for (let r = 1; r <= 5; r++) {
+      const stars = shuffle([...Array(12).keys()], R).slice(0, 3), order = shuffle([...Array(12).keys()], R), open = [];
+      S.push({ line: 0, run: r, open: [], stars, runs: [...runs], msg: `Run ${r}: the stars are hidden in new random places.` });
+      for (const c of order) {
+        open.push(c);
+        if (stars.includes(c)) {
+          runs.push(open.length);
+          S.push({ line: [2, 3], run: r, open: [...open], stars, runs: [...runs], msg: `Card ${c + 1} shows a ★ after <b>${open.length} ${open.length > 1 ? 'tries' : 'try'}</b>. The answer is guaranteed to be correct.`, vars: { run: r, tries: open.length } });
+          break;
+        }
+        S.push({ line: [1, 2], run: r, open: [...open], stars, runs: [...runs], msg: `Flip a random card (#${c + 1}): empty. Try again.`, vars: { run: r, tries: open.length } });
+      }
+    }
+    S.push({ line: -1, run: 6, open: [], stars: [], runs: [...runs], msg: `Tries per run: ${runs.join(', ')}. Every answer was correct; only the <b>running time</b> was random. That is a <b>Las Vegas</b> algorithm. Monte Carlo is the opposite: fixed time, answer only probably right.` });
+    return S;
+  },
+  render(s) {
+    const it = [], X = c => 80 + (c % 4) * 96, Y = c => 82 + Math.floor(c / 4) * 118;
+    for (let c = 0; c < 12; c++) {
+      const op = s.open.includes(c), st = s.stars.includes(c);
+      it.push({ k: 'c' + c, x: X(c), y: Y(c), c: !op ? 'fd' : st ? 'ok' : 'bad', h: R(78, 104, 'bx', 10) + (!op ? T(0, 0, '?', 'lb lg') : st ? STAR(22) : T(0, 0, '✕', 'lb lg rtxt')) });
+    }
+    it.push({ k: 'ht', x: 490, y: 36, h: T(0, 0, 'TRIES NEEDED PER RUN', 'cap l') });
+    for (let r = 1; r <= 5; r++) {
+      const cur = r === s.run && s.runs.length < r, t = s.runs[r - 1] ?? (cur ? s.open.length : 0);
+      it.push({ k: 'h' + r, x: 490, y: 76 + (r - 1) * 48, c: cur ? 'act' : '', h: T(0, 0, 'run ' + r, 'sm l') + `<rect class="hbar" x="56" y="-11" width="${t * 18}" height="22" rx="4"/>` + T(64 + t * 18, 0, t || '', 'lb l') });
+    }
+    return it;
+  }
+};
+
+/* =========================================================
+   12. Types of analysis: linear search best / worst / average
+   ========================================================= */
+const LA = [7, 3, 9, 1, 5, 8, 2, 6];
+const LS_CODE = ['linearSearch(A, x):', '  for i ← 0 to n − 1:', '    if A[i] = x: return i', '  return −1'];
+function lsRender(s) {
+  const X = i => 120 + i * 80, it = [];
+  it.push({ k: 'tg', x: 120, y: 30, h: T(-34, 0, s.x == null ? 'searching every value in turn' : `searching for x = ${s.x}`, 'lb l') });
+  LA.forEach((v, i) => {
+    let c = ''; if (s.st && s.st[i]) c = s.st[i];
+    it.push({ k: 'c' + i, x: X(i), y: 100, c, h: CELL(60, 60, v, 'lb lg') });
+    it.push({ k: 'i' + i, x: X(i), y: 145, h: T(0, 0, i, 'sm') });
+  });
+  it.push({ k: 'p', x: X(s.i ?? 0), y: 178, c: s.i != null ? '' : 'hide', h: PTR('i') });
+  if (s.bars) {
+    const BY = 388, H = 21;
+    s.bars.forEach((b, i) => { if (b) it.push({ k: 'b' + i, x: X(i), y: BY, c: i === s.cur ? 'cmp' : '', h: `<rect class="barv" x="-24" y="${-b * H}" width="48" height="${b * H}" rx="4"/>` + T(0, -b * H - 12, b, 'sm b') }); });
+    it.push({ k: 'ax', z: 0, h: `<line class="axis" x1="70" y1="${BY}" x2="730" y2="${BY}"/>` + T(70, 222, 'COMPARISONS NEEDED FOR EACH POSITION', 'cap l') });
+    if (s.avg) it.push({ k: 'avg', z: 2, h: `<line class="avgl" x1="74" y1="${BY - 4.5 * H}" x2="700" y2="${BY - 4.5 * H}"/>` + T(706, BY - 4.5 * H, 'avg 4.5', 'sm l rtxt') });
+  }
+  if (s.big) it.push({ k: 'big', x: 400, y: 290, c: s.bigc || '', h: R(420, 84, 'bx', 12) + T(0, -14, s.big, 'xl') + T(0, 20, s.big2, 'sm') });
+  return it;
+}
+const lsBest = {
+  vb: '0 0 800 400', code: LS_CODE, legend: [['ok', 'found'], ['bad', 'checked, not equal']],
+  build() {
+    return [
+      { line: 0, x: 7, msg: 'Best case: the value we want (7) happens to be the <b>first</b> element.', vars: { n: 8, comparisons: 0 } },
+      { line: [1, 2], x: 7, i: 0, st: { 0: 'ok' }, msg: 'Compare A[0] = 7 with x = 7 → <b class="g">equal</b>. Return index 0.', vars: { n: 8, comparisons: 1 } },
+      { line: -1, x: 7, st: { 0: 'ok' }, big: 'T(n) = 1', big2: 'one comparison, whatever n is → constant time', bigc: 'ok', msg: 'Best case: <b>1 comparison</b> no matter how large the array is. Nice, but we cannot count on being lucky, so the best case says little about performance.', vars: { comparisons: 1 } }
+    ];
+  },
+  render: lsRender
+};
+const lsWorst = {
+  vb: '0 0 800 400', code: LS_CODE, legend: [['bad', 'checked, not equal']],
+  build() {
+    const S = [], st = {}, x = 4;
+    S.push({ line: 0, x, msg: `Worst case: x = ${x} is <b>not in the array</b> (or sits in the last position), so we must check everything.`, vars: { n: 8, comparisons: 0 } });
+    LA.forEach((v, i) => { st[i] = 'bad'; S.push({ line: [1, 2], x, i, st: { ...st }, msg: `Compare A[${i}] = ${v} with ${x} → different, keep going.`, vars: { n: 8, comparisons: i + 1 } }); });
+    S.push({ line: 3, x, st: { ...st }, big: 'T(n) = n = 8', big2: 'double n → double the work → O(n)', bigc: 'bad', msg: 'Checked all n = 8 elements and return −1. Worst case T(n) = n, written <b>O(n)</b>. Big-O usually describes this worst case: a guarantee that it never gets slower.', vars: { comparisons: 8 } });
+    return S;
+  },
+  render: lsRender
+};
+const lsAvg = {
+  vb: '0 0 800 400', code: LS_CODE, legend: [['ok', 'found'], ['bad', 'checked, not equal'], ['cmp', 'newest bar']],
+  build() {
+    const S = [], bars = LA.map(() => 0);
+    S.push({ line: 0, x: null, bars: [...bars], msg: 'Average case: assume x is equally likely to be at any of the 8 positions. Search for each one and count the comparisons.', vars: { n: 8 } });
+    LA.forEach((v, k) => {
+      const st = {}; for (let i = 0; i < k; i++) st[i] = 'bad'; st[k] = 'ok'; bars[k] = k + 1;
+      S.push({ line: [1, 2], x: null, i: k, st, bars: [...bars], cur: k, msg: `Search for ${v} (index ${k}): ${k + 1} comparison${k ? 's' : ''}.`, vars: { n: 8, total: bars.reduce((a, b) => a + b, 0) } });
+    });
+    S.push({ line: -1, x: null, bars: [...bars], avg: 1, msg: 'Average = (1 + 2 + … + 8) / 8 = 36 / 8 = <b>4.5 = (n + 1) / 2</b>. About n/2, which still grows linearly with n → O(n).', vars: { total: 36, average: 4.5 } });
+    return S;
+  },
+  render: lsRender
+};
+
+/* =========================================================
+   Topics
+   ========================================================= */
+const TOPICS = [
+  { id: 'structure', group: 'General concepts', slide: '43', nav: 'Iterative vs recursive', title: 'Algorithm structure',
+    desc: '<dl><dt>Iterative</dt><dd>Execute an action in a loop: a sequence of instructions is repeated until a specific end result is achieved.</dd><dt>Recursive</dt><dd>The solution to a problem depends on solutions to smaller instances of the same problem.</dd></dl>',
+    ex: 'Both tabs compute 5! = 120, once with a loop and once with recursion.', demos: [['Iterative', factIter], ['Recursive', factRec]] },
+  { id: 'problem-type', group: 'General concepts', slide: '43', nav: 'Satisfying vs optimal', title: 'Problem type',
+    desc: '<dl><dt>Satisfying</dt><dd>Find any feasible solution.</dd><dt>Optimal</dt><dd>Find the best solution with respect to a cost metric.</dd></dl>',
+    ex: 'Find a route from A to F. The same map, solved both ways.', demos: [['Satisfying', satisfying], ['Optimal', optimal]] },
+  { id: 'brute-force', group: 'Strategies', slide: '44', nav: 'Brute force', title: 'Brute force algorithms',
+    desc: 'Brute force algorithms try all possible solutions to find the correct one. They are straightforward and simple to implement, but can be very inefficient and time-consuming, especially for large problem spaces.',
+    ex: 'Naive string matching · Exhaustive search for the Traveling Salesman Problem', demos: [['String matching', naiveMatch], ['Traveling salesman', tsp]] },
+  { id: 'greedy', group: 'Strategies', slide: '44', nav: 'Greedy', title: 'Greedy algorithms',
+    desc: 'Make the best possible choice at each step based on the current information, hoping that these local optimal choices lead to a global optimal solution.',
+    ex: 'Kruskal’s algorithm for Minimum Spanning Tree · Dijkstra’s algorithm for shortest path', demos: [['Kruskal (MST)', kruskal], ['Dijkstra (shortest path)', dijkstra]] },
+  { id: 'divide-conquer', group: 'Strategies', slide: '45', nav: 'Divide & conquer', title: 'Divide and conquer algorithms',
+    desc: 'Break a problem into smaller, more manageable subproblems, solve each subproblem independently, then combine their solutions to solve the original problem.',
+    ex: 'Merge Sort · Quick Sort', demos: [['Merge sort', mergeSort], ['Quick sort', quickSort]] },
+  { id: 'dynamic-programming', group: 'Strategies', slide: '45', nav: 'Dynamic programming', title: 'Dynamic programming algorithms',
+    desc: 'Break a problem into simpler subproblems and store their results to avoid redundant calculations. This improves performance and reduces computational complexity.',
+    ex: 'Dynamic Fibonacci · Shortest path with Bellman–Ford', demos: [['Fibonacci without DP', fibTree], ['Fibonacci with DP', fibDP], ['Bellman–Ford', bellman]] },
+  { id: 'dfs', group: 'Strategies', slide: '46', nav: 'Depth-first search', title: 'Depth-First Search (DFS)',
+    desc: 'Explore as far down a branch as possible before backtracking and exploring other branches. Useful for pathfinding and solving puzzles.',
+    ex: 'Tree and graph traversal. Compare the visit order with BFS on the same graph.', demos: [['DFS on a graph', dfs]] },
+  { id: 'bfs', group: 'Strategies', slide: '46', nav: 'Breadth-first search', title: 'Breadth-First Search (BFS)',
+    desc: 'Explore all nodes at the present depth level before moving on to nodes at the next depth level. Commonly used for finding the shortest path in unweighted graphs.',
+    ex: 'Graph traversal on the same graph as the DFS page.', demos: [['BFS on a graph', bfs]] },
+  { id: 'backtracking', group: 'Strategies', slide: '46', nav: 'Backtracking', title: 'Backtracking',
+    desc: 'Explore possible solutions by trying different possibilities and retreating as soon as a solution path fails. Useful for constraint satisfaction problems.',
+    ex: 'N-Queens (Sudoku works the same way: fill a cell, back up on a conflict)', demos: [['N-Queens', nQueens]] },
+  { id: 'evolutionary', group: 'Strategies', slide: '47', nav: 'Evolutionary', title: 'Evolutionary algorithms',
+    desc: 'Inspired by natural evolution, these algorithms use selection, mutation and crossover to find approximate solutions to complex optimization problems.',
+    ex: 'A genetic algorithm evolving bit strings', demos: [['Genetic algorithm', genetic]] },
+  { id: 'randomized', group: 'Strategies', slide: '47', nav: 'Randomized', title: 'Randomized algorithms',
+    desc: 'Make random choices during execution, which can simplify the implementation or improve the average performance.',
+    ex: 'Monte Carlo estimate of π · Las Vegas search', demos: [['Monte Carlo', monteCarlo], ['Las Vegas', lasVegas]] },
+  { id: 'analysis', group: 'Analysis', slide: '48', nav: 'Best, average, worst case', title: 'Types of algorithm analysis',
+    desc: '<dl><dt>Worst case</dt><dd>T(n) = maximum time on any input of size n. Usually described with Big-O.</dd><dt>Average case</dt><dd>T(n) = expected time over all inputs of size n.</dd><dt>Best case</dt><dd>Behavior under optimal conditions, e.g. linear search when the element is first.</dd></dl>',
+    ex: 'Linear search on the same array of 8 numbers', demos: [['Best case', lsBest], ['Average case', lsAvg], ['Worst case', lsWorst]] }
+];
+
+/* =========================================================
+   Player
+   ========================================================= */
+const ICON = {
+  restart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/></svg>',
+  prev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z"/></svg>'
+};
+const SPEEDS = [0.5, 1, 2, 4];
+let speed = 1;
+try { const v = parseFloat(localStorage.getItem('as-speed')); if (SPEEDS.includes(v)) speed = v; } catch (e) {}
+let current = null;
+
+function codeLine(l) {
+  const i = l.indexOf('▸');
+  return i < 0 ? esc(l) : esc(l.slice(0, i)) + '<span class="cm">' + esc(l.slice(i)) + '</span>';
+}
+function mountLab(host, demo, optsHost) {
+  host.innerHTML = `
+  <div class="lab">
+    <div class="stagebox"><div class="stage"></div><div class="legend">${(demo.legend || []).map(([c, t]) => `<span><i class="${c === 'k1' ? 'act' : c === 'bst' ? 'ok' : c}"></i>${esc(t)}</span>`).join('')}</div></div>
+    <div class="narr" aria-live="polite"></div>
+    <aside class="side">
+      <div class="panel code"><div class="ph">Pseudocode</div><ol>${demo.code.map(l => `<li><span>${codeLine(l)}</span></li>`).join('')}</ol></div>
+      <div class="panel"><div class="ph">Variables</div><div class="vl"></div></div>
+    </aside>
+    <div class="ctrl">
+      <div class="btns">
+        <button class="btn" data-a="restart" title="Restart (Home)" aria-label="Restart">${ICON.restart}</button>
+        <button class="btn" data-a="prev" title="Previous step (←)" aria-label="Previous step">${ICON.prev}</button>
+        <button class="btn play" data-a="play" title="Play / pause (Space)"></button>
+        <button class="btn" data-a="next" title="Next step (→)" aria-label="Next step">${ICON.next}</button>
+      </div>
+      <div class="prog"><input type="range" min="0" value="0" id="stepRange" aria-label="Step"><span class="cnt"></span></div>
+      <div class="spd"><span>Speed</span><div class="seg">${SPEEDS.map(v => `<button data-sp="${v}" aria-pressed="${v === speed}">${v}×</button>`).join('')}</div></div>
+    </div>
+  </div>`;
+  const $ = s => host.querySelector(s);
+  const stage = $('.stage'), ol = $('.code ol'), vl = $('.vl'), narr = $('.narr'), range = $('#stepRange'), cnt = $('.cnt');
+  const bPlay = $('[data-a=play]'), bPrev = $('[data-a=prev]'), bNext = $('[data-a=next]');
+  const opts = {}; (demo.opts || []).forEach(o => opts[o.id] = o.def);
+  let steps = [], i = 0, timer = null;
+
+  optsHost.innerHTML = '';
+  (demo.opts || []).forEach(o => {
+    if (o.type === 'choice') {
+      const wrap = document.createElement('div'); wrap.className = 'opts';
+      wrap.innerHTML = `<span>${esc(o.label)}</span><div class="seg">${o.vals.map(v => `<button aria-pressed="${v === opts[o.id]}" data-v="${v}">${esc(o.fmt(v))}</button>`).join('')}</div>`;
+      wrap.querySelectorAll('button').forEach(b => b.onclick = () => {
+        opts[o.id] = +b.dataset.v; wrap.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); rebuild();
+      });
+      optsHost.appendChild(wrap);
+    } else if (o.type === 'seed') {
+      const b = document.createElement('button'); b.className = 'optbtn'; b.textContent = '↻ ' + o.label;
+      b.onclick = () => { opts[o.id] = Math.floor(Math.random() * 1e9); rebuild(); };
+      optsHost.appendChild(b);
+    }
+  });
+
+  function setPlayUI(on) { bPlay.innerHTML = (on ? ICON.pause : ICON.play) + (on ? 'Pause' : 'Play'); bPlay.setAttribute('aria-label', on ? 'Pause' : 'Play'); }
+  function show(n) {
+    i = Math.max(0, Math.min(steps.length - 1, n));
+    const s = steps[i];
+    paint(stage, demo.vb, demo.render(s, opts));
+    const lines = [].concat(s.line ?? -1);
+    [...ol.children].forEach((li, k) => li.classList.toggle('on', lines.includes(k)));
+    narr.innerHTML = s.msg || '';
+    const vars = s.vars || {};
+    vl.innerHTML = Object.keys(vars).length ? Object.entries(vars).map(([k, v]) => `<span class="var">${esc(k)} = <b>${esc(inf(v))}</b></span>`).join('') : '<span class="var">—</span>';
+    range.value = i; cnt.textContent = `step ${i + 1} / ${steps.length}`;
+    bPrev.disabled = i === 0; bNext.disabled = i === steps.length - 1;
+  }
+  function pause() { clearInterval(timer); timer = null; setPlayUI(false); }
+  function play() {
+    if (i >= steps.length - 1) show(0);
+    clearInterval(timer);
+    timer = setInterval(() => { if (i >= steps.length - 1) { pause(); return; } show(i + 1); }, 1150 / speed);
+    setPlayUI(true);
+  }
+  function rebuild() { pause(); steps = demo.build(opts); range.max = steps.length - 1; show(0); }
+
+  host.querySelector('.ctrl').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.sp) {
+      speed = +b.dataset.sp; try { localStorage.setItem('as-speed', speed); } catch (err) {}
+      host.querySelectorAll('[data-sp]').forEach(x => x.setAttribute('aria-pressed', x === b));
+      if (timer) play();
+      return;
+    }
+    const a = b.dataset.a;
+    if (a === 'play') timer ? pause() : play();
+    else if (a === 'prev') { pause(); show(i - 1); }
+    else if (a === 'next') { pause(); show(i + 1); }
+    else if (a === 'restart') { pause(); show(0); }
+  });
+  range.addEventListener('input', () => { pause(); show(+range.value); });
+  setPlayUI(false);
+  rebuild();
+  return {
+    next() { pause(); show(i + 1); }, prev() { pause(); show(i - 1); },
+    toggle() { timer ? pause() : play(); }, restart() { pause(); show(0); }, destroy: pause
+  };
+}
+
+/* =========================================================
+   Navigation
+   ========================================================= */
+const main = document.getElementById('main'), toc = document.getElementById('toc');
+const tabMem = {};
+(() => {
+  const groups = {};
+  TOPICS.forEach(t => (groups[t.group] = groups[t.group] || []).push(t));
+  toc.innerHTML = Object.entries(groups).map(([g, ts]) => `<div class="grp"><h3>${esc(g)}</h3>${ts.map(t => `<a href="#${t.id}" data-id="${t.id}"><span class="sn">${t.slide}</span>${esc(t.nav)}</a>`).join('')}</div>`).join('');
+})();
+
+function showTopic(t) {
+  if (current) current.destroy();
+  const idx = TOPICS.indexOf(t), prev = TOPICS[idx - 1], next = TOPICS[idx + 1];
+  toc.querySelectorAll('a').forEach(a => a.dataset.id === t.id ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  main.innerHTML = `
+    <header>
+      <div class="eyebrow">Slide ${t.slide} · ${esc(t.group)}</div>
+      <h1>${esc(t.title)}</h1>
+      <div class="desc">${t.desc}</div>
+      <p class="ex"><span>Example</span>${esc(t.ex)}</p>
+    </header>
+    <div class="bar"><div class="seg" role="tablist" ${t.demos.length < 2 ? 'hidden' : ''}>${t.demos.map(([n], i) => `<button role="tab" data-i="${i}">${esc(n)}</button>`).join('')}</div><div class="opts" id="optsHost"></div></div>
+    <div id="labhost"></div>
+    <nav class="pager">${prev ? `<a href="#${prev.id}"><small>← Previous</small>${esc(prev.nav)}</a>` : ''}${next ? `<a class="nx" href="#${next.id}"><small>Next →</small>${esc(next.nav)}</a>` : ''}</nav>`;
+  const tabs = main.querySelectorAll('[role=tab]'), labhost = main.querySelector('#labhost'), optsHost = main.querySelector('#optsHost');
+  function load(i) {
+    tabMem[t.id] = i;
+    tabs.forEach(b => b.setAttribute('aria-selected', +b.dataset.i === i));
+    if (current) current.destroy();
+    current = mountLab(labhost, t.demos[i][1], optsHost);
+  }
+  tabs.forEach(b => b.onclick = () => load(+b.dataset.i));
+  load(tabMem[t.id] || 0);
+}
+function route() {
+  const id = location.hash.slice(1);
+  const t = TOPICS.find(x => x.id === id) || TOPICS[0];
+  showTopic(t);
+  window.scrollTo(0, 0);
+}
+function goTopic(d) {
+  const id = location.hash.slice(1), i = Math.max(0, TOPICS.findIndex(x => x.id === id));
+  const t = TOPICS[i + d]; if (t) location.hash = t.id;
+}
+window.addEventListener('hashchange', route);
+document.addEventListener('keydown', e => {
+  if (!current || e.altKey || e.ctrlKey || e.metaKey) return;
+  const tag = e.target.tagName;
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); current.next(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); current.prev(); }
+  else if (e.key === ' ' && tag !== 'BUTTON' && tag !== 'A') { e.preventDefault(); current.toggle(); }
+  else if (e.key === 'Home') { e.preventDefault(); current.restart(); }
+  else if (e.key === 'PageDown') { e.preventDefault(); goTopic(1); }
+  else if (e.key === 'PageUp') { e.preventDefault(); goTopic(-1); }
+});
+route();
+</script>
+</body>
+</html>
