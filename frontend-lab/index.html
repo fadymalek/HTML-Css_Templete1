@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Frontend Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0B1020; --bg2:#10173A; --panel:#151E44; --panel2:#1D2758; --line:#2C3874;
+  --text:#F3F5FF; --soft:#AEB6E0; --dim:#737CB4;
+  --html:#FF8A3D; --css:#4DA3FF; --js:#FFD43B; --mint:#3BE0A1; --coral:#FF6B7A; --violet:#A78BFA;
+  --display:'Baloo 2','Trebuchet MS',system-ui,sans-serif;
+  --body:'Nunito','Trebuchet MS',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{font-size:clamp(14px, calc(.5vw + .8vh), 24px)}
+body{
+  margin:0;color:var(--text);font-family:var(--body);line-height:1.4;background-color:var(--bg);
+  background-image:
+    radial-gradient(900px 520px at 90% -10%, rgba(77,163,255,.18), transparent 60%),
+    radial-gradient(760px 520px at -10% 110%, rgba(255,138,61,.12), transparent 60%),
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size:auto,auto,32px 32px,32px 32px;background-attachment:fixed;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--css);outline-offset:3px}
+[hidden]{display:none!important}
+.screen{min-height:100vh;min-height:100dvh;max-width:1920px;margin:0 auto;display:flex;flex-direction:column;gap:12px;padding:clamp(10px,1.6vh,18px) clamp(12px,2vw,28px);animation:fade .3s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (min-width:1000px) and (min-height:600px){
+  .screen.fit{height:100vh;height:100dvh}
+  .screen.fit .work{flex:1;min-height:0}
+  .screen.fit .work > *{min-height:0}
+}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;font-family:var(--display);font-weight:800;font-size:1.05rem;
+  padding:.45em 1em;border-radius:14px;border:2px solid var(--line);background:var(--panel2);cursor:pointer;transition:transform .12s, background .2s, border-color .2s;line-height:1.1}
+.btn:hover{transform:translateY(-2px);border-color:var(--soft)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--mint);border-color:var(--mint);color:#06281B}
+.btn.ghost{background:transparent}
+.btn.small{font-size:.9rem;padding:.35em .8em;border-radius:11px}
+.btn.on{background:var(--css);border-color:var(--css);color:#04203F}
+.btn[disabled]{opacity:.45;pointer-events:none}
+
+/* ---------- top bar ---------- */
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top .crumb{flex:1;min-width:200px}
+.top .crumb small{display:block;color:var(--dim);font-weight:800;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase}
+.top .crumb b{font-family:var(--display);font-size:1.5rem;line-height:1.1}
+.seg{display:inline-flex;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:3px;gap:3px}
+.seg button{border:0;background:transparent;padding:.35em .9em;border-radius:10px;font-family:var(--display);font-weight:800;cursor:pointer;color:var(--soft);font-size:1rem}
+.seg button.on{background:var(--text);color:var(--bg)}
+
+.panel{background:linear-gradient(180deg,var(--panel),var(--bg2));border:2px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.panel h3{margin:0;font-family:var(--display);font-size:1.15rem;line-height:1.1}
+.panel .sub{color:var(--soft);font-size:.9rem;margin:-6px 0 0}
+.scroll{overflow:auto}
+
+/* ---------- discover list ---------- */
+.disc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:d}
+.disc li{counter-increment:d;display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-radius:14px;border:2px dashed var(--line);color:var(--dim);font-weight:700;font-size:.95rem;transition:all .4s}
+.disc li::before{content:counter(d);flex:0 0 auto;width:1.6em;height:1.6em;border-radius:50%;display:grid;place-items:center;background:var(--panel2);font-family:var(--display);font-weight:800;font-size:.9rem}
+.disc li.lit{color:var(--text);border-style:solid;border-color:var(--mint);background:rgba(59,224,161,.09);animation:pop .5s}
+.disc li.lit::before{content:'✓';background:var(--mint);color:#06281B}
+.disc .prog{font-weight:800;color:var(--soft);font-size:.85rem}
+.disc .prog b{color:var(--mint)}
+@keyframes pop{0%{transform:scale(.96)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+.doneBox{border:2px solid var(--mint);background:rgba(59,224,161,.1);border-radius:14px;padding:10px;font-weight:800;display:flex;flex-direction:column;gap:8px}
+
+/* ---------- layer colours ---------- */
+.L-html{--c:var(--html)} .L-css{--c:var(--css)} .L-js{--c:var(--js)}
+.tagc{display:inline-block;padding:.05em .55em;border-radius:8px;font-family:var(--mono);font-weight:700;font-size:.85em;background:color-mix(in srgb,var(--c) 22%,transparent);color:var(--c);border:1px solid color-mix(in srgb,var(--c) 60%,transparent)}
+
+/* ---------- code viewer ---------- */
+.codebox{border:2px solid color-mix(in srgb,var(--c,var(--line)) 55%,var(--line));border-radius:14px;background:#0A0F24;display:flex;flex-direction:column;min-height:0;overflow:hidden;transition:opacity .3s, filter .3s}
+.codebox .ch{display:flex;align-items:center;gap:8px;padding:6px 10px;background:color-mix(in srgb,var(--c,var(--line)) 16%,#0A0F24);font-weight:800;font-size:.9rem}
+.codebox .ch .fn{font-family:var(--mono);color:var(--c,var(--soft))}
+.codebox .ch .st{margin-left:auto;font-size:.75rem;color:var(--soft)}
+.codebox.off{opacity:.35;filter:grayscale(.8)}
+.cbody{overflow:auto;padding:6px 0;font-family:var(--mono);font-size:.78rem;line-height:1.55;min-height:0;flex:1;position:relative}
+.ln{display:flex;white-space:pre;padding-right:10px;transition:background .3s}
+.ln .no{flex:0 0 2.6em;text-align:right;padding-right:.9em;color:#475089;user-select:none}
+.ln.hl{background:color-mix(in srgb,var(--c,var(--mint)) 28%,transparent);box-shadow:inset 4px 0 0 var(--c,var(--mint))}
+.ln.dim{opacity:.32}
+.cbody i{font-style:normal}
+i.t{color:#FF9E64} i.p{color:#6E78B8} i.a{color:#7DCFFF} i.s{color:#9ECE6A} i.k{color:#C792EA} i.n{color:#FF9E64} i.c{color:#5A6399} i.sel{color:#FFC777} i.pr{color:#7DCFFF} i.f{color:#82AAFF}
+
+/* ---------- browser frame ---------- */
+.browser{border-radius:14px;overflow:hidden;border:2px solid var(--line);background:#fff;display:flex;flex-direction:column;min-height:0}
+.browser .bar{display:flex;align-items:center;gap:6px;background:#1A2350;padding:6px 10px;font-size:.8rem;color:var(--soft);font-family:var(--mono)}
+.browser .bar i{width:10px;height:10px;border-radius:50%;display:inline-block;background:#FF6B7A}
+.browser .bar i:nth-child(2){background:#FFD43B}.browser .bar i:nth-child(3){background:#3BE0A1}
+.browser .bar span{margin-left:8px;background:#0E1536;padding:2px 10px;border-radius:8px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.browser iframe{border:0;width:100%;flex:1;min-height:260px;background:#fff;display:block}
+
+/* ---------- toggles ---------- */
+.layerBar{display:flex;gap:10px;flex-wrap:wrap}
+.ltog{flex:1;min-width:150px;display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;border:2px solid var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);cursor:pointer;text-align:left}
+.ltog .sw{width:2.6em;height:1.45em;border-radius:99px;background:var(--c);position:relative;flex:0 0 auto;transition:background .2s}
+.ltog .sw::after{content:'';position:absolute;top:.18em;left:1.3em;width:1.1em;height:1.1em;border-radius:50%;background:#fff;transition:left .2s}
+.ltog b{font-family:var(--display);font-size:1.1rem;color:var(--c);display:block;line-height:1}
+.ltog small{color:var(--soft);font-weight:700;font-size:.8rem}
+.ltog.off{background:transparent;border-color:var(--line)}
+.ltog.off .sw{background:#39406E}.ltog.off .sw::after{left:.18em}
+.ltog.off b{color:var(--dim)}
+
+.tip{border-radius:14px;padding:10px 12px;background:var(--panel2);border:2px solid var(--line);font-weight:700;min-height:3.2em}
+.tip.good{border-color:var(--mint)} .tip.warn{border-color:var(--js)}
+
+/* ---------- home ---------- */
+.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;align-items:stretch}
+.hero h1{font-family:var(--display);font-size:clamp(2rem,4vw,3.2rem);line-height:1;margin:0}
+.hero h1 span{background:linear-gradient(90deg,var(--html),var(--css),var(--js));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{margin:0;color:var(--soft);font-weight:700}
+.trio{display:flex;gap:8px;flex-wrap:wrap}
+.trio div{flex:1;min-width:120px;border-radius:14px;padding:8px 10px;border:2px solid var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+.trio b{font-family:var(--display);color:var(--c);font-size:1.25rem;display:block;line-height:1}
+.trio small{font-weight:700;color:var(--soft)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.tcard{padding:14px;border-radius:20px;border:2px solid var(--line);background:linear-gradient(180deg,var(--panel),var(--bg2));display:flex;flex-direction:column;gap:8px}
+.tcard .ic{font-size:2rem;line-height:1}
+.tcard .num{color:var(--dim);font-weight:800;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase}
+.tcard h2{margin:0;font-family:var(--display);font-size:1.35rem;line-height:1.05}
+.tcard p{margin:0;color:var(--soft);font-weight:700;font-size:.9rem;flex:1}
+.tcard .row{display:flex;gap:8px;flex-wrap:wrap}
+.tcard .row .btn{flex:1}
+.stars{color:var(--js);letter-spacing:2px;font-size:1rem}
+.stars .e{color:#39406E}
+.tcard.exam{border-color:var(--violet);background:linear-gradient(180deg,rgba(167,139,250,.18),var(--bg2))}
+.takeaway{font-weight:800;color:var(--soft);text-align:center;padding:6px}
+.takeaway b{color:var(--text)}
+
+/* ---------- layouts ---------- */
+.work{display:grid;gap:12px}
+.g-t1{grid-template-columns:1.25fr 1fr .8fr}
+.g-t2{grid-template-columns:1fr 1fr .75fr}
+.g-t3{grid-template-columns:.85fr 1.3fr .8fr}
+.g-t4{grid-template-columns:1.6fr .9fr}
+.g-t5{grid-template-columns:1.7fr .75fr}
+@media (max-width:1000px){ .g-t1,.g-t2,.g-t3,.g-t4,.g-t5,.hero{grid-template-columns:1fr} }
+
+/* T1 */
+.t1stage{display:grid;grid-template-columns:1fr 9em;gap:10px;min-height:0;flex:1}
+@media (max-width:700px){.t1stage{grid-template-columns:1fr}.t1stage .browser iframe{min-height:380px}.house{flex-direction:row}.house svg{max-width:9em}}
+.house{display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center}
+.house svg{width:100%;height:auto}
+.house .lbl{font-size:.72rem;font-weight:800;text-align:center;line-height:1.3}
+.house .lbl span{display:block;color:var(--dim);transition:color .3s}
+.house .lbl span.on{color:var(--c)}
+#hs .frame{stroke:var(--html);stroke-width:2.5;fill:none;transition:opacity .3s}
+#hs .wall{fill:transparent;transition:fill .4s}
+#hs.c-on .wall{fill:#4DA3FF}
+#hs .roof{fill:transparent;transition:fill .4s}
+#hs.c-on .roof{fill:#FF6B7A}
+#hs .door{fill:transparent;transition:fill .4s}
+#hs.c-on .door{fill:#8A5A2B}
+#hs .win{fill:#1A2350;transition:fill .3s}
+#hs.c-on .win{fill:#CFE8FF}
+#hs.j-on .win{fill:#FFE98A}
+#hs .glow{opacity:0;transition:opacity .3s}
+#hs.j-on .glow{opacity:.55}
+#hs.flash .glow{opacity:1}
+#hs .wire{stroke:#555E99;stroke-width:2;fill:none;stroke-dasharray:4 3}
+#hs.j-on .wire{stroke:var(--js)}
+#hs.h-off .frame{opacity:.18;stroke-dasharray:4 4}
+#hs.h-off .wall,#hs.h-off .roof,#hs.h-off .door,#hs.h-off .win{fill:transparent!important}
+#hs.h-off .glow{opacity:0!important}
+.codeStack{display:grid;grid-template-rows:1.25fr 1fr .8fr;gap:8px;min-height:0;flex:1}
+
+/* T2 */
+.edTabs{display:flex;gap:6px}
+.edTabs button{flex:1;border:2px solid var(--c);background:transparent;color:var(--c);border-radius:12px 12px 0 0;padding:.35em;font-family:var(--mono);font-weight:700;cursor:pointer;opacity:.6}
+.edTabs button.on{background:color-mix(in srgb,var(--c) 20%,transparent);opacity:1}
+.editor{flex:1;min-height:300px;width:100%;resize:none;border-radius:0 0 14px 14px;border:2px solid var(--c);background:#0A0F24;color:#E6E9FF;font-family:var(--mono);font-size:.82rem;line-height:1.55;padding:10px;tab-size:2;white-space:pre;overflow:auto}
+.editor:focus{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 40%,transparent)}
+.console{font-family:var(--mono);font-size:.78rem;padding:7px 10px;border-radius:10px;background:#0A0F24;border:2px solid var(--line);color:var(--mint)}
+.console.err{color:var(--coral);border-color:var(--coral)}
+.mlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mlist li{border:2px solid var(--line);border-radius:14px;padding:8px 10px;font-weight:700;font-size:.9rem;display:flex;flex-direction:column;gap:4px}
+.mlist li .mh{display:flex;gap:8px;align-items:flex-start}
+.mlist li .ck{flex:0 0 auto;width:1.5em;height:1.5em;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:.8rem}
+.mlist li.ok{border-color:var(--mint);background:rgba(59,224,161,.08)}
+.mlist li.ok .ck{background:var(--mint);border-color:var(--mint);color:#06281B}
+.mlist .hint{font-family:var(--mono);font-size:.75rem;color:var(--js);background:#0A0F24;border-radius:8px;padding:6px 8px;white-space:pre-wrap}
+.mlist .hbtn{align-self:flex-start;font-size:.75rem;color:var(--soft);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+.examNote{border:2px dashed var(--violet);border-radius:14px;padding:10px;font-size:.88rem;font-weight:700}
+.examNote b{font-family:var(--display)}
+
+/* T3 */
+.mock{background:#F1F5FF;color:#1B2140;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;font-family:Arial,sans-serif;position:relative}
+.mock .rg{position:relative;border-radius:10px;transition:box-shadow .3s, transform .3s;padding:10px}
+.mock .rg.hdr{background:#3B5BDB;color:#fff}
+.mock .rg.hdr h1{margin:0;font-size:1.4rem}
+.mock .rg.nv{background:#fff;display:flex;gap:16px}
+.mock .rg.nv a{color:#3B5BDB;font-weight:bold;text-decoration:underline}
+.mock .rg.mn{background:#fff;min-height:7em}
+.mock .rg.mn h2{margin:0 0 6px;font-size:1.15rem}
+.mock .rg.mn p{margin:4px 0}
+.mock .rg.ft{text-align:center;color:#666;font-size:.85rem}
+.mock.tags .rg{box-shadow:0 0 0 3px var(--bc,#999)}
+.mock.tags .rg::after{content:attr(data-tag);position:absolute;top:-.8em;right:8px;font-family:var(--mono);font-size:.72rem;font-weight:700;padding:1px 8px;border-radius:8px;background:var(--bc,#999);color:#0B1020}
+.mock.div .rg{--bc:#9AA0B8}
+.mock.sem .rg{--bc:var(--html)}
+.mock .rg.speak{box-shadow:0 0 0 4px var(--js),0 0 22px rgba(255,212,59,.7)!important;transform:scale(1.015)}
+.sr{border-radius:14px;padding:10px 12px;background:#0A0F24;border:2px solid var(--js);font-weight:800;min-height:3.4em;display:flex;gap:10px;align-items:center}
+.sr .ic{font-size:1.5rem}
+.serp{background:#fff;color:#202124;border-radius:14px;padding:12px;font-family:Arial,sans-serif;font-size:.9rem}
+.serp .u{color:#4D5156;font-size:.75rem}
+.serp .tt{color:#1A0DAB;font-size:1.15rem;margin:2px 0}
+.serp .sl{display:flex;gap:14px;color:#1A0DAB;font-size:.85rem;margin-top:4px}
+.robot{border-radius:14px;padding:10px 12px;background:var(--panel2);border:2px solid var(--line);font-weight:700;font-size:.9rem}
+.robot ul{margin:4px 0 0;padding-left:1.2em}
+
+/* T4 */
+.devbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.devbar input[type=range]{flex:1;min-width:160px;accent-color:var(--css)}
+.wlabel{font-family:var(--mono);font-weight:700;background:#0A0F24;border-radius:10px;padding:4px 10px;border:2px solid var(--line);min-width:11em;text-align:center}
+.rstage{flex:1;min-height:340px;border-radius:16px;background:repeating-linear-gradient(45deg,#0E1536,#0E1536 12px,#111A40 12px,#111A40 24px);border:2px solid var(--line);position:relative;overflow:hidden;display:flex;justify-content:center;align-items:flex-start;padding:12px}
+.rdev{background:#000;border-radius:14px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:width .25s, height .25s}
+.rdev.phone{border-radius:26px;padding:10px 6px}
+.rdev .clip{overflow:hidden;border-radius:10px;background:#fff;width:100%;height:100%}
+.rdev.phone .clip{border-radius:18px}
+.rdev iframe{border:0;transform-origin:0 0;display:block;background:#fff}
+.cblk{border-radius:10px;margin:2px 6px;transition:all .3s}
+.cblk.act{background:rgba(77,163,255,.14);box-shadow:inset 4px 0 0 var(--css)}
+.cblk.ina{opacity:.35}
+.cblk.pulse{box-shadow:inset 4px 0 0 var(--js),0 0 0 2px var(--js)}
+
+/* T5 */
+.sTabs{display:flex;gap:8px;flex-wrap:wrap}
+.pal{display:flex;gap:8px;flex-wrap:wrap}
+.pal button{font-family:var(--mono);font-weight:700;font-size:.85rem;border:2px solid var(--violet);background:rgba(167,139,250,.14);color:#D9CCFF;border-radius:12px;padding:.45em .8em;cursor:pointer}
+.pal button:hover{background:rgba(167,139,250,.3)}
+.fwcanvas{background:#F1F5FF;color:#1B2140;border-radius:14px;padding:10px;min-height:12em;display:flex;flex-direction:column;gap:8px;font-family:Arial,sans-serif}
+.fwcanvas .empty{color:#8890B0;text-align:center;margin:auto;font-weight:bold}
+.cp{animation:drop .35s ease both;border-radius:10px}
+@keyframes drop{from{opacity:0;transform:translateY(-14px) scale(.96)}to{opacity:1;transform:none}}
+.cp.nav{background:#3B5BDB;color:#fff;padding:10px;display:flex;justify-content:space-between;font-weight:bold}
+.cp.nav span{color:#FFD43B}
+.cp.card{background:#fff;padding:10px;border-left:6px solid #3B5BDB}
+.cp.sign{display:flex;gap:10px;align-items:center}
+.cp.sign button{background:#FF6B6B;color:#fff;border:0;border-radius:99px;padding:8px 16px;font-weight:bold;cursor:pointer}
+.cp.foot{text-align:center;color:#666;font-size:.85rem;padding:6px}
+.meter{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;font-weight:800;font-size:.85rem}
+.meter .bar{height:14px;border-radius:99px;background:#0A0F24;overflow:hidden}
+.meter .bar i{display:block;height:100%;border-radius:99px;transition:width .4s}
+.upd{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini{background:#F1F5FF;color:#1B2140;border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px;font-family:Arial,sans-serif;font-size:.85rem;position:relative}
+.mini .part{background:#fff;border-radius:8px;padding:6px 8px;transition:background .2s}
+.mini .part.h{background:#3B5BDB;color:#fff;font-weight:bold}
+.mini .row2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.mini .flash{animation:flash .9s ease}
+@keyframes flash{0%,100%{background:#fff;box-shadow:none}30%{background:#FFE066;box-shadow:0 0 0 3px #FFB703}}
+.mini .part.h.flash{animation:flashh .9s ease}
+@keyframes flashh{0%,100%{background:#3B5BDB}30%{background:#FFB703}}
+.mini .loading{position:absolute;inset:0;background:rgba(255,255,255,.92);border-radius:14px;display:grid;place-items:center;font-weight:bold;color:#3B5BDB;font-size:1.1rem}
+.mini b.cnt{display:inline-block;padding:0 6px;border-radius:6px}
+.mini b.cnt.flash{animation:flash .9s ease}
+.fwc{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:700px){.fwc,.upd{grid-template-columns:1fr}}
+.fw{border:2px solid var(--line);border-radius:16px;padding:12px;cursor:pointer;background:var(--panel2);text-align:left;display:flex;flex-direction:column;gap:6px}
+.fw .lg{width:2.4em;height:2.4em;border-radius:12px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.2rem;color:#0B1020}
+.fw b{font-family:var(--display);font-size:1.25rem}
+.fw.open{border-color:var(--c)}
+.fw small{color:var(--soft);font-weight:700}
+
+/* ---------- quiz ---------- */
+.quiz{display:flex;flex-direction:column;gap:12px;flex:1;min-height:0}
+.qtop{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dots{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+.dots span{width:14px;height:14px;border-radius:50%;background:var(--panel2);border:2px solid var(--line)}
+.dots span.done{background:var(--mint);border-color:var(--mint)}
+.dots span.bad{background:var(--coral);border-color:var(--coral)}
+.dots span.now{border-color:var(--text);transform:scale(1.25)}
+.miss{font-weight:800;color:var(--soft)}
+.qcard{flex:1;min-height:0;overflow:auto;padding:clamp(14px,2.4vh,26px)}
+.qtag{align-self:flex-start;font-weight:800;font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;color:var(--violet);border:2px solid var(--violet);border-radius:99px;padding:2px 10px}
+.qprompt{margin:0;font-family:var(--display);font-size:clamp(1.3rem,2.4vw,1.9rem);line-height:1.15}
+.qgrid{display:grid;gap:16px;align-items:start}
+.qgrid.v{grid-template-columns:1.1fr 1fr}
+@media (max-width:900px){.qgrid.v{grid-template-columns:1fr}}
+.qvisual{display:flex;flex-direction:column;gap:8px;min-width:0}
+.opts{display:grid;gap:10px}
+.opts.c3{grid-template-columns:repeat(3,1fr)}
+.opts.c2{grid-template-columns:repeat(2,1fr)}
+@media (max-width:600px){.opts.c3,.opts.c2{grid-template-columns:1fr}}
+.opt{border:2px solid var(--c,var(--line));background:color-mix(in srgb,var(--c,#1D2758) 14%,var(--panel2));border-radius:16px;padding:.7em .9em;font-weight:800;font-size:1.05rem;cursor:pointer;text-align:left;transition:transform .12s;display:flex;gap:10px;align-items:center}
+.opt:hover{transform:translateY(-2px)}
+.opt.big{font-family:var(--display);font-size:1.45rem;justify-content:center;text-align:center;color:var(--c,var(--text))}
+.opt .k{flex:0 0 auto;width:1.7em;height:1.7em;border-radius:9px;display:grid;place-items:center;background:#0A0F24;font-family:var(--display)}
+.opt.right{border-color:var(--mint)!important;background:rgba(59,224,161,.22)!important;color:var(--text)}
+.opt.wrong{border-color:var(--coral)!important;background:rgba(255,107,122,.2)!important;animation:shake .35s}
+.opt[disabled]{cursor:default}
+.opt[disabled]:hover{transform:none}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.qfeed{border-radius:14px;padding:10px 14px;font-weight:700;border:2px solid var(--mint);background:rgba(59,224,161,.1)}
+.qfeed.bad{border-color:var(--coral);background:rgba(255,107,122,.1)}
+.qfeed b{font-family:var(--display);font-size:1.1rem}
+.qnext{display:flex;justify-content:flex-end}
+.tin{display:flex;gap:10px;flex-wrap:wrap}
+.tin input{flex:1;min-width:200px;font:inherit;font-weight:800;font-size:1.3rem;padding:.5em .8em;border-radius:14px;border:2px solid var(--line);background:#0A0F24;color:var(--text)}
+.tin input:focus{outline:none;border-color:var(--css)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--c,var(--violet));background:color-mix(in srgb,var(--c,var(--violet)) 16%,transparent);border-radius:12px;padding:.4em .9em;font-weight:800;cursor:pointer;font-size:1rem;font-family:var(--mono)}
+.chip.sel{background:var(--c,var(--violet));color:#0B1020;transform:scale(1.06)}
+.zone{display:inline-flex;min-width:7em;min-height:1.8em;align-items:center;justify-content:center;border:2px dashed var(--soft);border-radius:10px;padding:0 .6em;cursor:pointer;font-family:var(--mono);font-weight:700;vertical-align:middle;transition:all .2s;background:rgba(255,255,255,.04)}
+.zone.ready{border-color:var(--js);background:rgba(255,212,59,.12)}
+.zone.filled{border-style:solid;border-color:var(--mint);background:rgba(59,224,161,.18);cursor:default}
+.zone.bad{animation:shake .35s;border-color:var(--coral)}
+.passage{font-size:1.2rem;line-height:2.2;font-weight:700}
+.wire{display:grid;gap:8px;background:#F1F5FF;border-radius:14px;padding:10px;color:#1B2140}
+.wire .zone{display:flex;width:100%;min-height:3.4em;flex-direction:column;border-color:#8890B0;color:#1B2140;background:#fff;text-align:center;font-family:Arial,sans-serif;font-weight:bold;font-size:.85rem}
+.wire .zone small{color:#6A7090;font-weight:normal}
+.wire .zone.ready{border-color:#FFB703;background:#FFF6D6}
+.wire .zone.filled{border-color:#2B8A3E;background:#E3FAE9}
+.wire .zone .tg{font-family:var(--mono);color:#E8590C;font-size:1rem}
+.result{align-items:center;text-align:center;justify-content:center;gap:14px}
+.result .big{font-size:clamp(2.6rem,7vw,4.4rem);letter-spacing:6px;color:var(--js)}
+.result h2{margin:0;font-family:var(--display);font-size:2rem}
+.result .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.snip{font-family:var(--mono);font-size:.8rem;background:#0A0F24;border-radius:10px;padding:8px 10px;border:2px solid var(--line);white-space:pre-wrap;line-height:1.5}
+.snip .bug{color:var(--coral);text-decoration:line-through}
+.snip .fix{color:var(--mint)}
+.thumb{display:grid;gap:4px;width:100%;max-width:9em;margin:auto}
+.thumb i{display:block;height:1.4em;border-radius:4px;background:var(--css)}
+.symptom{font-weight:800;border-left:5px solid var(--coral);padding:6px 10px;background:rgba(255,107,122,.08);border-radius:0 10px 10px 0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* =========================================================
+   Frontend Lab — Lesson 3-3: Fundamentals of Frontend Technology
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const app = $('#app');
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+const Store = {
+  key: 'frontend-lab-3-3',
+  get() { try { return JSON.parse(localStorage.getItem(this.key)) || {}; } catch (e) { return {}; } },
+  set(d) { try { localStorage.setItem(this.key, JSON.stringify(d)); } catch (e) {} },
+  stars(id) { return (this.get().stars || {})[id] || 0; },
+  saveStars(id, n) { const d = this.get(); d.stars = d.stars || {}; d.stars[id] = Math.max(d.stars[id] || 0, n); this.set(d); }
+};
+
+/* ---------- cleanup between screens ---------- */
+let cleanups = [];
+const onCleanup = f => cleanups.push(f);
+let onMsg = null;
+window.addEventListener('message', e => { if (onMsg && e.data && e.data.lab) onMsg(e.data, e.source); });
+
+/* ---------- syntax highlight ---------- */
+function hl(line, lang) {
+  const e = esc(line);
+  if (lang === 'html') {
+    return e.replace(/(&lt;!--.*?--&gt;)|(&lt;\/?)([a-zA-Z][\w-]*)|(\s)([a-zA-Z-]+)(?==)|("[^"]*")|(\/?&gt;)/g,
+      (m, com, lt, tag, sp, attr, str, gt) => {
+        if (com) return `<i class="c">${com}</i>`;
+        if (tag) return `<i class="p">${lt}</i><i class="t">${tag}</i>`;
+        if (attr) return `${sp}<i class="a">${attr}</i>`;
+        if (str) return `<i class="s">${str}</i>`;
+        if (gt) return `<i class="p">${gt}</i>`;
+        return m;
+      });
+  }
+  if (lang === 'css') {
+    if (/^\s*\/\*/.test(line)) return `<i class="c">${e}</i>`;
+    let sel = '', rest = e;
+    const k = e.indexOf('{');
+    if (k >= 0) { sel = e.slice(0, k); rest = e.slice(k); }
+    if (sel) sel = /@media/.test(sel) ? sel.replace(/(@media)(.*)/, '<i class="k">$1</i><i class="s">$2</i>') : `<i class="sel">${sel}</i>`;
+    rest = rest.replace(/(\/\*.*?\*\/)|([a-z-]+)(\s*:)|(#[0-9a-fA-F]{3,8})\b|(\d+(?:\.\d+)?(?:px|%|em|rem|fr|vw)?)/g,
+      (m, com, prop, col, hex, num) => {
+        if (com) return `<i class="c">${com}</i>`;
+        if (prop) return `<i class="pr">${prop}</i>${col}`;
+        if (hex) return `<i class="n">${hex}</i>`;
+        if (num) return `<i class="n">${num}</i>`;
+        return m;
+      });
+    return sel + rest;
+  }
+  // js / jsx-ish
+  return e.replace(/(\/\/.*$)|("[^"]*"|'[^']*'|`[^`]*`)|\b(let|const|var|function|return|if|else|new|true|false|null|import|from|export|default)\b|\b(\d+)\b|\.([a-zA-Z_]\w*)(?=\s*\()|(&lt;\/?)([A-Za-z][\w]*)/g,
+    (m, com, str, kw, num, fn, lt, tag) => {
+      if (com) return `<i class="c">${com}</i>`;
+      if (str) return `<i class="s">${str}</i>`;
+      if (kw) return `<i class="k">${kw}</i>`;
+      if (num) return `<i class="n">${num}</i>`;
+      if (fn) return `.<i class="f">${fn}</i>`;
+      if (tag) return `<i class="p">${lt}</i><i class="t">${tag}</i>`;
+      return m;
+    });
+}
+function codeLines(code, lang, start = 1) {
+  return code.split('\n').map((l, i) => `<div class="ln" data-n="${i + start}"><span class="no">${i + start}</span><span class="tx">${hl(l, lang) || ' '}</span></div>`).join('');
+}
+function scrollToLine(box, ln) {
+  if (!box || !ln) return;
+  box.scrollTop = Math.max(0, ln.offsetTop - box.clientHeight / 2);
+}
+
+/* ---------- iframe page builder ---------- */
+const BRIDGE = `<script>
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(a)e.preventDefault();var t=e.target;parent.postMessage({lab:'click',tag:t.tagName.toLowerCase(),id:t.id||''},'*');},true);
+document.addEventListener('input',function(e){parent.postMessage({lab:'input',value:e.target.value||''},'*');});
+window.onerror=function(m){parent.postMessage({lab:'error',msg:String(m)},'*');};
+<\/script>`;
+function pageDoc({ html = '', css = null, js = null, viewport = true }) {
+  return `<!doctype html><html><head><meta charset="utf-8">${viewport ? '<meta name="viewport" content="width=device-width,initial-scale=1">' : ''}${BRIDGE}${css != null ? `<style>${css}</style>` : ''}</head><body>${html}${js != null ? `<script>try{${js}\n}catch(err){parent.postMessage({lab:'error',msg:String(err.message||err)},'*')}<\/script>` : ''}</body></html>`;
+}
+
+/* ---------- shared page code (Robotics Club) ---------- */
+const CLUB = {
+  html: `<header>
+  <h1>Robotics Club</h1>
+  <nav><a href="#">Events</a> <a href="#">Join</a></nav>
+</header>
+<main>
+  <h2>Upcoming Events</h2>
+  <ul>
+    <li>Robot Race – Monday</li>
+    <li>Code Night – Wednesday</li>
+    <li>Science Fair – Friday</li>
+  </ul>
+  <button id="signup">Sign me up!</button>
+  <p>Signed up: <span id="count">0</span></p>
+</main>
+<footer>© School Robotics Club</footer>`,
+  css: `body { font-family: sans-serif; margin: 0; background: #f1f5ff; }
+header { background: #3b5bdb; color: white; padding: 16px; }
+h1 { margin: 0; }
+nav a { color: #ffd43b; margin-right: 12px; }
+main { padding: 16px; }
+li { background: white; margin: 6px 0; padding: 10px; border-radius: 8px; }
+button { background: #ff6b6b; color: white; border: none; padding: 12px 20px; border-radius: 99px; font-size: 18px; }
+footer { text-align: center; color: #666; padding: 10px; }`,
+  js: `let count = 0;
+const button = document.querySelector("#signup");
+button.addEventListener("click", function () {
+  count = count + 1;
+  document.querySelector("#count").textContent = count;
+});`
+};
+const LIBRARY = {
+  html: `<header>
+  <h1>📚 School Library</h1>
+</header>
+<main>
+  <input id="search" placeholder="Type to search books...">
+  <ul id="books">
+    <li>Harry and the Robot</li>
+    <li>The Secret Garden</li>
+    <li>Coding for Kids</li>
+    <li>The Little Prince</li>
+    <li>Space Explorers</li>
+  </ul>
+</main>`,
+  css: `body { font-family: sans-serif; margin: 0; background: #fff8e7; }
+header { background: #2b8a3e; color: white; padding: 16px; }
+h1 { margin: 0; }
+main { padding: 16px; }
+input { width: 100%; padding: 12px; font-size: 18px; border: 2px solid #2b8a3e; border-radius: 10px; box-sizing: border-box; }
+ul { padding: 0; }
+li { background: white; margin: 8px 0; padding: 12px; border-radius: 8px; list-style: none; border-left: 6px solid #2b8a3e; }`,
+  js: `const search = document.querySelector("#search");
+search.addEventListener("input", function () {
+  const text = search.value.toLowerCase();
+  const books = document.querySelectorAll("#books li");
+  books.forEach(function (book) {
+    const title = book.textContent.toLowerCase();
+    if (title.includes(text)) {
+      book.style.display = "block";
+    } else {
+      book.style.display = "none";
+    }
+  });
+});`
+};
+
+/* ---------- topics ---------- */
+const TOPICS = [
+  { n: 1, icon: '🧱', title: 'The Three Layers', sub: 'HTML · CSS · JavaScript', learn: 'Switch each layer on and off and click the page to see which code made it.', solve: 'Who does this job?' },
+  { n: 2, icon: '⌨️', title: 'Live Code Lab', sub: 'Write real code, see it live', learn: 'Edit the HTML, CSS and JS of a club page and a library page.', solve: 'Page Doctor' },
+  { n: 3, icon: '🏷️', title: 'Semantic HTML', sub: 'Tags with meaning', learn: 'Compare div boxes and semantic tags with a screen reader and a search robot.', solve: 'Tag the Page' },
+  { n: 4, icon: '📱', title: 'Responsive Design', sub: 'One page, every screen', learn: 'Resize the screen from phone to PC and watch the layout change.', solve: 'Predict the Layout' },
+  { n: 5, icon: '🧩', title: 'Frameworks', sub: 'React · Vue · Next.js', learn: 'Build a page from ready-made parts and update only part of the screen.', solve: 'Framework Match' },
+];
+const starHTML = n => `<span class="stars">${'★'.repeat(n)}<span class="e">${'★'.repeat(3 - n)}</span></span>`;
+
+/* ---------- common chrome ---------- */
+function topBar(t, mode) {
+  const tabs = t ? `<div class="seg"><button data-go="#t${t.n}-learn" class="${mode === 'learn' ? 'on' : ''}">🔬 Learn</button><button data-go="#t${t.n}-solve" class="${mode === 'solve' ? 'on' : ''}">🎯 Solve</button></div>` : '';
+  return `<header class="top">
+    <button class="btn small ghost" data-go="#home">← Home</button>
+    <div class="crumb"><small>Lesson 3-3 · ${t ? 'Topic ' + t.n : 'Final'}</small><b>${t ? t.icon + ' ' + t.title : '🏆 Exam Arena'}</b></div>
+    ${tabs}
+    <button class="btn small ghost" id="fsBtn" title="Full screen">⛶</button>
+  </header>`;
+}
+function wireChrome() {
+  $$('[data-go]').forEach(b => b.onclick = () => { location.hash = b.dataset.go; });
+  const fs = $('#fsBtn');
+  if (fs) fs.onclick = () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); };
+}
+
+/* ---------- discover panel ---------- */
+function discoverPanel(points, nextHash) {
+  return `<aside class="panel disc scroll">
+    <h3>💡 What we discover</h3>
+    <div class="prog"><b class="dc">0</b> / ${points.length} found</div>
+    <ol>${points.map((p, i) => `<li data-i="${i}"><span>${p}</span></li>`).join('')}</ol>
+    <div class="doneBox" hidden>🎉 You found everything! Ready for the mission?
+      <button class="btn primary" data-go="${nextHash}">🎯 Go to Solve</button></div>
+  </aside>`;
+}
+function makeDiscover(total) {
+  const found = new Set();
+  return function light(i) {
+    if (found.has(i)) return;
+    found.add(i);
+    const li = $(`.disc li[data-i="${i}"]`);
+    if (li) li.classList.add('lit');
+    const dc = $('.disc .dc'); if (dc) dc.textContent = found.size;
+    if (found.size === total) { const d = $('.disc .doneBox'); if (d) d.hidden = false; }
+  };
+}
+
+/* =========================================================
+   HOME
+   ========================================================= */
+function screenHome() {
+  app.innerHTML = `<div class="screen">
+    <header class="top"><div class="crumb"><small>Lesson 3-3</small><b>Fundamentals of Frontend Technology</b></div>
+      <button class="btn small ghost" id="fsBtn" title="Full screen">⛶</button></header>
+    <section class="hero">
+      <div class="panel" style="gap:14px">
+        <h1>Frontend <span>Lab</span></h1>
+        <p>Open any web page and you are seeing three technologies working together. Switch them on and off, write real code, resize the screen, and build pages from ready-made parts.</p>
+        <div class="trio">
+          <div class="L-html"><b>HTML</b><small>Structure · the frame of a building</small></div>
+          <div class="L-css"><b>CSS</b><small>Appearance · the interior</small></div>
+          <div class="L-js"><b>JavaScript</b><small>Behavior · the electricity</small></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>❓ Guiding question</h3>
+        <p style="color:var(--text)">How do HTML, CSS and JavaScript work together to build a web page, and what makes a modern frontend <b>meaningful</b>, <b>adaptable</b> and <b>efficient</b> to build?</p>
+        <h3 style="margin-top:6px">🗝️ Key terms</h3>
+        <p>semantic HTML · accessibility · SEO · responsive design · mobile-first · framework</p>
+      </div>
+    </section>
+    <section class="cards">
+      ${TOPICS.map(t => `<div class="tcard">
+        <div class="ic">${t.icon}</div><div class="num">Topic ${t.n} · ${t.sub}</div>
+        <h2>${t.title}</h2><p>${t.learn}</p>
+        <div>${starHTML(Store.stars('t' + t.n))} <small style="color:var(--dim);font-weight:800">${t.solve}</small></div>
+        <div class="row"><button class="btn small" data-go="#t${t.n}-learn">🔬 Learn</button><button class="btn small primary" data-go="#t${t.n}-solve">🎯 Solve</button></div>
+      </div>`).join('')}
+      <div class="tcard exam">
+        <div class="ic">🏆</div><div class="num">Final · All topics</div>
+        <h2>Exam Arena</h2><p>The lesson's own exam-style questions: true/false, matching, fill in the blanks and the club web page decision.</p>
+        <div>${starHTML(Store.stars('exam'))}</div>
+        <div class="row"><button class="btn small primary" data-go="#exam">Start the exam →</button></div>
+      </div>
+    </section>
+    <div class="takeaway">⭐ <b>HTML structures, CSS styles, JavaScript behaves</b> — and semantic HTML, responsive design and frameworks make a modern frontend meaningful, adaptable and efficient.</div>
+  </div>`;
+  wireChrome();
+}
+
+/* =========================================================
+   TOPIC 1 — THE THREE LAYERS (Learn)
+   ========================================================= */
+function screenT1Learn() {
+  const t = TOPICS[0];
+  const pts = [
+    '<span class="tagc L-html">HTML</span> builds the <b>structure</b> — headings, lists, links, buttons. Without it there is nothing on the page.',
+    '<span class="tagc L-css">CSS</span> adds the <b>appearance</b> — colors, layout, sizes, fonts. Without it the page is plain.',
+    '<span class="tagc L-js">JavaScript</span> adds <b>behavior</b> — it reacts to clicks and updates part of the screen.',
+    'Every piece on the page comes from a line of code. Click things to find their HTML and CSS lines.',
+    'Each layer has its <b>own job</b>, and the page is made by combining all three.'
+  ];
+  app.innerHTML = `<div class="screen fit">${topBar(t, 'learn')}
+    <div class="work g-t1">
+      <section class="panel">
+        <div class="layerBar">
+          <button class="ltog L-html" data-l="html"><span class="sw"></span><span><b>HTML</b><small>structure</small></span></button>
+          <button class="ltog L-css" data-l="css"><span class="sw"></span><span><b>CSS</b><small>appearance</small></span></button>
+          <button class="ltog L-js" data-l="js"><span class="sw"></span><span><b>JavaScript</b><small>behavior</small></span></button>
+        </div>
+        <div class="t1stage">
+          <div class="browser"><div class="bar"><i></i><i></i><i></i><span>robotics-club.html</span></div><iframe id="pv" title="Club page preview"></iframe></div>
+          <div class="house">
+            <svg id="hs" viewBox="0 0 200 190" aria-label="Building analogy">
+              <circle class="glow" cx="72" cy="112" r="26" fill="#FFD43B"/>
+              <polygon class="roof" points="25,80 100,22 175,80"/>
+              <rect class="wall" x="38" y="80" width="124" height="88"/>
+              <rect class="door" x="112" y="118" width="30" height="50"/>
+              <rect class="win" x="56" y="98" width="32" height="28"/>
+              <g class="frame"><polyline points="25,80 100,22 175,80"/><rect x="38" y="80" width="124" height="88"/><line x1="38" y1="124" x2="162" y2="124"/><line x1="100" y1="80" x2="100" y2="168"/><line x1="38" y1="80" x2="100" y2="124"/><line x1="162" y1="80" x2="100" y2="124"/><rect x="112" y="118" width="30" height="50"/><rect x="56" y="98" width="32" height="28"/></g>
+              <path class="wire" d="M72 98 V60 H190 V185"/>
+              <line x1="10" y1="169" x2="190" y2="169" stroke="#39406E" stroke-width="3"/>
+            </svg>
+            <div class="lbl"><span class="L-html" id="lbH">🏗️ Frame = HTML</span><span class="L-css" id="lbC">🎨 Interior = CSS</span><span class="L-js" id="lbJ">💡 Electricity = JS</span></div>
+          </div>
+        </div>
+        <div class="tip" id="tip">👆 Click anything on the page — the heading, an event, the button — to see which code made it. Then try switching the layers off.</div>
+      </section>
+      <section class="panel"><h3>👩‍💻 The code behind the page</h3>
+        <div class="codeStack">
+          <div class="codebox L-html" id="cb-html"><div class="ch"><span class="fn">index.html</span> structure<span class="st">ON</span></div><div class="cbody">${codeLines(CLUB.html, 'html')}</div></div>
+          <div class="codebox L-css" id="cb-css"><div class="ch"><span class="fn">style.css</span> appearance<span class="st">ON</span></div><div class="cbody">${codeLines(CLUB.css, 'css')}</div></div>
+          <div class="codebox L-js" id="cb-js"><div class="ch"><span class="fn">script.js</span> behavior<span class="st">ON</span></div><div class="cbody">${codeLines(CLUB.js, 'js')}</div></div>
+        </div>
+      </section>
+      ${discoverPanel(pts, '#t1-solve')}
+    </div></div>`;
+  wireChrome();
+  const light = makeDiscover(pts.length);
+  const on = { html: true, css: true, js: true };
+  const toggled = new Set();
+  const pv = $('#pv'), tip = $('#tip'), hs = $('#hs');
+  let inspected = 0;
+  function setTip(html, cls = '') { tip.innerHTML = html; tip.className = 'tip ' + cls; }
+  function clearHL() { $$('.ln.hl').forEach(l => l.classList.remove('hl')); }
+  function render() {
+    pv.srcdoc = pageDoc({ html: on.html ? CLUB.html : '', css: on.css ? CLUB.css : null, js: on.js ? CLUB.js : null });
+    $$('.ltog').forEach(b => b.classList.toggle('off', !on[b.dataset.l]));
+    ['html', 'css', 'js'].forEach(l => { const cb = $('#cb-' + l); cb.classList.toggle('off', !on[l]); $('.st', cb).textContent = on[l] ? 'ON' : 'OFF'; });
+    hs.classList.toggle('h-off', !on.html); hs.classList.toggle('c-on', on.css); hs.classList.toggle('j-on', on.js);
+    $('#lbH').classList.toggle('on', on.html); $('#lbC').classList.toggle('on', on.css && on.html); $('#lbJ').classList.toggle('on', on.js && on.html);
+  }
+  $$('.ltog').forEach(b => b.onclick = () => {
+    const l = b.dataset.l; on[l] = !on[l]; toggled.add(l); clearHL(); render();
+    if (l === 'html' && !on.html) { light(0); setTip('🏗️ <b>No HTML = no structure.</b> The page is empty: there is nothing for CSS to style and nothing for JavaScript to control. Even the house has no frame!', 'warn'); }
+    else if (l === 'css' && !on.css) { light(1); setTip('🎨 <b>Same content, no style.</b> HTML alone shows plain black text on white. The colors, rounded cards and the red button were all CSS.', 'warn'); }
+    else if (l === 'js' && !on.js) { setTip('💡 The page still <b>looks</b> the same… now click <b>Sign me up!</b> — does the number change?', 'warn'); }
+    else setTip(`✅ <b>${l === 'js' ? 'JavaScript' : l.toUpperCase()}</b> is back on.`, 'good');
+    if (toggled.size === 3 && on.html && on.css && on.js) light(4);
+  });
+  onMsg = (d, src) => {
+    if (src !== pv.contentWindow) return;
+    if (d.lab === 'error') return;
+    if (d.lab !== 'click') return;
+    clearHL();
+    if (d.id === 'signup') {
+      if (on.js) {
+        light(2);
+        const ln = $$('#cb-js .ln').find(l => l.textContent.includes('count = count + 1'));
+        const ln2 = $$('#cb-js .ln').find(l => l.textContent.includes('textContent'));
+        [ln, ln2].forEach(x => x && x.classList.add('hl'));
+        scrollToLine($('#cb-js .cbody'), ln);
+        hs.classList.add('flash'); setTimeout(() => hs.classList.remove('flash'), 350);
+        setTip('⚡ <b>JavaScript reacted to your click:</b> <code>count = count + 1</code>, then it updated only the number — the rest of the page did not reload.', 'good');
+      } else {
+        light(2);
+        setTip('🔌 <b>Nothing happens!</b> The button exists (HTML) and looks nice (CSS), but with no JavaScript there is no behavior. Switch JS back on.', 'warn');
+      }
+      if (toggled.size === 3 && on.html && on.css && on.js) light(4);
+      return;
+    }
+    const tag = d.tag === 'html' ? 'body' : d.tag;
+    const hLines = $$('#cb-html .ln').filter(l => new RegExp('<' + tag + '[\\s>]').test(l.textContent));
+    const cLines = $$('#cb-css .ln').filter(l => { const s = l.textContent.replace(/^\s*\d+/, '').split('{')[0]; return l.textContent.includes('{') && s.trim().split(/[\s,]+/).includes(tag); });
+    hLines.forEach(l => l.classList.add('hl')); cLines.forEach(l => l.classList.add('hl'));
+    scrollToLine($('#cb-html .cbody'), hLines[0]); scrollToLine($('#cb-css .cbody'), cLines[0]);
+    const nums = ls => ls.map(l => l.dataset.n).join(', ');
+    setTip(`🔎 <span class="tagc L-html">&lt;${tag}&gt;</span> ${hLines.length ? `is built by <b>HTML line ${nums(hLines)}</b>` : 'is the whole page'}${cLines.length ? ` · styled by <b>CSS line ${nums(cLines)}</b>` : ' · it has no CSS rule of its own'}.`, 'good');
+    inspected++; if (inspected >= 2) light(3);
+  };
+  render();
+}
+
+/* =========================================================
+   TOPIC 2 — LIVE CODE LAB (Learn)
+   ========================================================= */
+function cssRule(css, sel) {
+  const m = css.match(new RegExp('(^|\\n)\\s*' + sel.replace(/\s+/g, '\\s+') + '\\s*\\{([^}]*)\\}'));
+  return m ? m[2] : '';
+}
+function cssProp(rule, prop) { const m = rule.match(new RegExp('(^|[;\\s{])' + prop + '\\s*:\\s*([^;]+)')); return m ? m[2].trim().toLowerCase() : ''; }
+
+const LAB_PRESETS = {
+  club: {
+    name: '🤖 Club page', file: 'robotics-club.html', code: CLUB,
+    missions: [
+      { l: 'html', t: 'Rename the club: change the text inside <code>&lt;h1&gt;</code>.', hint: '<h1>Super Coders Club</h1>', check: (c) => { const m = c.html.match(/<h1>([^<]*)<\/h1>/); return m && m[1].trim() && m[1].trim() !== 'Robotics Club'; } },
+      { l: 'html', t: 'Add a 4th event: copy one <code>&lt;li&gt;</code> line and change it.', hint: '<li>Drone Day – Saturday</li>', check: (c) => (c.html.match(/<li>/g) || []).length >= 4 },
+      { l: 'css', t: 'Paint the header in your club\'s color: change <code>background</code> in the <code>header</code> rule.', hint: 'header { background: purple; ... }', check: (c) => { const v = cssProp(cssRule(c.css, 'header'), 'background(?:-color)?'); return v && v !== '#3b5bdb'; } },
+      { l: 'css', t: 'Make the button text bigger: change <code>font-size</code> in the <code>button</code> rule.', hint: 'button { ... font-size: 28px; }', check: (c) => { const v = parseFloat(cssProp(cssRule(c.css, 'button'), 'font-size')); return v > 18; } },
+      { l: 'js', t: 'Make every click add <b>2</b> people instead of 1.', hint: 'count = count + 2;', check: (c) => /count\s*=\s*count\s*\+\s*2\b|count\s*\+=\s*2\b/.test(c.js) },
+      { l: 'js', t: 'Test it: click <b>Sign me up!</b> in the preview.', hint: 'Click the red button on the page.', ev: 'click-signup' }
+    ]
+  },
+  library: {
+    name: '📚 Library page', file: 'library.html', code: LIBRARY,
+    missions: [
+      { l: 'js', t: 'Type <b>the</b> in the search box — JavaScript filters the books as you type.', hint: 'Click the search box on the page and type.', ev: 'input' },
+      { l: 'html', t: 'Add a new book <code>&lt;li&gt;</code> to the list.', hint: '<li>The Magic Code</li>', check: (c) => (c.html.match(/<li>/g) || []).length >= 6 },
+      { l: 'css', t: 'Change the page background in the <code>body</code> rule.', hint: 'body { ... background: #e7f5ff; }', check: (c) => { const v = cssProp(cssRule(c.css, 'body'), 'background(?:-color)?'); return v && v !== '#fff8e7'; } },
+      { l: 'css', t: 'Change the header color in the <code>header</code> rule.', hint: 'header { background: #e8590c; ... }', check: (c) => { const v = cssProp(cssRule(c.css, 'header'), 'background(?:-color)?'); return v && v !== '#2b8a3e'; } },
+    ]
+  }
+};
+function screenT2Learn() {
+  const t = TOPICS[1];
+  let preset = 'club';
+  let code = {}, tab = 'html', done = new Set(), timer = null;
+  app.innerHTML = `<div class="screen fit">${topBar(t, 'learn')}
+    <div class="work g-t2">
+      <section class="panel">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <div class="seg" id="pre"><button data-p="club">🤖 Club page</button><button data-p="library">📚 Library page</button></div>
+          <button class="btn small ghost" id="reset">↺ Reset code</button>
+        </div>
+        <div style="display:flex;flex-direction:column;flex:1;min-height:0">
+          <div class="edTabs"><button class="L-html" data-t="html">index.html</button><button class="L-css" data-t="css">style.css</button><button class="L-js" data-t="js">script.js</button></div>
+          <textarea class="editor" id="ed" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+        </div>
+      </section>
+      <section class="panel">
+        <h3>👀 Live preview</h3><p class="sub">Updates automatically while you type.</p>
+        <div class="browser" style="flex:1"><div class="bar"><i></i><i></i><i></i><span id="fname"></span></div><iframe id="pv" title="Live preview"></iframe></div>
+        <div class="console" id="con">✓ No errors</div>
+      </section>
+      <aside class="panel scroll">
+        <h3>🎯 Missions</h3><p class="sub">Change the code to complete each one.</p>
+        <ul class="mlist" id="ml"></ul>
+        <div class="examNote" id="note"></div>
+        <div class="doneBox" id="allDone" hidden>🎉 All missions done! You are a real frontend developer.<button class="btn primary" data-go="#t2-solve">🎯 Try Page Doctor</button></div>
+      </aside>
+    </div></div>`;
+  wireChrome();
+  const ed = $('#ed'), pv = $('#pv'), con = $('#con');
+  function loadPreset(p) {
+    preset = p; code = { ...LAB_PRESETS[p].code }; done = new Set(); tab = 'html';
+    $$('#pre button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+    $('#fname').textContent = LAB_PRESETS[p].file;
+    $('#note').innerHTML = p === 'library'
+      ? '📝 <b>Exam link:</b> a library page that lists books, is styled, and filters results as you type.<br>• <span class="tagc L-html">HTML</span> structure: the heading, search box and list of books.<br>• <span class="tagc L-css">CSS</span> appearance: colors, cards, sizes.<br>• <span class="tagc L-js">JS</span> behavior: filtering the list as the user types.'
+      : '💡 <b>Tip:</b> the HTML tab holds the content, the CSS tab styles it, and the JS tab makes it react. Break something on purpose and see what happens!';
+    renderMissions(); showTab(); run();
+  }
+  function showTab() {
+    $$('.edTabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+    ed.className = 'editor L-' + tab; ed.value = code[tab];
+  }
+  function renderMissions() {
+    const ms = LAB_PRESETS[preset].missions;
+    $('#ml').innerHTML = ms.map((m, i) => `<li class="L-${m.l} ${done.has(i) ? 'ok' : ''}" data-i="${i}"><div class="mh"><span class="ck">${done.has(i) ? '✓' : i + 1}</span><span><span class="tagc">${m.l === 'js' ? 'JS' : m.l.toUpperCase()}</span> ${m.t}</span></div><button class="hbtn">show hint</button><div class="hint" hidden>${esc(m.hint)}</div></li>`).join('');
+    $$('#ml .hbtn').forEach(b => b.onclick = () => { b.nextElementSibling.hidden = !b.nextElementSibling.hidden; });
+    $('#allDone').hidden = done.size < ms.length;
+  }
+  function mark(i) { if (done.has(i)) return; done.add(i); renderMissions(); }
+  function checkAll() { LAB_PRESETS[preset].missions.forEach((m, i) => { if (m.check && m.check(code)) mark(i); }); }
+  function run() {
+    con.textContent = '✓ No errors'; con.className = 'console';
+    pv.srcdoc = pageDoc(code);
+    checkAll();
+  }
+  ed.addEventListener('input', () => { code[tab] = ed.value; clearTimeout(timer); timer = setTimeout(run, 450); });
+  ed.addEventListener('keydown', e => { if (e.key === 'Tab') { e.preventDefault(); const s = ed.selectionStart; ed.setRangeText('  ', s, ed.selectionEnd, 'end'); ed.dispatchEvent(new Event('input')); } });
+  $$('.edTabs button').forEach(b => b.onclick = () => { tab = b.dataset.t; showTab(); });
+  $$('#pre button').forEach(b => b.onclick = () => loadPreset(b.dataset.p));
+  $('#reset').onclick = () => { code = { ...LAB_PRESETS[preset].code }; showTab(); run(); };
+  onCleanup(() => clearTimeout(timer));
+  onMsg = (d, src) => {
+    if (src !== pv.contentWindow) return;
+    const ms = LAB_PRESETS[preset].missions;
+    if (d.lab === 'error') { con.textContent = '⚠️ JavaScript error: ' + d.msg; con.className = 'console err'; }
+    if (d.lab === 'click' && d.id === 'signup') ms.forEach((m, i) => m.ev === 'click-signup' && mark(i));
+    if (d.lab === 'input' && d.value.trim()) ms.forEach((m, i) => m.ev === 'input' && mark(i));
+  };
+  loadPreset('club');
+}
+
+/* =========================================================
+   TOPIC 3 — SEMANTIC HTML (Learn)
+   ========================================================= */
+const SEM_CODE = {
+  div: `<div class="top">
+  <h1>Robotics Club</h1>
+</div>
+<div class="menu">
+  <a href="#">Events</a>
+  <a href="#">Join</a>
+</div>
+<div class="content">
+  <h2>Upcoming Events</h2>
+  <p>Robot Race – Monday</p>
+  <p>Code Night – Wednesday</p>
+</div>
+<div class="bottom">
+  © School Robotics Club
+</div>`,
+  sem: `<header>
+  <h1>Robotics Club</h1>
+</header>
+<nav>
+  <a href="#">Events</a>
+  <a href="#">Join</a>
+</nav>
+<main>
+  <h2>Upcoming Events</h2>
+  <p>Robot Race – Monday</p>
+  <p>Code Night – Wednesday</p>
+</main>
+<footer>
+  © School Robotics Club
+</footer>`
+};
+const SR_SCRIPT = {
+  div: [
+    { r: null, t: 'Reading the page from top to bottom…' },
+    { r: 'header', t: '“Robotics Club” … (just a box)' },
+    { r: 'nav', t: '“link Events”, “link Join” … (just a box)' },
+    { r: 'main', t: '“Upcoming Events”, “Robot Race – Monday”, “Code Night – Wednesday”' },
+    { r: 'footer', t: '“© School Robotics Club”' },
+    { r: null, t: '🤔 I only found boxes (div). Where is the menu? Where is the main content? I cannot jump to them.' }
+  ],
+  sem: [
+    { r: 'header', t: 'Banner (header): “Robotics Club”' },
+    { r: 'nav', t: 'Navigation (nav) with 2 links: Events, Join' },
+    { r: 'main', t: 'Main content (main): “Upcoming Events”, 2 events' },
+    { r: 'footer', t: 'Footer (content info): “© School Robotics Club”' },
+    { r: null, t: '✅ I found 4 landmarks! A blind user can jump straight to the menu or the main content.' }
+  ]
+};
+function screenT3Learn() {
+  const t = TOPICS[2];
+  const pts = [
+    '<b>Semantic HTML</b> uses tags whose names tell what each part <b>means</b>.',
+    '<span class="tagc L-html">&lt;header&gt;</span> top · <span class="tagc L-html">&lt;nav&gt;</span> menu · <span class="tagc L-html">&lt;main&gt;</span> body · <span class="tagc L-html">&lt;footer&gt;</span> bottom.',
+    'To our eyes both pages <b>look the same</b> — the difference is the meaning in the code.',
+    '<b>Accessibility:</b> screen readers understand the structure, so information reaches users with visual impairments.',
+    '<b>SEO:</b> search engines understand the content, so the page shows up properly in search results.'
+  ];
+  let mode = 'div', showTags = true, srTimer = null, speak = false;
+  const seen = new Set();
+  app.innerHTML = `<div class="screen fit">${topBar(t, 'learn')}
+    <div class="work g-t3">
+      <section class="panel"><h3>👩‍💻 The HTML code</h3>
+        <div class="seg" id="mode"><button data-m="div">📦 Div boxes</button><button data-m="sem">🏷️ Semantic tags</button></div>
+        <div class="codebox L-html" style="flex:1"><div class="ch"><span class="fn">index.html</span><span class="st" id="mlab"></span></div><div class="cbody" id="code"></div></div>
+      </section>
+      <section class="panel scroll">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn small" id="bTags">🏷️ Show tags</button>
+          <button class="btn small" id="bSR">🔊 Screen reader</button>
+          <button class="btn small" id="bBot">🔍 Search robot</button>
+          <button class="btn small ghost" id="bSpeak" title="Read aloud">🔈 Voice: off</button>
+        </div>
+        <div class="mock tags" id="mock">
+          <div class="rg hdr" data-r="header"><h1>🤖 Robotics Club</h1></div>
+          <div class="rg nv" data-r="nav"><a>Events</a><a>Join</a></div>
+          <div class="rg mn" data-r="main"><h2>Upcoming Events</h2><p>🏎️ Robot Race – Monday</p><p>💻 Code Night – Wednesday</p></div>
+          <div class="rg ft" data-r="footer">© School Robotics Club</div>
+        </div>
+        <div id="out"><div class="tip">Switch between <b>📦 Div boxes</b> and <b>🏷️ Semantic tags</b>. Does the page look different? Then ask the screen reader and the search robot.</div></div>
+      </section>
+      ${discoverPanel(pts, '#t3-solve')}
+    </div></div>`;
+  wireChrome();
+  const light = makeDiscover(pts.length);
+  const mock = $('#mock'), out = $('#out');
+  const TAGS = { div: { header: 'div class="top"', nav: 'div class="menu"', main: 'div class="content"', footer: 'div class="bottom"' }, sem: { header: 'header', nav: 'nav', main: 'main', footer: 'footer' } };
+  function render() {
+    $$('#mode button').forEach(b => b.classList.toggle('on', b.dataset.m === mode));
+    $('#code').innerHTML = codeLines(SEM_CODE[mode], 'html');
+    $('#mlab').textContent = mode === 'div' ? 'only boxes' : 'meaningful tags';
+    mock.className = 'mock ' + mode + (showTags ? ' tags' : '');
+    $$('.rg', mock).forEach(r => r.dataset.tag = '<' + TAGS[mode][r.dataset.r] + '>');
+    $('#bTags').classList.toggle('on', showTags);
+    seen.add(mode);
+    if (seen.size === 2) light(2);
+    if (mode === 'sem') { light(0); if (showTags) light(1); }
+  }
+  function stopSR() { clearTimeout(srTimer); $$('.rg', mock).forEach(r => r.classList.remove('speak')); try { speechSynthesis.cancel(); } catch (e) {} }
+  onCleanup(stopSR);
+  $$('#mode button').forEach(b => b.onclick = () => { stopSR(); mode = b.dataset.m; render(); out.innerHTML = `<div class="tip">${mode === 'sem' ? '🏷️ Now every part has a <b>meaningful tag</b>. It looks exactly the same — run the screen reader again!' : '📦 Every part is just a <b>div</b> (a plain box). It means nothing to a computer.'}</div>`; });
+  $('#bTags').onclick = () => { showTags = !showTags; render(); };
+  $('#bSpeak').onclick = () => { speak = !speak; $('#bSpeak').textContent = speak ? '🔊 Voice: on' : '🔈 Voice: off'; $('#bSpeak').classList.toggle('on', speak); };
+  $('#bSR').onclick = () => {
+    stopSR();
+    const steps = SR_SCRIPT[mode]; let k = 0;
+    out.innerHTML = `<div class="sr"><span class="ic">🔊</span><span id="srt"></span></div>`;
+    const step = () => {
+      $$('.rg', mock).forEach(r => r.classList.remove('speak'));
+      if (k >= steps.length) { if (mode === 'sem') light(3); return; }
+      const s = steps[k++];
+      $('#srt').textContent = s.t;
+      if (s.r) $(`.rg[data-r="${s.r}"]`, mock).classList.add('speak');
+      if (speak && 'speechSynthesis' in window) { try { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(s.t.replace(/[🤔✅“”]/g, ''))); } catch (e) {} }
+      srTimer = setTimeout(step, speak ? 3200 : 2100);
+    };
+    step();
+  };
+  $('#bBot').onclick = () => {
+    stopSR();
+    if (mode === 'div') {
+      out.innerHTML = `<div class="serp"><div class="u">school-club.example › page</div><div class="tt">Untitled page</div><div>Robotics Club Events Join Upcoming Events Robot Race – Monday Code Night – Wednesday © School Robotics…</div></div>
+      <div class="robot" style="margin-top:8px">🤖 <b>Search robot:</b> “I see 4 boxes, but which one is the menu and which is the important content? I'll just mix all the text together.”
+      <ul><li>Menu: ❓ unknown</li><li>Main content: ❓ unknown</li><li>Footer: ❓ unknown</li></ul></div>`;
+    } else {
+      light(4);
+      out.innerHTML = `<div class="serp"><div class="u">school-club.example › robotics</div><div class="tt">Robotics Club</div><div><b>Upcoming Events:</b> Robot Race – Monday · Code Night – Wednesday</div><div class="sl"><span>Events</span><span>Join</span></div></div>
+      <div class="robot" style="margin-top:8px">🤖 <b>Search robot:</b> “Easy! I understand this page correctly.”
+      <ul><li>Menu: ✅ found in &lt;nav&gt; → shown as quick links</li><li>Main content: ✅ found in &lt;main&gt; → used for the description</li><li>Footer: ✅ found in &lt;footer&gt; → not important for search</li></ul></div>`;
+    }
+  };
+  render();
+}
+
+/* =========================================================
+   TOPIC 4 — RESPONSIVE DESIGN (Learn)
+   ========================================================= */
+const R_HTML = `<header>
+  <h1>🤖 Robotics Club</h1>
+  <nav><a>Events</a><a>Join</a><a>Gallery</a></nav>
+</header>
+<main class="cards">
+  <div class="card">🏎️<h3>Robot Race</h3><p>Monday</p></div>
+  <div class="card">💻<h3>Code Night</h3><p>Wednesday</p></div>
+  <div class="card">🔬<h3>Science Fair</h3><p>Friday</p></div>
+  <div class="card">🚁<h3>Drone Day</h3><p>Saturday</p></div>
+  <div class="card">🎮<h3>Game Jam</h3><p>Sunday</p></div>
+  <div class="card">🧩<h3>Puzzle Hour</h3><p>Tuesday</p></div>
+</main>`;
+const R_CSS_BLOCKS = [
+  { min: 0, name: '📱 Phone (base)', code: `/* 1. Base styles: phones first (mobile-first) */
+body { margin: 0; font-family: sans-serif; background: #f1f5ff; }
+header { background: #3b5bdb; color: white; padding: 12px; text-align: center; }
+h1 { margin: 0 0 6px; font-size: 24px; }
+nav a { display: block; padding: 6px; color: #ffd43b; }
+.cards { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 12px; }
+.card { background: white; border-radius: 12px; padding: 14px; font-size: 30px; }
+.card h3 { font-size: 18px; margin: 6px 0 0; }
+.card p { font-size: 14px; margin: 2px 0 0; color: #666; }` },
+  { min: 600, name: '📲 Tablet', code: `/* 2. Tablet: 600px and wider */
+@media (min-width: 600px) {
+  .cards { grid-template-columns: 1fr 1fr; }
+  nav a { display: inline-block; margin: 0 8px; }
+}` },
+  { min: 900, name: '💻 PC', code: `/* 3. PC: 900px and wider */
+@media (min-width: 900px) {
+  .cards { grid-template-columns: 1fr 1fr 1fr; }
+  header { display: flex; justify-content: space-between; align-items: center; }
+}` }
+];
+const R_CSS = R_CSS_BLOCKS.map(b => b.code).join('\n');
+const R_FIXED = `/* NOT responsive: one fixed size for every screen */
+body { margin: 0; font-family: sans-serif; background: #f1f5ff; width: 1000px; }
+header { background: #3b5bdb; color: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+h1 { margin: 0; font-size: 24px; }
+nav a { margin: 0 8px; color: #ffd43b; }
+.cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; padding: 12px; }
+.card { background: white; border-radius: 12px; padding: 14px; font-size: 30px; }
+.card h3 { font-size: 18px; margin: 6px 0 0; }
+.card p { font-size: 14px; margin: 2px 0 0; color: #666; }`;
+const devName = w => w < 600 ? '📱 Phone' : w < 900 ? '📲 Tablet' : '💻 PC';
+const colsAt = w => w >= 900 ? 3 : w >= 600 ? 2 : 1;
+
+function scaledFrame(stage, dev, iframe, w) {
+  const pad = 24, avW = stage.clientWidth - pad, avH = Math.max(300, stage.clientHeight - pad);
+  const phone = w < 600; dev.classList.toggle('phone', phone);
+  const bez = phone ? 12 : 12;
+  const s = Math.min(1, (avW - bez) / w);
+  const h = Math.min(avH - bez, phone ? Math.min(avH - bez, w * 1.9 * s) : avH - bez);
+  dev.style.width = (w * s + bez) + 'px'; dev.style.height = (h + bez + (phone ? 8 : 0)) + 'px';
+  iframe.style.width = w + 'px'; iframe.style.height = (h / s) + 'px'; iframe.style.transform = `scale(${s})`;
+}
+function screenT4Learn() {
+  const t = TOPICS[3];
+  const pts = [
+    '<b>Responsive design:</b> the layout adjusts automatically to the screen size.',
+    'With <b>one single web page</b>, it is easy to view on a phone, a tablet and a PC.',
+    'CSS <span class="tagc L-css">@media</span> rules switch the layout when the screen gets wider.',
+    '<b>Mobile-first:</b> design for small phone screens first, then add rules for bigger screens.',
+    'Without responsive design, phones get a page that is too wide — you must scroll sideways.'
+  ];
+  let w = 1100, resp = true, lastCols = null, colsSeen = new Set(), anim = null;
+  app.innerHTML = `<div class="screen fit">${topBar(t, 'learn')}
+    <div class="work g-t4">
+      <section class="panel">
+        <div class="devbar">
+          <button class="btn small" data-w="375">📱 Phone</button>
+          <button class="btn small" data-w="768">📲 Tablet</button>
+          <button class="btn small" data-w="1200">💻 PC</button>
+          <input type="range" id="wr" min="320" max="1300" step="1" aria-label="Screen width">
+          <span class="wlabel" id="wl"></span>
+        </div>
+        <div class="devbar">
+          <div class="seg" id="rs"><button data-r="1">✅ Responsive ON</button><button data-r="0">🚫 Responsive OFF</button></div>
+          <button class="btn small" id="mf">🔢 Show mobile-first order</button>
+        </div>
+        <div class="rstage" id="st"><div class="rdev" id="dev"><div class="clip"><iframe id="pv" title="Responsive preview"></iframe></div></div></div>
+        <div class="tip" id="tip">↔️ Drag the slider or pick a device. Watch how many columns the event cards use.</div>
+      </section>
+      <div style="display:grid;grid-template-rows:1fr auto;gap:12px;min-height:0">
+        <section class="panel" style="min-height:0"><h3>🎨 style.css</h3>
+          <div class="codebox L-css" style="flex:1"><div class="cbody" id="code"></div></div>
+        </section>
+        ${discoverPanel(pts, '#t4-solve')}
+      </div>
+    </div></div>`;
+  wireChrome();
+  const light = makeDiscover(pts.length);
+  const st = $('#st'), dev = $('#dev'), pv = $('#pv'), wr = $('#wr'), tip = $('#tip');
+  function renderCode() {
+    $('#code').innerHTML = resp
+      ? R_CSS_BLOCKS.map((b, i) => `<div class="cblk" data-b="${i}">${codeLines(b.code, 'css', R_CSS_BLOCKS.slice(0, i).reduce((n, x) => n + x.code.split('\n').length, 1))}</div>`).join('')
+      : `<div class="cblk act">${codeLines(R_FIXED, 'css')}</div>`;
+  }
+  function loadPage() { pv.srcdoc = pageDoc({ html: R_HTML, css: resp ? R_CSS : R_FIXED, viewport: true }); }
+  function update(fromUser = true) {
+    wr.value = w;
+    $('#wl').textContent = `${w}px · ${devName(w)}`;
+    scaledFrame(st, dev, pv, w);
+    if (resp) {
+      $$('.cblk', $('#code')).forEach((el, i) => { const a = w >= R_CSS_BLOCKS[i].min; el.classList.toggle('act', a); el.classList.toggle('ina', !a); });
+      const c = colsAt(w);
+      if (lastCols !== null && c !== lastCols && fromUser) { light(0); light(2); tip.innerHTML = `✨ The layout changed to <b>${c} column${c > 1 ? 's' : ''}</b> — ${c === 1 ? 'only the base phone styles apply now (no <span class="tagc L-css">@media</span> rule is active).' : `the <span class="tagc L-css">@media</span> rule for ${c === 2 ? '600px and wider' : '900px and wider'} is now active.`}`; tip.className = 'tip good'; }
+      lastCols = c; colsSeen.add(c);
+      if (colsSeen.size === 3) light(1);
+    } else if (w < 600) {
+      light(4);
+      tip.innerHTML = '🚫 <b>Not responsive:</b> the page is fixed at 1000px, so on a phone it doesn\'t fit. Users must zoom or scroll sideways to read it!'; tip.className = 'tip warn';
+    }
+  }
+  wr.oninput = () => { stopAnim(); w = +wr.value; update(); };
+  $$('[data-w]').forEach(b => b.onclick = () => { stopAnim(); w = +b.dataset.w; update(); });
+  $$('#rs button').forEach(b => b.onclick = () => {
+    stopAnim(); resp = b.dataset.r === '1'; lastCols = null;
+    $$('#rs button').forEach(x => x.classList.toggle('on', x === b));
+    renderCode(); loadPage(); update(false);
+    if (!resp) { tip.innerHTML = '🚫 Responsive design is OFF. Now pick 📱 Phone — what happens?'; tip.className = 'tip warn'; }
+    else { tip.innerHTML = '✅ Responsive design is back ON.'; tip.className = 'tip good'; }
+  });
+  function stopAnim() { if (anim) { clearTimeout(anim); anim = null; $$('.cblk').forEach(x => x.classList.remove('pulse')); } }
+  $('#mf').onclick = () => {
+    stopAnim();
+    if (!resp) $('#rs button[data-r="1"]').click();
+    const steps = [
+      { w: 360, b: 0, t: '1️⃣ <b>Mobile-first:</b> we write the phone styles first — one column, big readable cards.' },
+      { w: 700, b: 1, t: '2️⃣ Then we <b>add</b> a rule for screens 600px and wider: two columns, menu in one line.' },
+      { w: 1200, b: 2, t: '3️⃣ Finally a rule for 900px and wider: three columns and the menu beside the title.' }
+    ];
+    let k = 0;
+    const next = () => {
+      $$('.cblk').forEach(x => x.classList.remove('pulse'));
+      if (k >= steps.length) { light(3); anim = null; return; }
+      const s = steps[k++]; w = s.w; update(false);
+      const blk = $(`.cblk[data-b="${s.b}"]`); blk.classList.add('pulse'); scrollToLine($('#code'), blk);
+      tip.innerHTML = s.t; tip.className = 'tip good';
+      anim = setTimeout(next, 3000);
+    };
+    next();
+  };
+  const ro = new ResizeObserver(() => scaledFrame(st, dev, pv, w)); ro.observe(st);
+  onCleanup(() => { ro.disconnect(); stopAnim(); });
+  $('#rs button[data-r="1"]').classList.add('on');
+  renderCode(); loadPage(); update(false);
+}
+
+/* =========================================================
+   TOPIC 5 — FRAMEWORKS (Learn)
+   ========================================================= */
+const FW_PARTS = {
+  Navbar: { inside: 14, jsx: () => '<Navbar />', html: () => `<div class="cp nav">🤖 Robotics Club <span>Events · Join</span></div>` },
+  EventCard: { inside: 12, jsx: (d) => `<EventCard title="${d.t}" day="${d.d}" />`, html: (d) => `<div class="cp card"><b>${d.e} ${d.t}</b><br><small>${d.d}</small></div>` },
+  SignupButton: { inside: 18, jsx: () => '<SignupButton />', html: () => `<div class="cp sign"><button>Sign me up!</button> Signed up: <b>0</b></div>` },
+  Footer: { inside: 8, jsx: () => '<Footer />', html: () => `<div class="cp foot">© School Robotics Club</div>` }
+};
+const EVENTS = [['🏎️', 'Robot Race', 'Monday'], ['💻', 'Code Night', 'Wednesday'], ['🔬', 'Science Fair', 'Friday'], ['🚁', 'Drone Day', 'Saturday'], ['🎮', 'Game Jam', 'Sunday']];
+const FWS = [
+  { k: 'react', n: 'React', c: '#61DAFB', by: 'Developed by Meta (formerly Facebook)', pts: ['Efficiently updates <b>only part of the screen</b>.', 'Suited to <b>large-scale</b> web applications.'], code: `function SignupButton() {
+  const [count, setCount] = useState(0);
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      Signed up: {count}
+    </button>
+  );
+}` },
+  { k: 'vue', n: 'Vue', c: '#42B883', by: 'Simple structure', pts: ['Has a <b>simple structure</b>.', 'Lets you build apps <b>step by step</b>, starting from small features.'], code: `<template>
+  <button @click="count++">
+    Signed up: {{ count }}
+  </button>
+</template>` },
+  { k: 'next', n: 'Next.js', c: '#E6E9FF', by: 'Built on React', pts: ['Has <b>all of React\'s features</b>…', '…plus mechanisms to <b>speed up page display</b> (pages can be prepared before they reach you).'], code: `// pages/index.js  (a Next.js page)
+export default function Home() {
+  return (
+    <main>
+      <Navbar />
+      <EventCard title="Robot Race" day="Monday" />
+      <SignupButton />
+    </main>
+  );
+}` }
+];
+function screenT5Learn() {
+  const t = TOPICS[4];
+  const pts = [
+    'A <b>framework</b> gives you commonly used functions and components <b>ready-made</b>.',
+    'You don\'t write all code from scratch → development is <b>faster and more efficient</b>.',
+    '<b>React</b> (by Meta) updates <b>only part of the screen</b> — great for large apps.',
+    '<b>Vue</b> is simple and lets you build step by step from small features.',
+    '<b>Next.js</b> = React\'s features + tricks to make pages <b>display faster</b>.'
+  ];
+  let tab = 'build', parts = [], evI = 0, openFw = null, justAdded = false;
+  app.innerHTML = `<div class="screen fit">${topBar(t, 'learn')}
+    <div class="work g-t5">
+      <section class="panel scroll">
+        <div class="sTabs seg" id="tabs"><button data-t="build">🧩 Build with ready-made parts</button><button data-t="update">⚡ Update only part</button><button data-t="meet">👋 Meet the frameworks</button></div>
+        <div id="pane" style="display:flex;flex-direction:column;gap:10px;flex:1"></div>
+      </section>
+      ${discoverPanel(pts, '#t5-solve')}
+    </div></div>`;
+  wireChrome();
+  const light = makeDiscover(pts.length);
+  const pane = $('#pane');
+  function showTab() {
+    $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+    if (tab === 'build') buildPane(); else if (tab === 'update') updatePane(); else meetPane();
+  }
+  function buildPane() {
+    pane.innerHTML = `<p class="sub" style="margin:0">Click a ready-made component to add it to the page. Each one is a whole chunk of HTML, CSS and JS that someone already wrote for you.</p>
+      <div class="pal">${Object.keys(FW_PARTS).map(k => `<button data-k="${k}">+ &lt;${k} /&gt;</button>`).join('')}<button data-k="clear" style="border-color:var(--coral);color:var(--coral);background:transparent">🗑 Clear</button></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="upd">
+        <div class="fwcanvas" id="cv"></div>
+        <div class="codebox" style="--c:var(--violet)"><div class="ch"><span class="fn">App.jsx</span> what YOU write</div><div class="cbody" id="jsx"></div></div>
+      </div>
+      <div class="meter">
+        <span>✍️ Lines you wrote</span><div class="bar"><i id="m1" style="background:var(--mint)"></i></div><b id="n1">0</b>
+        <span>🎁 Lines the parts gave you</span><div class="bar"><i id="m2" style="background:var(--violet)"></i></div><b id="n2">0</b>
+      </div>
+      <div class="tip" id="tip">Add some parts and compare the two bars.</div>`;
+    const draw = () => {
+      $('#cv').innerHTML = parts.length ? parts.map(p => FW_PARTS[p.k].html(p.d)).join('') : '<div class="empty">Empty page — add a component ➜</div>';
+      $$('#cv .cp').forEach((el, k) => { if (k < parts.length - 1 || !justAdded) el.style.animation = 'none'; });
+      justAdded = false;
+      const jsx = ['function App() {', '  return (', '    <div>', ...parts.map(p => '      ' + FW_PARTS[p.k].jsx(p.d)), '    </div>', '  );', '}'];
+      $('#jsx').innerHTML = codeLines(jsx.join('\n'), 'js');
+      const mine = parts.length ? jsx.length : 0, gift = parts.reduce((s, p) => s + FW_PARTS[p.k].inside, 0);
+      const mx = Math.max(mine, gift, 1);
+      $('#n1').textContent = mine; $('#n2').textContent = gift;
+      $('#m1').style.width = (mine / mx * 100) + '%'; $('#m2').style.width = (gift / mx * 100) + '%';
+      $$('#cv .cp.sign button').forEach(b => b.onclick = () => { const n = b.nextElementSibling; n.textContent = +n.textContent + 1; });
+    };
+    $$('.pal button').forEach(b => b.onclick = () => {
+      if (b.dataset.k === 'clear') { parts = []; draw(); return; }
+      const e = EVENTS[evI++ % EVENTS.length];
+      parts.push({ k: b.dataset.k, d: { e: e[0], t: e[1], d: e[2] } }); justAdded = true;
+      draw(); light(0);
+      if (parts.length >= 4) { light(1); $('#tip').innerHTML = `🚀 You wrote only <b>${parts.length + 6} lines</b>, but the page uses <b>${parts.reduce((s, p) => s + FW_PARTS[p.k].inside, 0)}</b> lines of ready-made code. That's why frameworks make development efficient! (Try the Sign me up button — it already works.)`; $('#tip').className = 'tip good'; }
+    });
+    draw();
+  }
+  function updatePane() {
+    const page = (id) => `<div class="mini" id="${id}">
+      <div class="part h">🤖 Robotics Club</div><div class="part">Events · Join · Gallery</div>
+      <div class="row2"><div class="part">🏎️ Race</div><div class="part">💻 Code</div><div class="part">🔬 Fair</div></div>
+      <div class="row2"><div class="part">🚁 Drone</div><div class="part">🎮 Games</div><div class="part">🧩 Puzzle</div></div>
+      <div class="part">Signed up: <b class="cnt">0</b></div><div class="part">© School Robotics Club</div></div>`;
+    pane.innerHTML = `<p class="sub" style="margin:0">Someone clicks “Sign me up”. Only one number changes — but how much of the screen gets redrawn?</p>
+      <div class="upd">
+        <div class="panel"><h3>🐢 Old way: reload the whole page</h3>${page('pa')}<button class="btn" id="ba">Sign me up!</button><div class="meter"><span>Parts redrawn</span><div class="bar"><i id="ra" style="background:var(--coral);width:0"></i></div><b id="na">0</b></div></div>
+        <div class="panel"><h3>⚡ React way: update only that part</h3>${page('pb')}<button class="btn primary" id="bb">Sign me up!</button><div class="meter"><span>Parts redrawn</span><div class="bar"><i id="rb" style="background:var(--mint);width:0"></i></div><b id="nb">0</b></div></div>
+      </div>
+      <div class="tip" id="tip">Click both buttons and watch which parts flash yellow.</div>`;
+    let ca = 0, cb = 0;
+    const flash = el => { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); };
+    $('#ba').onclick = () => {
+      const pa = $('#pa'); const ov = document.createElement('div'); ov.className = 'loading'; ov.textContent = '⏳ Reloading the whole page…'; pa.appendChild(ov);
+      $('#ba').disabled = true;
+      setTimeout(() => { ov.remove(); ca++; $('.cnt', pa).textContent = ca; $$('.part', pa).forEach(flash); const n = $$('.part', pa).length; $('#na').textContent = n; $('#ra').style.width = '100%'; $('#ba').disabled = false; }, 900);
+    };
+    $('#bb').onclick = () => {
+      const pb = $('#pb'); cb++; const c = $('.cnt', pb); c.textContent = cb; flash(c);
+      $('#nb').textContent = 1; $('#rb').style.width = (100 / $$('.part', pb).length) + '%';
+      light(2); $('#tip').innerHTML = '⚡ <b>React</b> changed only the number. Nothing else was redrawn and there was no waiting. This is why React suits big apps like social media feeds.'; $('#tip').className = 'tip good';
+    };
+  }
+  function meetPane() {
+    pane.innerHTML = `<p class="sub" style="margin:0">Click each framework card to learn about it.</p>
+      <div class="fwc">${FWS.map(f => `<button class="fw" data-k="${f.k}" style="--c:${f.c}"><span class="lg" style="background:${f.c}">${f.n[0]}</span><b>${f.n}</b><small>${f.by}</small></button>`).join('')}</div>
+      <div id="fwd"></div>`;
+    const show = k => {
+      const f = FWS.find(x => x.k === k); openFw = k;
+      $$('.fw').forEach(b => b.classList.toggle('open', b.dataset.k === k));
+      $('#fwd').innerHTML = `<div class="upd"><div class="panel" style="--c:${f.c};border-color:${f.c}"><h3>${f.n}</h3><ul style="margin:0;padding-left:1.2em;font-weight:700">${f.pts.map(p => `<li>${p}</li>`).join('')}</ul></div>
+        <div class="codebox" style="--c:${f.c}"><div class="ch"><span class="fn">${f.n} code</span> a sign-up counter</div><div class="cbody">${codeLines(f.code, 'js')}</div></div></div>`;
+      if (k === 'react') light(2); if (k === 'vue') light(3); if (k === 'next') light(4);
+    };
+    $$('.fw').forEach(b => b.onclick = () => show(b.dataset.k));
+    if (openFw) show(openFw);
+  }
+  $$('#tabs button').forEach(b => b.onclick = () => { tab = b.dataset.t; showTab(); });
+  showTab();
+}
+
+/* =========================================================
+   QUIZ ENGINE (mcq · type · place)
+   ========================================================= */
+function screenQuiz({ id, topic, title, questions, retry }) {
+  let i = 0, mistakes = 0; const results = [];
+  app.innerHTML = `<div class="screen fit">${topBar(topic, 'solve')}<div class="quiz" id="qz"></div></div>`;
+  wireChrome();
+  const qz = $('#qz');
+  const norm = s => String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
+  function show() {
+    if (i >= questions.length) return finish();
+    const q = questions[i];
+    qz.innerHTML = `<div class="qtop"><b style="font-family:var(--display);font-size:1.2rem">${title}</b>
+        <div class="dots">${questions.map((_, k) => `<span class="${k < i ? (results[k] ? 'done' : 'bad') : k === i ? 'now' : ''}"></span>`).join('')}</div>
+        <div class="miss">Question ${i + 1}/${questions.length} · Mistakes: <b>${mistakes}</b></div></div>
+      <div class="qcard panel">
+        ${q.tag ? `<div class="qtag">${q.tag}</div>` : ''}
+        <h2 class="qprompt">${q.prompt}</h2>
+        <div class="qgrid ${q.visual || q.mount ? 'v' : ''}">
+          ${q.visual || q.mount ? `<div class="qvisual" id="qv">${q.visual || ''}</div>` : ''}
+          <div class="qbody" id="qb" style="display:flex;flex-direction:column;gap:12px"></div>
+        </div>
+        <div class="qfeed" id="qf" hidden></div>
+        <div class="qnext" id="qn" hidden><button class="btn primary">${i === questions.length - 1 ? 'See results 🏁' : 'Next →'}</button></div>
+      </div>`;
+    if (q.mount) q.mount($('#qv'));
+    const qb = $('#qb');
+    let wrongHere = false;
+    const finishQ = (ok, extra = '') => {
+      results[i] = ok && !wrongHere;
+      const f = $('#qf'); f.hidden = false; f.className = 'qfeed' + (ok && !wrongHere ? '' : ' bad');
+      f.innerHTML = `<b>${ok && !wrongHere ? '✓ Correct!' : '✗ Not quite.'}</b> ${extra}${q.explain ? ' ' + q.explain : ''}`;
+      if (q.reveal) q.reveal($('#qv'));
+      const n = $('#qn'); n.hidden = false; const b = $('button', n); b.onclick = () => { i++; show(); }; b.focus();
+    };
+    if (q.type === 'type') {
+      qb.innerHTML = `<div class="tin"><input id="ti" placeholder="Type your answer…" autocomplete="off"><button class="btn primary" id="tc">Check</button></div>`;
+      const inp = $('#ti'); inp.focus();
+      const check = () => {
+        if (!inp.value.trim()) return;
+        const ok = q.accept.some(a => norm(a) === norm(inp.value));
+        inp.disabled = true; $('#tc').disabled = true;
+        if (!ok) { mistakes++; wrongHere = true; }
+        finishQ(ok, ok ? '' : `The answer is <b>${q.accept[0]}</b>.`);
+      };
+      $('#tc').onclick = check; inp.onkeydown = e => { if (e.key === 'Enter') check(); };
+    } else if (q.type === 'place') {
+      qb.innerHTML = `${q.layout}<div class="chips" id="chips">${shuffle(q.chips).map(c => `<button class="chip" data-c="${c}" ${q.chipClass ? `style="--c:${q.chipClass(c)}"` : ''}>${esc(c)}</button>`).join('')}</div>`;
+      let sel = null; const total = Object.keys(q.answer).length; let filled = 0;
+      const zones = $$('.zone', qb);
+      const tryPlace = (z, c) => {
+        if (z.classList.contains('filled')) return;
+        if (q.answer[z.dataset.z] === c) {
+          z.classList.add('filled'); z.classList.remove('ready'); z.innerHTML = q.fillLabel ? q.fillLabel(c, z) : esc(c); filled++;
+          const chip = $(`.chip[data-c="${CSS.escape(c)}"]`, qb); if (chip && !q.reuse) chip.remove(); else if (chip) chip.classList.remove('sel');
+          sel = null; zones.forEach(x => x.classList.remove('ready'));
+          if (filled === total) finishQ(true);
+        } else {
+          mistakes++; wrongHere = true;
+          z.classList.remove('bad'); void z.offsetWidth; z.classList.add('bad');
+          $('.miss b', qz).textContent = mistakes;
+        }
+      };
+      qb.addEventListener('click', e => {
+        const chip = e.target.closest('.chip'), z = e.target.closest('.zone');
+        if (chip) { $$('.chip', qb).forEach(x => x.classList.remove('sel')); sel = chip.dataset.c; chip.classList.add('sel'); zones.forEach(x => x.classList.toggle('ready', !x.classList.contains('filled'))); }
+        else if (z && sel) tryPlace(z, sel);
+      });
+    } else {
+      const opts = q.options.map((o, k) => ({ o, k }));
+      const list = q.shuffle ? shuffle(opts) : opts;
+      const cols = q.cols ? 'c' + q.cols : '';
+      qb.innerHTML = `<div class="opts ${cols}">${list.map(({ o, k }, j) => `<button class="opt ${q.big ? 'big' : ''}" data-k="${k}" ${q.optColor ? `style="--c:${q.optColor[k]}"` : ''}>${q.noKeys || q.big ? '' : `<span class="k">${'ABCDEF'[j]}</span>`}<span>${o}</span></button>`).join('')}</div>`;
+      $$('.opt', qb).forEach(b => b.onclick = () => {
+        const k = +b.dataset.k, ok = k === q.answer;
+        $$('.opt', qb).forEach(x => x.disabled = true);
+        if (ok) b.classList.add('right');
+        else { b.classList.add('wrong'); $(`.opt[data-k="${q.answer}"]`, qb).classList.add('right'); mistakes++; wrongHere = true; }
+        finishQ(ok);
+      });
+    }
+  }
+  function finish() {
+    const n = questions.length;
+    const stars = mistakes <= 1 ? 3 : mistakes <= Math.max(3, Math.round(n * .25)) ? 2 : 1;
+    Store.saveStars(id, stars);
+    const nextT = topic && TOPICS[topic.n];
+    qz.innerHTML = `<div class="panel result" style="flex:1">
+      <div class="big">${'★'.repeat(stars)}<span style="color:#39406E">${'★'.repeat(3 - stars)}</span></div>
+      <h2>${stars === 3 ? 'Amazing work! 🎉' : stars === 2 ? 'Great job! 👏' : 'Good try! Keep practising 💪'}</h2>
+      <p style="font-weight:800;color:var(--soft);margin:0">${results.filter(Boolean).length} / ${n} first-try correct · ${mistakes} mistake${mistakes === 1 ? '' : 's'}</p>
+      <div class="row">
+        <button class="btn" id="again">↺ Try again</button>
+        ${topic ? `<button class="btn" data-go="#t${topic.n}-learn">🔬 Back to Learn</button>` : ''}
+        ${nextT ? `<button class="btn primary" data-go="#t${nextT.n}-learn">Next: ${nextT.icon} ${nextT.title} →</button>` : topic ? `<button class="btn primary" data-go="#exam">🏆 Exam Arena →</button>` : `<button class="btn primary" data-go="#home">🏠 Home</button>`}
+      </div></div>`;
+    wireChrome();
+    $('#again').onclick = retry;
+  }
+  show();
+}
+const LAYER_OPTS = { options: ['HTML', 'CSS', 'JavaScript'], optColor: ['var(--html)', 'var(--css)', 'var(--js)'], big: true, cols: 3 };
+const L = { html: 0, css: 1, js: 2 };
+
+/* ---------- T1 Solve: Who does this job? ---------- */
+const T1_TASKS = [
+  ['📝', 'Describe the structure of headings and paragraphs', 'html', 'Structure (headings, paragraphs) is HTML.'],
+  ['🎨', 'Change the color and size of text', 'css', 'Colors and sizes are appearance → CSS.'],
+  ['🔄', 'Update part of the screen when a button is pressed', 'js', 'Reacting to a click and updating the screen is behavior → JavaScript.'],
+  ['🖼️', 'Place images and links on the page', 'html', 'Putting images and links on the page is structure → HTML.'],
+  ['🌈', 'Set the background color of the entire page', 'css', 'Background color is appearance → CSS.'],
+  ['✅', 'Check (validate) what someone typed into a form', 'js', 'Checking input while the user uses the page is behavior → JavaScript.'],
+  ['📋', 'Write the list of club events', 'html', 'The content of the list is structure → HTML.'],
+  ['💛', 'Make the menu links yellow', 'css', 'Color → CSS.'],
+  ['🔢', 'Count sign-ups each time the button is clicked', 'js', 'Counting clicks is behavior → JavaScript.'],
+  ['🔤', 'Choose the font for the whole page', 'css', 'Fonts are appearance → CSS.'],
+  ['🔍', 'Filter the list of books as the user types', 'js', 'Reacting while the user types is behavior → JavaScript.'],
+  ['🔘', 'Put a “Sign me up!” button on the page', 'html', 'Adding the button element itself is structure → HTML. (Making it count is JS!)'],
+  ['⬜', 'Round the corners of the event cards', 'css', 'Shape and look → CSS.'],
+  ['🙏', 'Show “Thank you!” after someone clicks', 'js', 'Responding to a click → JavaScript.'],
+];
+function screenT1Solve() {
+  const qs = shuffle(T1_TASKS).slice(0, 12).map(([e, txt, l, ex]) => ({
+    tag: 'Who does this job?', prompt: `${e} ${txt}`, ...LAYER_OPTS, answer: L[l], explain: ex
+  }));
+  screenQuiz({ id: 't1', topic: TOPICS[0], title: '🧱 Who does this job?', questions: qs, retry: screenT1Solve });
+}
+
+/* ---------- T2 Solve: Page Doctor ---------- */
+const DOCTOR = [
+  { s: 'Click “Sign me up!” — the number never changes.', l: 'js', bug: 'document.querySelector("#cuont")', fix: 'document.querySelector("#count")', mk: c => ({ ...c, js: c.js.replace('"#count"', '"#cuont"') }), ex: 'Behavior is broken → JavaScript. A typo means JS cannot find the number to update.' },
+  { s: 'The header is plain white — the club\'s blue color is gone.', l: 'css', bug: 'header { backgound: #3b5bdb; ... }', fix: 'header { background: #3b5bdb; ... }', mk: c => ({ ...c, css: c.css.replace('header { background', 'header { backgound') }), ex: 'Colors are appearance → CSS. The property name was misspelled.' },
+  { s: 'The club has 3 events, but only 2 appear on the page.', l: 'html', bug: '(the line <li>Science Fair – Friday</li> is missing)', fix: '<li>Science Fair – Friday</li>', mk: c => ({ ...c, html: c.html.replace('    <li>Science Fair – Friday</li>\n', '') }), ex: 'Missing content is a structure problem → HTML.' },
+  { s: 'Each click adds 10 people instead of 1!', l: 'js', bug: 'count = count + 10;', fix: 'count = count + 1;', mk: c => ({ ...c, js: c.js.replace('count + 1', 'count + 10') }), ex: 'What happens on a click is behavior → JavaScript.' },
+  { s: 'All the text is giant and red!', l: 'css', bug: 'body { color: red; font-size: 40px; ... }', fix: 'body { font-family: sans-serif; ... }', mk: c => ({ ...c, css: c.css.replace('body { font-family', 'body { color: red; font-size: 40px; font-family') }), ex: 'Text color and size are appearance → CSS.' },
+  { s: 'There is no sign-up button on the page at all.', l: 'html', bug: '(the line <button id="signup">Sign me up!</button> is missing)', fix: '<button id="signup">Sign me up!</button>', mk: c => ({ ...c, html: c.html.replace('  <button id="signup">Sign me up!</button>\n', '') }), ex: 'The button element itself is part of the structure → HTML. (JS can\'t react to a button that doesn\'t exist!)' },
+  { s: 'The button looks empty — its text is invisible.', l: 'css', bug: 'button { background: #ff6b6b; color: #ff6b6b; ... }', fix: 'button { background: #ff6b6b; color: white; ... }', mk: c => ({ ...c, css: c.css.replace('button { background: #ff6b6b; color: white', 'button { background: #ff6b6b; color: #ff6b6b') }), ex: 'Text color the same as the background → CSS appearance problem.' },
+  { s: 'The heading says “Upcoming Evnts”.', l: 'html', bug: '<h2>Upcoming Evnts</h2>', fix: '<h2>Upcoming Events</h2>', mk: c => ({ ...c, html: c.html.replace('Upcoming Events', 'Upcoming Evnts') }), ex: 'The words on the page are content written in HTML.' },
+  { s: 'The number goes DOWN every time you click!', l: 'js', bug: 'count = count - 1;', fix: 'count = count + 1;', mk: c => ({ ...c, js: c.js.replace('count + 1', 'count - 1') }), ex: 'Counting is behavior → JavaScript.' },
+];
+function screenT2Solve() {
+  const qs = shuffle(DOCTOR).slice(0, 8).map(d => {
+    const code = d.mk(CLUB);
+    return {
+      tag: '🩺 Page Doctor', prompt: 'Which layer is sick?', ...LAYER_OPTS, cols: 1, answer: L[d.l], explain: d.ex,
+      mount: el => {
+        el.innerHTML = `<div class="symptom">🤒 Symptom: ${d.s}</div><div class="browser"><div class="bar"><i></i><i></i><i></i><span>robotics-club.html</span></div><iframe style="min-height:300px"></iframe></div><small style="color:var(--soft);font-weight:700">You can click the page to test it.</small>`;
+        $('iframe', el).srcdoc = pageDoc(code);
+      },
+      reveal: el => { el.insertAdjacentHTML('beforeend', `<div class="snip L-${d.l}">🐞 Bug:  <span class="bug">${esc(d.bug)}</span>\n💊 Fix:  <span class="fix">${esc(d.fix)}</span></div>`); }
+    };
+  });
+  screenQuiz({ id: 't2', topic: TOPICS[1], title: '🩺 Page Doctor', questions: qs, retry: screenT2Solve });
+}
+
+/* ---------- T3 Solve: Tag the Page ---------- */
+function screenT3Solve() {
+  const tagFill = c => `<span class="tg">&lt;${c}&gt;</span>`;
+  const wire1 = `<div class="wire">
+    <div class="zone" data-z="header">📰 Daily News — logo & title<small>(top of the page)</small></div>
+    <div class="zone" data-z="nav">Home · World · Sport · Science<small>(menu links)</small></div>
+    <div class="zone" data-z="main" style="min-height:6em">Today's big story + all the articles<small>(the important content)</small></div>
+    <div class="zone" data-z="footer">© Daily News · Contact us<small>(bottom of the page)</small></div></div>`;
+  const wire2 = `<div class="wire" style="grid-template-columns:1fr 2fr">
+    <div class="zone" data-z="header" style="grid-column:1/3">🍰 Sara's Baking Blog<small>(top)</small></div>
+    <div class="zone" data-z="nav" style="min-height:8em">Recipes<br>Cakes<br>About<small>(side menu)</small></div>
+    <div class="zone" data-z="main" style="min-height:8em">How to bake a chocolate cake<small>(the post)</small></div>
+    <div class="zone" data-z="footer" style="grid-column:1/3">Made by Sara · 2026<small>(bottom)</small></div></div>`;
+  const qs = [
+    { type: 'place', tag: 'Tag the page', prompt: 'Pick a tag, then tap the part of the news site it belongs to.', layout: wire1, chips: ['header', 'nav', 'main', 'footer'], answer: { header: 'header', nav: 'nav', main: 'main', footer: 'footer' }, fillLabel: tagFill, explain: 'Each part now has a tag that says what it means.' },
+    { type: 'place', tag: 'Tag the page', prompt: 'This blog has its menu on the side. Tag every part!', layout: wire2, chips: ['header', 'nav', 'main', 'footer'], answer: { header: 'header', nav: 'nav', main: 'main', footer: 'footer' }, fillLabel: tagFill, explain: 'The menu is still <nav>, even on the side: the tag describes meaning, not position.' },
+    { tag: 'Try 2 (1)', prompt: 'Which is <u>NOT</u> a benefit of using semantic HTML?', options: ['Screen reader software can correctly understand the structure of the page.', 'Search engines can more easily understand the content of a web page.', 'The display speed of a web page necessarily becomes faster.', 'Information becomes easier to convey to users with visual impairments.'], answer: 2, explain: 'Semantic HTML improves accessibility and SEO — it does not necessarily make a page faster.' },
+    { tag: 'Pause & think', prompt: 'Why does a screen reader understand a page better with <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code> and <code>&lt;main&gt;</code> instead of plain boxes?', options: ['The tag names tell it what each part means, so it can describe and jump to them', 'Those tags make the text bigger', 'Those tags add colors that a screen reader can see', 'Plain boxes are not allowed in HTML'], answer: 0, explain: 'A <div> means nothing; <nav> means "menu" and <main> means "main content".' },
+    { tag: 'Key terms', prompt: 'Being found easily by search engines is called…', options: ['Accessibility', 'SEO (Search Engine Optimization)', 'Responsive design', 'A framework'], answer: 1, explain: 'SEO = Search Engine Optimization.' },
+    { tag: 'Key terms', prompt: 'A page that people with visual impairments can use well has good…', options: ['SEO', 'Speed', 'Accessibility', 'Colors'], answer: 2, explain: 'Accessibility = usable by people with impairments.' },
+    { tag: 'Code', prompt: 'Which tag should wrap the menu links?', options: ['&lt;footer&gt;', '&lt;nav&gt;', '&lt;div&gt;', '&lt;main&gt;'], answer: 1, cols: 2, explain: '<nav> = navigation.' },
+  ];
+  screenQuiz({ id: 't3', topic: TOPICS[2], title: '🏷️ Tag the Page', questions: qs, retry: screenT3Solve });
+}
+
+/* ---------- T4 Solve: Predict the Layout ---------- */
+function screenT4Solve() {
+  const thumb = n => `<div class="thumb" style="grid-template-columns:repeat(${n},1fr)">${'<i></i>'.repeat(n * 2)}</div><div style="text-align:center;margin-top:4px">${n} column${n > 1 ? 's' : ''}</div>`;
+  const cssSnip = `<div class="codebox L-css"><div class="ch"><span class="fn">style.css</span></div><div class="cbody">${codeLines(`.cards { grid-template-columns: 1fr; }
+
+@media (min-width: 600px) {
+  .cards { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 900px) {
+  .cards { grid-template-columns: 1fr 1fr 1fr; }
+}`, 'css')}</div></div>`;
+  const widthQ = w => ({
+    tag: 'Predict the layout', prompt: `The screen is <b>${w}px</b> wide (${devName(w)}). How many columns of event cards?`,
+    options: [thumb(1), thumb(2), thumb(3)], answer: colsAt(w) - 1, cols: 3, noKeys: true,
+    explain: (w === 600 || w === 900 ? `<code>min-width: ${w}px</code> means "${w}px <b>or wider</b>", so it counts! ` : w === 599 ? '599 is less than 600, so the tablet rule does not apply yet. ' : '') + `At ${w}px ${w >= 900 ? 'both @media rules apply, and the 900px rule (3 columns) comes last, so it wins' : w >= 600 ? 'only the 600px rule applies → 2 columns' : 'no @media rule applies, so the base style (1 column) is used'}.`,
+    visual: cssSnip,
+    reveal: el => {
+      el.insertAdjacentHTML('beforeend', `<div class="rstage" style="min-height:220px;height:240px;padding:8px"><div class="rdev"><div class="clip"><iframe></iframe></div></div></div>`);
+      const st = $('.rstage', el), dev = $('.rdev', el), fr = $('iframe', el);
+      fr.srcdoc = pageDoc({ html: R_HTML, css: R_CSS });
+      requestAnimationFrame(() => scaledFrame(st, dev, fr, w));
+    }
+  });
+  const qs = [
+    ...shuffle([375, 700, 1280, 599, 900, 600]).map(widthQ),
+    { tag: 'Exercise 3 (2)', prompt: 'Why is responsive design needed?', options: ['To improve the display speed of websites', 'Because websites are accessed from various devices such as PCs, smartphones, and tablets', 'To raise rankings in search engines', 'To add behavior to web pages'], answer: 1, explain: 'One page must look good on every screen size.' },
+    { tag: 'Mobile-first', prompt: 'What does <b>mobile-first</b> mean?', options: ['Only phones can open the website', 'Design for small screens like smartphones first, then add rules for bigger screens', 'Build the phone app before the website', 'Phones load the page before PCs'], answer: 1, explain: 'In the code, the base styles are for phones; @media rules add changes for bigger screens.' },
+    { tag: 'Fix it', prompt: 'On a phone, the club page is so wide you must scroll sideways. Which change fixes it?', options: ['Set <code>body { width: 1000px; }</code>', 'Use <code>@media</code> rules so the cards stack into one column on small screens', 'Add more JavaScript', 'Use smaller images only on PCs'], answer: 1, explain: 'Let the layout adjust to the screen size instead of a fixed width.' },
+  ];
+  screenQuiz({ id: 't4', topic: TOPICS[3], title: '📱 Predict the Layout', questions: qs, retry: screenT4Solve });
+}
+
+/* ---------- T5 Solve: Framework Match ---------- */
+function screenT5Solve() {
+  const FW = { options: ['React', 'Vue', 'Next.js'], optColor: ['#61DAFB', '#42B883', '#E6E9FF'], big: true, cols: 3 };
+  const qs = [
+    ...shuffle([
+      { prompt: 'Developed by Meta (formerly Facebook).', a: 0 },
+      { prompt: 'Efficiently updates only part of the screen; suited to large-scale web apps.', a: 0 },
+      { prompt: 'Has a simple structure and lets you build an app step by step from small features.', a: 1 },
+      { prompt: 'Has React\'s features plus mechanisms to speed up page display.', a: 2 },
+    ]).map(x => ({ tag: 'Framework match', prompt: x.prompt, ...FW, answer: x.a })),
+    { tag: 'Try 2 (2)', prompt: 'Which most appropriately describes a <b>framework</b>?', options: ['A language for defining the structure of a web page', 'A structure for making web application development more efficient', 'A technology for encrypting data and sending it safely', 'A design concept for supporting different screen sizes'], answer: 1, explain: 'A framework provides common functions and components in advance.' },
+    { tag: 'True or false?', prompt: '“Using a framework means you do not need to write all the code from scratch, so development is more efficient.”', options: ['○ True', '× False'], answer: 0, cols: 2, big: true, explain: 'Correct description of the benefit of frameworks.' },
+    { tag: 'True or false?', prompt: '“With a framework you never have to write any code at all.”', options: ['○ True', '× False'], answer: 1, cols: 2, big: true, explain: 'You still write code — just not ALL of it from scratch.' },
+    { tag: 'Think', prompt: 'A social media feed updates likes and comments all the time without reloading. Which idea makes this efficient?', options: ['Reloading the whole page every second', 'Updating only the part of the screen that changed (like React)', 'Using only HTML with no JavaScript', 'Making the page 1000px wide'], answer: 1 },
+  ];
+  screenQuiz({ id: 't5', topic: TOPICS[4], title: '🧩 Framework Match', questions: qs, retry: screenT5Solve });
+}
+
+/* ---------- Exam Arena ---------- */
+function screenExam() {
+  const TF = { options: ['○ True', '× False'], cols: 2, big: true };
+  const ABC = { options: ['A · HTML', 'B · CSS', 'C · JavaScript'], optColor: ['var(--html)', 'var(--css)', 'var(--js)'], big: true, cols: 3 };
+  const tagOf = c => ({ HTML: 'var(--html)', CSS: 'var(--css)', JavaScript: 'var(--js)' })[c] || 'var(--violet)';
+  const qs = [
+    { tag: 'Worked example (1) · A', prompt: 'HTML is a technology that defines the structure (skeleton) of a web page.', ...TF, answer: 0, explain: 'HTML defines the structure → ○.' },
+    { tag: 'Worked example (1) · B', prompt: 'CSS is a technology that adds behavior to a web page.', ...TF, answer: 1, explain: 'CSS specifies appearance. Adding behavior is JavaScript → ×.' },
+    { tag: 'Worked example (1) · C', prompt: 'Responsive design is a concept in which the layout is automatically adjusted according to different screen sizes.', ...TF, answer: 0, explain: 'Correct definition → ○.' },
+    { tag: 'Worked example (1) · D', prompt: 'Using a framework eliminates the need to write all code from scratch and allows efficient development.', ...TF, answer: 0, explain: 'Correct benefit of frameworks → ○.' },
+    { type: 'place', tag: 'Worked example (2)', prompt: 'Match each role with the right technology.', reuse: false, chipClass: tagOf,
+      layout: `<div class="passage">a. Defines the structure of a web page → <span class="zone" data-z="a"></span><br>b. Specifies the appearance of a web page → <span class="zone" data-z="b"></span><br>c. Adds behavior and interactivity → <span class="zone" data-z="c"></span></div>`,
+      chips: ['HTML', 'CSS', 'JavaScript'], answer: { a: 'HTML', b: 'CSS', c: 'JavaScript' } },
+    { type: 'type', tag: 'Try 1 · Q1', prompt: 'The four-letter abbreviation for the technology that defines the structure (skeleton) of a web page?', accept: ['HTML', 'hypertext markup language'] },
+    { type: 'type', tag: 'Try 1 · Q2', prompt: 'The three-letter abbreviation for the technology that specifies the appearance (colors, layout, size…)?', accept: ['CSS', 'cascading style sheets'] },
+    { type: 'type', tag: 'Try 1 · Q3', prompt: 'The technology that adds behavior and interactivity to a web page?', accept: ['JavaScript', 'JS', 'java script'] },
+    { type: 'type', tag: 'Try 1 · Q4', prompt: 'The design concept in which the layout is automatically adjusted to different screen sizes?', accept: ['responsive design', 'responsive', 'responsive web design'] },
+    { tag: 'Try 2 (1)', prompt: 'Which is <u>NOT</u> an appropriate benefit of using semantic HTML?', options: ['Screen reader software can correctly understand the structure of the page.', 'Search engines can more easily understand the content of a web page.', 'The display speed of a web page necessarily becomes faster.', 'Information becomes easier to convey to users with visual impairments.'], answer: 2 },
+    { tag: 'Try 2 (2)', prompt: 'Which most appropriately describes a framework?', options: ['A language for defining the structure of a web page', 'A structure for making web application development more efficient', 'A technology for encrypting data and sending it safely', 'A design concept for supporting different screen sizes'], answer: 1 },
+    { type: 'place', tag: 'Exercise 2', prompt: 'Fill in the blanks (a)–(d).', chipClass: tagOf,
+      layout: `<div class="passage">Web pages are mainly composed of three technologies: <span class="zone" data-z="a">(a)</span>, which defines the structure of the page; <span class="zone" data-z="b">(b)</span>, which specifies the appearance; and <span class="zone" data-z="c">(c)</span>, which adds behavior and interactivity. The concept of adjusting the layout according to different screen sizes such as PCs, smartphones, and tablets is called <span class="zone" data-z="d">(d)</span>.</div>`,
+      chips: ['HTML', 'CSS', 'JavaScript', 'responsive design', 'framework', 'SEO'], answer: { a: 'HTML', b: 'CSS', c: 'JavaScript', d: 'responsive design' } },
+    ...[
+      ['a', 'Describing the structure of headings and paragraphs', 0],
+      ['b', 'Changing the color and size of text', 1],
+      ['c', 'Updating part of the screen when a button is pressed', 2],
+      ['d', 'Placing images and links', 0],
+      ['e', 'Setting the background color of the entire page', 1],
+      ['f', 'Validating the contents entered into a form', 2],
+    ].map(([k, p, a]) => ({ tag: `Exercise 3 (1) · ${k}`, prompt: p, ...ABC, answer: a })),
+    { tag: 'Exercise 3 (2)', prompt: 'Choose the reason responsive design is needed.', options: ['To improve the display speed of websites', 'Because websites are accessed from various devices such as PCs, smartphones, and tablets', 'To raise rankings in search engines', 'To add behavior to web pages'], answer: 1 },
+    { tag: '⚙ Think as an Engineer', prompt: 'The student club page lists events, uses the club\'s colors and has a live sign-up counter. What should the club do?', options: ['Write everything in one file', 'Use HTML, CSS and JavaScript for their proper roles'], answer: 1, cols: 2, explain: 'Each part has one job, so it is easier to find and fix problems, and you can change the look (CSS) without touching the content (HTML) or the behavior (JS).' },
+    { tag: '⚙ Think as an Engineer', prompt: 'What does the live sign-up counter need from <b>JavaScript</b>?', options: ['To count each click and update the number on the screen', 'To paint the page in the club\'s colors', 'To write the list of events', 'To make the page appear in search results'], answer: 0, explain: 'HTML holds the button and the number, CSS styles them, JavaScript makes them react and update.' },
+    { tag: '🌍 New context', prompt: 'A news site must look good on phones. Which is a <b>responsive-design</b> choice?', options: ['Make every page exactly 1200px wide', 'Use @media rules so the news columns stack into one column on phones', 'Wrap the menu in &lt;nav&gt;', 'Add more div boxes'], answer: 1, explain: 'It improves readability on every screen size.' },
+    { tag: '🌍 New context', prompt: 'The news site must be found easily by search engines. Which is a <b>semantic-HTML</b> choice?', options: ['Put each part in &lt;header&gt;, &lt;nav&gt;, &lt;main&gt; and &lt;footer&gt;', 'Make all the text bigger', 'Use red headings', 'Reload the page every minute'], answer: 0, explain: 'Meaningful tags improve SEO (and accessibility too).' },
+  ];
+  screenQuiz({ id: 'exam', topic: null, title: '🏆 Exam Arena', questions: qs, retry: screenExam });
+}
+
+/* =========================================================
+   ROUTER
+   ========================================================= */
+const ROUTES = {
+  home: screenHome,
+  't1-learn': screenT1Learn, 't1-solve': screenT1Solve,
+  't2-learn': screenT2Learn, 't2-solve': screenT2Solve,
+  't3-learn': screenT3Learn, 't3-solve': screenT3Solve,
+  't4-learn': screenT4Learn, 't4-solve': screenT4Solve,
+  't5-learn': screenT5Learn, 't5-solve': screenT5Solve,
+  exam: screenExam,
+};
+function route() {
+  cleanups.forEach(f => { try { f(); } catch (e) {} }); cleanups = []; onMsg = null;
+  const key = location.hash.slice(1) || 'home';
+  (ROUTES[key] || screenHome)();
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>

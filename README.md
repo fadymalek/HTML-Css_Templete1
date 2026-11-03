@@ -25,3 +25,19 @@ Final challenges: **Switch Master**, **Circuit Doctor**, **Breadboard Builder**.
 
 Direct links: `#t3-learn`, `#t3-solve`, `#c1` … e.g. `circuit-quest/index.html#t5-learn`.
 Every screen fits the window with no scrolling (full-screen button in the header). Works with mouse or touch. Progress is saved in the browser.
+
+## Frontend Lab — Lesson 3-3 · Fundamentals of Frontend Technology
+
+`frontend-lab/index.html` is a self-contained interactive simulator for the lesson (one HTML file, no install). Each topic has a **Learn** lab (with a “What we discover” panel) and a **Solve** mission with stars.
+
+| # | Topic | Learn (demo lab) | Solve (mission) |
+|---|-------|------------------|-----------------|
+| 1 | The Three Layers | Switch HTML / CSS / JS on and off on a real page; click any element to see the code line that made it; building analogy | Who does this job? |
+| 2 | Live Code Lab | Edit real HTML, CSS and JS with live preview (club page + the exam's library page that filters as you type) | Page Doctor (find the broken layer) |
+| 3 | Semantic HTML | Div boxes vs semantic tags, screen reader (with optional voice) and search robot | Tag the Page |
+| 4 | Responsive Design | Resize from phone to PC, see the active `@media` rule, responsive ON/OFF, mobile-first order | Predict the Layout |
+| 5 | Frameworks | Build with ready-made components, “update only part of the screen”, React / Vue / Next.js | Framework Match |
+
+Final: **Exam Arena** — the lesson's worked example, Try 1–2, Exercises 2–3, Think as an Engineer and New Context questions.
+
+Direct links: `frontend-lab/index.html#t3-learn`, `#t4-solve`, `#exam`. Progress (stars) is saved in the browser.
