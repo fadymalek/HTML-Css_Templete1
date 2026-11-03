@@ -6,7 +6,7 @@
 <title>Frontend Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&family=JetBrains+Mono:wght@500;700&family=Cairo:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:dark;
@@ -32,6 +32,18 @@ body{
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--css);outline-offset:3px}
 [hidden]{display:none!important}
+.ar{display:block;direction:rtl;text-align:right;font-family:'Cairo',var(--body);font-weight:600;font-size:.86em;line-height:1.65;color:var(--soft);margin-top:4px;letter-spacing:0}
+.ar b{color:inherit}
+.inl{display:inline;margin:0 .4em 0 0}
+.disc li.lit .ar{color:#CFF7E6}
+.qprompt .ar{font-size:.62em;color:var(--soft);margin-top:8px;font-weight:700}
+.qfeed .ar{border-top:1px dashed rgba(255,255,255,.18);padding-top:6px;margin-top:6px;color:var(--text)}
+.opt .ar{font-size:.8em;margin-top:2px}
+.tip .ar{color:var(--text);opacity:.85}
+.panel h3 .ar,.crumb .ar{display:inline;font-size:.72em;margin:0 0 0 .5em;color:var(--dim)}
+.tcard .ar{color:var(--soft)}
+.tcard h2 .ar{display:block;font-size:.62em;color:var(--js)}
+
 .screen{min-height:100vh;min-height:100dvh;max-width:1920px;margin:0 auto;display:flex;flex-direction:column;gap:12px;padding:clamp(10px,1.6vh,18px) clamp(12px,2vw,28px);animation:fade .3s ease both}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (min-width:1000px) and (min-height:600px){
@@ -491,11 +503,11 @@ search.addEventListener("input", function () {
 
 /* ---------- topics ---------- */
 const TOPICS = [
-  { n: 1, icon: '🧱', title: 'The Three Layers', sub: 'HTML · CSS · JavaScript', learn: 'Switch each layer on and off and click the page to see which code made it.', solve: 'Who does this job?' },
-  { n: 2, icon: '⌨️', title: 'Live Code Lab', sub: 'Write real code, see it live', learn: 'Edit the HTML, CSS and JS of a club page and a library page.', solve: 'Page Doctor' },
-  { n: 3, icon: '🏷️', title: 'Semantic HTML', sub: 'Tags with meaning', learn: 'Compare div boxes and semantic tags with a screen reader and a search robot.', solve: 'Tag the Page' },
-  { n: 4, icon: '📱', title: 'Responsive Design', sub: 'One page, every screen', learn: 'Resize the screen from phone to PC and watch the layout change.', solve: 'Predict the Layout' },
-  { n: 5, icon: '🧩', title: 'Frameworks', sub: 'React · Vue · Next.js', learn: 'Build a page from ready-made parts and update only part of the screen.', solve: 'Framework Match' },
+  { n: 1, icon: '🧱', title: 'The Three Layers', arT: 'الطبقات الثلاث', sub: 'HTML · CSS · JavaScript', learn: 'Switch each layer on and off and click the page to see which code made it.', arL: 'شغّل واقفل كل طبقة، واضغط على الصفحة عشان تعرف أنهي كود عملها.', solve: 'Who does this job?' },
+  { n: 2, icon: '⌨️', title: 'Live Code Lab', arT: 'معمل الكود المباشر', sub: 'Write real code, see it live', learn: 'Edit the HTML, CSS and JS of a club page and a library page.', arL: 'عدّل الـ HTML والـ CSS والـ JS لصفحة نادي وصفحة مكتبة.', solve: 'Page Doctor' },
+  { n: 3, icon: '🏷️', title: 'Semantic HTML', arT: 'HTML بمعنى', sub: 'Tags with meaning', learn: 'Compare div boxes and semantic tags with a screen reader and a search robot.', arL: 'قارن بين صناديق div والتاجات بمعنى، باستخدام قارئ شاشة وروبوت بحث.', solve: 'Tag the Page' },
+  { n: 4, icon: '📱', title: 'Responsive Design', arT: 'التصميم المتجاوب', sub: 'One page, every screen', learn: 'Resize the screen from phone to PC and watch the layout change.', arL: 'غيّر مقاس الشاشة من موبايل لكمبيوتر وشوف الترتيب بيتغير إزاي.', solve: 'Predict the Layout' },
+  { n: 5, icon: '🧩', title: 'Frameworks', arT: 'أطر العمل', sub: 'React · Vue · Next.js', learn: 'Build a page from ready-made parts and update only part of the screen.', arL: 'ابني صفحة من مكونات جاهزة، وحدّث جزء من الشاشة بس.', solve: 'Framework Match' },
 ];
 const starHTML = n => `<span class="stars">${'★'.repeat(n)}<span class="e">${'★'.repeat(3 - n)}</span></span>`;
 
@@ -518,10 +530,10 @@ function wireChrome() {
 /* ---------- discover panel ---------- */
 function discoverPanel(points, nextHash) {
   return `<aside class="panel disc scroll">
-    <h3>💡 What we discover</h3>
+    <h3>💡 What we discover<span class="ar">ما اكتشفناه</span></h3>
     <div class="prog"><b class="dc">0</b> / ${points.length} found</div>
     <ol>${points.map((p, i) => `<li data-i="${i}"><span>${p}</span></li>`).join('')}</ol>
-    <div class="doneBox" hidden>🎉 You found everything! Ready for the mission?
+    <div class="doneBox" hidden>🎉 You found everything! Ready for the mission?<span class="ar">اكتشفت كل حاجة! جاهز للمهمة؟</span>
       <button class="btn primary" data-go="${nextHash}">🎯 Go to Solve</button></div>
   </aside>`;
 }
@@ -547,35 +559,35 @@ function screenHome() {
     <section class="hero">
       <div class="panel" style="gap:14px">
         <h1>Frontend <span>Lab</span></h1>
-        <p>Open any web page and you are seeing three technologies working together. Switch them on and off, write real code, resize the screen, and build pages from ready-made parts.</p>
+        <p>Open any web page and you are seeing three technologies working together. Switch them on and off, write real code, resize the screen, and build pages from ready-made parts.<span class="ar">أي صفحة ويب بتفتحها فيها 3 تقنيات شغالين مع بعض. هنا هتشغّلهم وتقفلهم، وتكتب كود حقيقي، وتغيّر مقاس الشاشة، وتبني صفحات من مكونات جاهزة.</span></p>
         <div class="trio">
-          <div class="L-html"><b>HTML</b><small>Structure · the frame of a building</small></div>
-          <div class="L-css"><b>CSS</b><small>Appearance · the interior</small></div>
-          <div class="L-js"><b>JavaScript</b><small>Behavior · the electricity</small></div>
+          <div class="L-html"><b>HTML</b><small>Structure · the frame of a building</small><small class="ar">الهيكل · زي هيكل المبنى</small></div>
+          <div class="L-css"><b>CSS</b><small>Appearance · the interior</small><small class="ar">الشكل · زي ديكور المبنى</small></div>
+          <div class="L-js"><b>JavaScript</b><small>Behavior · the electricity</small><small class="ar">السلوك · زي الكهربا والسباكة</small></div>
         </div>
       </div>
       <div class="panel">
-        <h3>❓ Guiding question</h3>
-        <p style="color:var(--text)">How do HTML, CSS and JavaScript work together to build a web page, and what makes a modern frontend <b>meaningful</b>, <b>adaptable</b> and <b>efficient</b> to build?</p>
-        <h3 style="margin-top:6px">🗝️ Key terms</h3>
-        <p>semantic HTML · accessibility · SEO · responsive design · mobile-first · framework</p>
+        <h3>❓ Guiding question<span class="ar">السؤال الأساسي</span></h3>
+        <p style="color:var(--text)">How do HTML, CSS and JavaScript work together to build a web page, and what makes a modern frontend <b>meaningful</b>, <b>adaptable</b> and <b>efficient</b> to build?<span class="ar">إزاي HTML وCSS وJavaScript بيشتغلوا مع بعض عشان يبنوا صفحة ويب؟ وإيه اللي بيخلّي الفرونت إند الحديث ليه معنى، ومتجاوب، وسهل في البناء؟</span></p>
+        <h3 style="margin-top:6px">🗝️ Key terms<span class="ar">المصطلحات المهمة</span></h3>
+        <p>semantic HTML · accessibility · SEO · responsive design · mobile-first · framework<span class="ar">HTML بمعنى · إمكانية الوصول · الظهور في محركات البحث · التصميم المتجاوب · الموبايل أولًا · إطار العمل</span></p>
       </div>
     </section>
     <section class="cards">
       ${TOPICS.map(t => `<div class="tcard">
         <div class="ic">${t.icon}</div><div class="num">Topic ${t.n} · ${t.sub}</div>
-        <h2>${t.title}</h2><p>${t.learn}</p>
+        <h2>${t.title}<span class="ar">${t.arT}</span></h2><p>${t.learn}<span class="ar">${t.arL}</span></p>
         <div>${starHTML(Store.stars('t' + t.n))} <small style="color:var(--dim);font-weight:800">${t.solve}</small></div>
         <div class="row"><button class="btn small" data-go="#t${t.n}-learn">🔬 Learn</button><button class="btn small primary" data-go="#t${t.n}-solve">🎯 Solve</button></div>
       </div>`).join('')}
       <div class="tcard exam">
         <div class="ic">🏆</div><div class="num">Final · All topics</div>
-        <h2>Exam Arena</h2><p>The lesson's own exam-style questions: true/false, matching, fill in the blanks and the club web page decision.</p>
+        <h2>Exam Arena</h2><p>The lesson's own exam-style questions: true/false, matching, fill in the blanks and the club web page decision.<span class="ar">أسئلة الامتحان من الدرس: صح وغلط، توصيل، املأ الفراغات، وقرار صفحة النادي.</span></p>
         <div>${starHTML(Store.stars('exam'))}</div>
         <div class="row"><button class="btn small primary" data-go="#exam">Start the exam →</button></div>
       </div>
     </section>
-    <div class="takeaway">⭐ <b>HTML structures, CSS styles, JavaScript behaves</b> — and semantic HTML, responsive design and frameworks make a modern frontend meaningful, adaptable and efficient.</div>
+    <div class="takeaway">⭐ <b>HTML structures, CSS styles, JavaScript behaves</b> — and semantic HTML, responsive design and frameworks make a modern frontend meaningful, adaptable and efficient.<span class="ar">HTML بتبني الهيكل، وCSS بتنسّق، وJavaScript بتدي السلوك. والـ semantic HTML والتصميم المتجاوب والـ frameworks بيخلّوا الفرونت إند الحديث ليه معنى، ومتجاوب، وسريع في البناء.</span></div>
   </div>`;
   wireChrome();
 }
@@ -586,11 +598,11 @@ function screenHome() {
 function screenT1Learn() {
   const t = TOPICS[0];
   const pts = [
-    '<span class="tagc L-html">HTML</span> builds the <b>structure</b> — headings, lists, links, buttons. Without it there is nothing on the page.',
-    '<span class="tagc L-css">CSS</span> adds the <b>appearance</b> — colors, layout, sizes, fonts. Without it the page is plain.',
-    '<span class="tagc L-js">JavaScript</span> adds <b>behavior</b> — it reacts to clicks and updates part of the screen.',
-    'Every piece on the page comes from a line of code. Click things to find their HTML and CSS lines.',
-    'Each layer has its <b>own job</b>, and the page is made by combining all three.'
+    '<span class="tagc L-html">HTML</span> builds the <b>structure</b> — headings, lists, links, buttons. Without it there is nothing on the page.<span class="ar">HTML بتبني <b>هيكل</b> الصفحة: العناوين والقوائم واللينكات والأزرار. من غيرها الصفحة بتبقى فاضية.</span>',
+    '<span class="tagc L-css">CSS</span> adds the <b>appearance</b> — colors, layout, sizes, fonts. Without it the page is plain.<span class="ar">CSS بتدي <b>الشكل</b>: الألوان والترتيب والأحجام والخطوط. من غيرها الصفحة بتبقى سادة.</span>',
+    '<span class="tagc L-js">JavaScript</span> adds <b>behavior</b> — it reacts to clicks and updates part of the screen.<span class="ar">JavaScript بتدي <b>السلوك</b>: بتستجيب للضغط وبتحدّث جزء من الشاشة.</span>',
+    'Every piece on the page comes from a line of code. Click things to find their HTML and CSS lines.<span class="ar">كل حاجة في الصفحة جاية من سطر كود. اضغط على أي عنصر وشوف سطر الـ HTML والـ CSS بتوعه.</span>',
+    'Each layer has its <b>own job</b>, and the page is made by combining all three.<span class="ar">كل طبقة ليها <b>شغلانة لوحدها</b>، والصفحة بتتعمل لما الثلاثة يشتغلوا مع بعض.</span>'
   ];
   app.innerHTML = `<div class="screen fit">${topBar(t, 'learn')}
     <div class="work g-t1">
@@ -616,9 +628,9 @@ function screenT1Learn() {
             <div class="lbl"><span class="L-html" id="lbH">🏗️ Frame = HTML</span><span class="L-css" id="lbC">🎨 Interior = CSS</span><span class="L-js" id="lbJ">💡 Electricity = JS</span></div>
           </div>
         </div>
-        <div class="tip" id="tip">👆 Click anything on the page — the heading, an event, the button — to see which code made it. Then try switching the layers off.</div>
+        <div class="tip" id="tip">👆 Click anything on the page — the heading, an event, the button — to see which code made it. Then try switching the layers off.<span class="ar">اضغط على أي حاجة في الصفحة عشان تعرف أنهي كود عملها، وبعدين جرّب تقفل الطبقات.</span></div>
       </section>
-      <section class="panel"><h3>👩‍💻 The code behind the page</h3>
+      <section class="panel"><h3>👩‍💻 The code behind the page<span class="ar">الكود اللي ورا الصفحة</span></h3>
         <div class="codeStack">
           <div class="codebox L-html" id="cb-html"><div class="ch"><span class="fn">index.html</span> structure<span class="st">ON</span></div><div class="cbody">${codeLines(CLUB.html, 'html')}</div></div>
           <div class="codebox L-css" id="cb-css"><div class="ch"><span class="fn">style.css</span> appearance<span class="st">ON</span></div><div class="cbody">${codeLines(CLUB.css, 'css')}</div></div>
@@ -644,10 +656,10 @@ function screenT1Learn() {
   }
   $$('.ltog').forEach(b => b.onclick = () => {
     const l = b.dataset.l; on[l] = !on[l]; toggled.add(l); clearHL(); render();
-    if (l === 'html' && !on.html) { light(0); setTip('🏗️ <b>No HTML = no structure.</b> The page is empty: there is nothing for CSS to style and nothing for JavaScript to control. Even the house has no frame!', 'warn'); }
-    else if (l === 'css' && !on.css) { light(1); setTip('🎨 <b>Same content, no style.</b> HTML alone shows plain black text on white. The colors, rounded cards and the red button were all CSS.', 'warn'); }
-    else if (l === 'js' && !on.js) { setTip('💡 The page still <b>looks</b> the same… now click <b>Sign me up!</b> — does the number change?', 'warn'); }
-    else setTip(`✅ <b>${l === 'js' ? 'JavaScript' : l.toUpperCase()}</b> is back on.`, 'good');
+    if (l === 'html' && !on.html) { light(0); setTip('🏗️ <b>No HTML = no structure.</b> The page is empty: there is nothing for CSS to style and nothing for JavaScript to control. Even the house has no frame!<span class="ar">من غير HTML مفيش هيكل، فمفيش حاجة الـ CSS تلوّنها ولا الـ JavaScript تتحكم فيها.</span>', 'warn'); }
+    else if (l === 'css' && !on.css) { light(1); setTip('🎨 <b>Same content, no style.</b> HTML alone shows plain black text on white. The colors, rounded cards and the red button were all CSS.<span class="ar">نفس المحتوى من غير تنسيق: الألوان والكروت والزرار الأحمر كانوا كلهم CSS.</span>', 'warn'); }
+    else if (l === 'js' && !on.js) { setTip('💡 The page still <b>looks</b> the same… now click <b>Sign me up!</b> — does the number change?<span class="ar">الصفحة لسه شكلها حلو… دوس على زرار Sign me up! هل الرقم بيتغير؟</span>', 'warn'); }
+    else setTip(`✅ <b>${l === 'js' ? 'JavaScript' : l.toUpperCase()}</b> is back on.<span class="ar">الطبقة رجعت تشتغل تاني.</span>`, 'good');
     if (toggled.size === 3 && on.html && on.css && on.js) light(4);
   });
   onMsg = (d, src) => {
@@ -663,10 +675,10 @@ function screenT1Learn() {
         [ln, ln2].forEach(x => x && x.classList.add('hl'));
         scrollToLine($('#cb-js .cbody'), ln);
         hs.classList.add('flash'); setTimeout(() => hs.classList.remove('flash'), 350);
-        setTip('⚡ <b>JavaScript reacted to your click:</b> <code>count = count + 1</code>, then it updated only the number — the rest of the page did not reload.', 'good');
+        setTip('⚡ <b>JavaScript reacted to your click:</b> <code>count = count + 1</code>, then it updated only the number — the rest of the page did not reload.<span class="ar">الـ JavaScript استجابت لضغطتك: زوّدت العدد وحدّثت الرقم بس، من غير ما الصفحة كلها تتحمّل تاني.</span>', 'good');
       } else {
         light(2);
-        setTip('🔌 <b>Nothing happens!</b> The button exists (HTML) and looks nice (CSS), but with no JavaScript there is no behavior. Switch JS back on.', 'warn');
+        setTip('🔌 <b>Nothing happens!</b> The button exists (HTML) and looks nice (CSS), but with no JavaScript there is no behavior. Switch JS back on.<span class="ar">مفيش حاجة حصلت! الزرار موجود (HTML) وشكله حلو (CSS)، بس من غير JavaScript مفيش سلوك.</span>', 'warn');
       }
       if (toggled.size === 3 && on.html && on.css && on.js) light(4);
       return;
@@ -677,7 +689,7 @@ function screenT1Learn() {
     hLines.forEach(l => l.classList.add('hl')); cLines.forEach(l => l.classList.add('hl'));
     scrollToLine($('#cb-html .cbody'), hLines[0]); scrollToLine($('#cb-css .cbody'), cLines[0]);
     const nums = ls => ls.map(l => l.dataset.n).join(', ');
-    setTip(`🔎 <span class="tagc L-html">&lt;${tag}&gt;</span> ${hLines.length ? `is built by <b>HTML line ${nums(hLines)}</b>` : 'is the whole page'}${cLines.length ? ` · styled by <b>CSS line ${nums(cLines)}</b>` : ' · it has no CSS rule of its own'}.`, 'good');
+    setTip(`🔎 <span class="tagc L-html">&lt;${tag}&gt;</span> ${hLines.length ? `is built by <b>HTML line ${nums(hLines)}</b>` : 'is the whole page'}${cLines.length ? ` · styled by <b>CSS line ${nums(cLines)}</b>` : ' · it has no CSS rule of its own'}.<span class="ar">العنصر ده مكتوب في سطر الـ HTML المتلوّن، وتنسيقه في سطر الـ CSS المتلوّن.</span>`, 'good');
     inspected++; if (inspected >= 2) light(3);
   };
   render();
@@ -696,21 +708,21 @@ const LAB_PRESETS = {
   club: {
     name: '🤖 Club page', file: 'robotics-club.html', code: CLUB,
     missions: [
-      { l: 'html', t: 'Rename the club: change the text inside <code>&lt;h1&gt;</code>.', hint: '<h1>Super Coders Club</h1>', check: (c) => { const m = c.html.match(/<h1>([^<]*)<\/h1>/); return m && m[1].trim() && m[1].trim() !== 'Robotics Club'; } },
-      { l: 'html', t: 'Add a 4th event: copy one <code>&lt;li&gt;</code> line and change it.', hint: '<li>Drone Day – Saturday</li>', check: (c) => (c.html.match(/<li>/g) || []).length >= 4 },
-      { l: 'css', t: 'Paint the header in your club\'s color: change <code>background</code> in the <code>header</code> rule.', hint: 'header { background: purple; ... }', check: (c) => { const v = cssProp(cssRule(c.css, 'header'), 'background(?:-color)?'); return v && v !== '#3b5bdb'; } },
-      { l: 'css', t: 'Make the button text bigger: change <code>font-size</code> in the <code>button</code> rule.', hint: 'button { ... font-size: 28px; }', check: (c) => { const v = parseFloat(cssProp(cssRule(c.css, 'button'), 'font-size')); return v > 18; } },
-      { l: 'js', t: 'Make every click add <b>2</b> people instead of 1.', hint: 'count = count + 2;', check: (c) => /count\s*=\s*count\s*\+\s*2\b|count\s*\+=\s*2\b/.test(c.js) },
-      { l: 'js', t: 'Test it: click <b>Sign me up!</b> in the preview.', hint: 'Click the red button on the page.', ev: 'click-signup' }
+      { l: 'html', t: 'Rename the club: change the text inside <code>&lt;h1&gt;</code>.', ar: 'غيّر اسم النادي: عدّل الكلام اللي جوه <code>&lt;h1&gt;</code>.', hint: '<h1>Super Coders Club</h1>', check: (c) => { const m = c.html.match(/<h1>([^<]*)<\/h1>/); return m && m[1].trim() && m[1].trim() !== 'Robotics Club'; } },
+      { l: 'html', t: 'Add a 4th event: copy one <code>&lt;li&gt;</code> line and change it.', ar: 'زوّد فعالية رابعة: انسخ سطر <code>&lt;li&gt;</code> وغيّره.', hint: '<li>Drone Day – Saturday</li>', check: (c) => (c.html.match(/<li>/g) || []).length >= 4 },
+      { l: 'css', t: 'Paint the header in your club\'s color: change <code>background</code> in the <code>header</code> rule.', ar: 'لوّن الهيدر بلون ناديك: غيّر <code>background</code> في قاعدة <code>header</code>.', hint: 'header { background: purple; ... }', check: (c) => { const v = cssProp(cssRule(c.css, 'header'), 'background(?:-color)?'); return v && v !== '#3b5bdb'; } },
+      { l: 'css', t: 'Make the button text bigger: change <code>font-size</code> in the <code>button</code> rule.', ar: 'كبّر كلام الزرار: غيّر <code>font-size</code> في قاعدة <code>button</code>.', hint: 'button { ... font-size: 28px; }', check: (c) => { const v = parseFloat(cssProp(cssRule(c.css, 'button'), 'font-size')); return v > 18; } },
+      { l: 'js', t: 'Make every click add <b>2</b> people instead of 1.', ar: 'خلّي كل ضغطة تزوّد <b>2</b> بدل 1.', hint: 'count = count + 2;', check: (c) => /count\s*=\s*count\s*\+\s*2\b|count\s*\+=\s*2\b/.test(c.js) },
+      { l: 'js', t: 'Test it: click <b>Sign me up!</b> in the preview.', ar: 'جرّب: دوس على زرار Sign me up! في المعاينة.', hint: 'Click the red button on the page.', ev: 'click-signup' }
     ]
   },
   library: {
     name: '📚 Library page', file: 'library.html', code: LIBRARY,
     missions: [
-      { l: 'js', t: 'Type <b>the</b> in the search box — JavaScript filters the books as you type.', hint: 'Click the search box on the page and type.', ev: 'input' },
-      { l: 'html', t: 'Add a new book <code>&lt;li&gt;</code> to the list.', hint: '<li>The Magic Code</li>', check: (c) => (c.html.match(/<li>/g) || []).length >= 6 },
-      { l: 'css', t: 'Change the page background in the <code>body</code> rule.', hint: 'body { ... background: #e7f5ff; }', check: (c) => { const v = cssProp(cssRule(c.css, 'body'), 'background(?:-color)?'); return v && v !== '#fff8e7'; } },
-      { l: 'css', t: 'Change the header color in the <code>header</code> rule.', hint: 'header { background: #e8590c; ... }', check: (c) => { const v = cssProp(cssRule(c.css, 'header'), 'background(?:-color)?'); return v && v !== '#2b8a3e'; } },
+      { l: 'js', t: 'Type <b>the</b> in the search box — JavaScript filters the books as you type.', ar: 'اكتب <b>the</b> في خانة البحث: الـ JavaScript بتفلتر الكتب وانت بتكتب.', hint: 'Click the search box on the page and type.', ev: 'input' },
+      { l: 'html', t: 'Add a new book <code>&lt;li&gt;</code> to the list.', ar: 'زوّد كتاب جديد <code>&lt;li&gt;</code> للقائمة.', hint: '<li>The Magic Code</li>', check: (c) => (c.html.match(/<li>/g) || []).length >= 6 },
+      { l: 'css', t: 'Change the page background in the <code>body</code> rule.', ar: 'غيّر لون خلفية الصفحة في قاعدة <code>body</code>.', hint: 'body { ... background: #e7f5ff; }', check: (c) => { const v = cssProp(cssRule(c.css, 'body'), 'background(?:-color)?'); return v && v !== '#fff8e7'; } },
+      { l: 'css', t: 'Change the header color in the <code>header</code> rule.', ar: 'غيّر لون الهيدر في قاعدة <code>header</code>.', hint: 'header { background: #e8590c; ... }', check: (c) => { const v = cssProp(cssRule(c.css, 'header'), 'background(?:-color)?'); return v && v !== '#2b8a3e'; } },
     ]
   }
 };
@@ -731,15 +743,15 @@ function screenT2Learn() {
         </div>
       </section>
       <section class="panel">
-        <h3>👀 Live preview</h3><p class="sub">Updates automatically while you type.</p>
+        <h3>👀 Live preview<span class="ar">المعاينة المباشرة</span></h3><p class="sub">Updates automatically while you type.<span class="ar">بتتحدّث لوحدها وانت بتكتب.</span></p>
         <div class="browser" style="flex:1"><div class="bar"><i></i><i></i><i></i><span id="fname"></span></div><iframe id="pv" title="Live preview"></iframe></div>
         <div class="console" id="con">✓ No errors</div>
       </section>
       <aside class="panel scroll">
-        <h3>🎯 Missions</h3><p class="sub">Change the code to complete each one.</p>
+        <h3>🎯 Missions<span class="ar">المهام</span></h3><p class="sub">Change the code to complete each one.<span class="ar">عدّل الكود عشان تخلّص كل مهمة.</span></p>
         <ul class="mlist" id="ml"></ul>
         <div class="examNote" id="note"></div>
-        <div class="doneBox" id="allDone" hidden>🎉 All missions done! You are a real frontend developer.<button class="btn primary" data-go="#t2-solve">🎯 Try Page Doctor</button></div>
+        <div class="doneBox" id="allDone" hidden>🎉 All missions done! You are a real frontend developer.<span class="ar">خلّصت كل المهام! انت دلوقتي مطوّر فرونت إند بجد.</span><button class="btn primary" data-go="#t2-solve">🎯 Try Page Doctor</button></div>
       </aside>
     </div></div>`;
   wireChrome();
@@ -749,8 +761,8 @@ function screenT2Learn() {
     $$('#pre button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
     $('#fname').textContent = LAB_PRESETS[p].file;
     $('#note').innerHTML = p === 'library'
-      ? '📝 <b>Exam link:</b> a library page that lists books, is styled, and filters results as you type.<br>• <span class="tagc L-html">HTML</span> structure: the heading, search box and list of books.<br>• <span class="tagc L-css">CSS</span> appearance: colors, cards, sizes.<br>• <span class="tagc L-js">JS</span> behavior: filtering the list as the user types.'
-      : '💡 <b>Tip:</b> the HTML tab holds the content, the CSS tab styles it, and the JS tab makes it react. Break something on purpose and see what happens!';
+      ? '📝 <b>Exam link:</b> a library page that lists books, is styled, and filters results as you type.<br>• <span class="tagc L-html">HTML</span> structure: the heading, search box and list of books.<br>• <span class="tagc L-css">CSS</span> appearance: colors, cards, sizes.<br>• <span class="tagc L-js">JS</span> behavior: filtering the list as the user types.<span class="ar">صفحة مكتبة: الـ HTML هو العنوان وخانة البحث وقائمة الكتب، والـ CSS هو الألوان والكروت، والـ JavaScript بتفلتر الكتب وانت بتكتب.</span>'
+      : '💡 <b>Tip:</b> the HTML tab holds the content, the CSS tab styles it, and the JS tab makes it react. Break something on purpose and see what happens!<span class="ar">تاب HTML فيه المحتوى، وتاب CSS بينسّقه، وتاب JS بيخلّيه يتفاعل. بوّظ حاجة بالقصد وشوف إيه اللي هيحصل!</span>';
     renderMissions(); showTab(); run();
   }
   function showTab() {
@@ -759,7 +771,7 @@ function screenT2Learn() {
   }
   function renderMissions() {
     const ms = LAB_PRESETS[preset].missions;
-    $('#ml').innerHTML = ms.map((m, i) => `<li class="L-${m.l} ${done.has(i) ? 'ok' : ''}" data-i="${i}"><div class="mh"><span class="ck">${done.has(i) ? '✓' : i + 1}</span><span><span class="tagc">${m.l === 'js' ? 'JS' : m.l.toUpperCase()}</span> ${m.t}</span></div><button class="hbtn">show hint</button><div class="hint" hidden>${esc(m.hint)}</div></li>`).join('');
+    $('#ml').innerHTML = ms.map((m, i) => `<li class="L-${m.l} ${done.has(i) ? 'ok' : ''}" data-i="${i}"><div class="mh"><span class="ck">${done.has(i) ? '✓' : i + 1}</span><span><span class="tagc">${m.l === 'js' ? 'JS' : m.l.toUpperCase()}</span> ${m.t}${m.ar ? `<span class="ar">${m.ar}</span>` : ''}</span></div><button class="hbtn">show hint</button><div class="hint" hidden>${esc(m.hint)}</div></li>`).join('');
     $$('#ml .hbtn').forEach(b => b.onclick = () => { b.nextElementSibling.hidden = !b.nextElementSibling.hidden; });
     $('#allDone').hidden = done.size < ms.length;
   }
@@ -828,30 +840,30 @@ const SR_SCRIPT = {
     { r: 'nav', t: '“link Events”, “link Join” … (just a box)' },
     { r: 'main', t: '“Upcoming Events”, “Robot Race – Monday”, “Code Night – Wednesday”' },
     { r: 'footer', t: '“© School Robotics Club”' },
-    { r: null, t: '🤔 I only found boxes (div). Where is the menu? Where is the main content? I cannot jump to them.' }
+    { r: null, t: '🤔 I only found boxes (div). Where is the menu? Where is the main content? I cannot jump to them.', ar: 'لقيت صناديق بس! فين القائمة؟ وفين المحتوى الأساسي؟ مش عارف أوصلهم.' }
   ],
   sem: [
     { r: 'header', t: 'Banner (header): “Robotics Club”' },
     { r: 'nav', t: 'Navigation (nav) with 2 links: Events, Join' },
     { r: 'main', t: 'Main content (main): “Upcoming Events”, 2 events' },
     { r: 'footer', t: 'Footer (content info): “© School Robotics Club”' },
-    { r: null, t: '✅ I found 4 landmarks! A blind user can jump straight to the menu or the main content.' }
+    { r: null, t: '✅ I found 4 landmarks! A blind user can jump straight to the menu or the main content.', ar: 'لقيت 4 أجزاء واضحة! الشخص الكفيف يقدر يروح للقائمة أو المحتوى على طول.' }
   ]
 };
 function screenT3Learn() {
   const t = TOPICS[2];
   const pts = [
-    '<b>Semantic HTML</b> uses tags whose names tell what each part <b>means</b>.',
-    '<span class="tagc L-html">&lt;header&gt;</span> top · <span class="tagc L-html">&lt;nav&gt;</span> menu · <span class="tagc L-html">&lt;main&gt;</span> body · <span class="tagc L-html">&lt;footer&gt;</span> bottom.',
-    'To our eyes both pages <b>look the same</b> — the difference is the meaning in the code.',
-    '<b>Accessibility:</b> screen readers understand the structure, so information reaches users with visual impairments.',
-    '<b>SEO:</b> search engines understand the content, so the page shows up properly in search results.'
+    '<b>Semantic HTML</b> uses tags whose names tell what each part <b>means</b>.<span class="ar">الـ Semantic HTML معناها نستخدم تاجات اسمها بيقول كل جزء <b>معناه إيه</b>.</span>',
+    '<span class="tagc L-html">&lt;header&gt;</span> top · <span class="tagc L-html">&lt;nav&gt;</span> menu · <span class="tagc L-html">&lt;main&gt;</span> body · <span class="tagc L-html">&lt;footer&gt;</span> bottom.<span class="ar">header فوق، nav للقائمة، main للمحتوى الأساسي، footer تحت.</span>',
+    'To our eyes both pages <b>look the same</b> — the difference is the meaning in the code.<span class="ar">بعنينا الصفحتين <b>شكلهم واحد</b>، الفرق في المعنى اللي جوه الكود.</span>',
+    '<b>Accessibility:</b> screen readers understand the structure, so information reaches users with visual impairments.<span class="ar"><b>إمكانية الوصول:</b> برامج قراءة الشاشة بتفهم هيكل الصفحة، فالمعلومة بتوصل لضعاف البصر بسهولة.</span>',
+    '<b>SEO:</b> search engines understand the content, so the page shows up properly in search results.<span class="ar"><b>الـ SEO:</b> محركات البحث بتفهم محتوى الصفحة صح، فبتظهر كويس في نتايج البحث.</span>'
   ];
   let mode = 'div', showTags = true, srTimer = null, speak = false;
   const seen = new Set();
   app.innerHTML = `<div class="screen fit">${topBar(t, 'learn')}
     <div class="work g-t3">
-      <section class="panel"><h3>👩‍💻 The HTML code</h3>
+      <section class="panel"><h3>👩‍💻 The HTML code<span class="ar">كود الـ HTML</span></h3>
         <div class="seg" id="mode"><button data-m="div">📦 Div boxes</button><button data-m="sem">🏷️ Semantic tags</button></div>
         <div class="codebox L-html" style="flex:1"><div class="ch"><span class="fn">index.html</span><span class="st" id="mlab"></span></div><div class="cbody" id="code"></div></div>
       </section>
@@ -868,7 +880,7 @@ function screenT3Learn() {
           <div class="rg mn" data-r="main"><h2>Upcoming Events</h2><p>🏎️ Robot Race – Monday</p><p>💻 Code Night – Wednesday</p></div>
           <div class="rg ft" data-r="footer">© School Robotics Club</div>
         </div>
-        <div id="out"><div class="tip">Switch between <b>📦 Div boxes</b> and <b>🏷️ Semantic tags</b>. Does the page look different? Then ask the screen reader and the search robot.</div></div>
+        <div id="out"><div class="tip">Switch between <b>📦 Div boxes</b> and <b>🏷️ Semantic tags</b>. Does the page look different? Then ask the screen reader and the search robot.<span class="ar">بدّل بين صناديق div والتاجات الـ semantic. الشكل بيتغير؟ بعدين جرّب قارئ الشاشة وروبوت البحث.</span></div></div>
       </section>
       ${discoverPanel(pts, '#t3-solve')}
     </div></div>`;
@@ -889,7 +901,7 @@ function screenT3Learn() {
   }
   function stopSR() { clearTimeout(srTimer); $$('.rg', mock).forEach(r => r.classList.remove('speak')); try { speechSynthesis.cancel(); } catch (e) {} }
   onCleanup(stopSR);
-  $$('#mode button').forEach(b => b.onclick = () => { stopSR(); mode = b.dataset.m; render(); out.innerHTML = `<div class="tip">${mode === 'sem' ? '🏷️ Now every part has a <b>meaningful tag</b>. It looks exactly the same — run the screen reader again!' : '📦 Every part is just a <b>div</b> (a plain box). It means nothing to a computer.'}</div>`; });
+  $$('#mode button').forEach(b => b.onclick = () => { stopSR(); mode = b.dataset.m; render(); out.innerHTML = `<div class="tip">${mode === 'sem' ? '🏷️ Now every part has a <b>meaningful tag</b>. It looks exactly the same — run the screen reader again!<span class="ar">دلوقتي كل جزء ليه تاج بمعنى. الشكل هو هو، شغّل قارئ الشاشة تاني!</span>' : '📦 Every part is just a <b>div</b> (a plain box). It means nothing to a computer.<span class="ar">كل جزء مجرد div (صندوق عادي)، ملوش أي معنى عند الكمبيوتر.</span>'}</div>`; });
   $('#bTags').onclick = () => { showTags = !showTags; render(); };
   $('#bSpeak').onclick = () => { speak = !speak; $('#bSpeak').textContent = speak ? '🔊 Voice: on' : '🔈 Voice: off'; $('#bSpeak').classList.toggle('on', speak); };
   $('#bSR').onclick = () => {
@@ -900,7 +912,7 @@ function screenT3Learn() {
       $$('.rg', mock).forEach(r => r.classList.remove('speak'));
       if (k >= steps.length) { if (mode === 'sem') light(3); return; }
       const s = steps[k++];
-      $('#srt').textContent = s.t;
+      $('#srt').innerHTML = esc(s.t) + (s.ar ? `<span class="ar">${s.ar}</span>` : '');
       if (s.r) $(`.rg[data-r="${s.r}"]`, mock).classList.add('speak');
       if (speak && 'speechSynthesis' in window) { try { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(s.t.replace(/[🤔✅“”]/g, ''))); } catch (e) {} }
       srTimer = setTimeout(step, speak ? 3200 : 2100);
@@ -911,12 +923,12 @@ function screenT3Learn() {
     stopSR();
     if (mode === 'div') {
       out.innerHTML = `<div class="serp"><div class="u">school-club.example › page</div><div class="tt">Untitled page</div><div>Robotics Club Events Join Upcoming Events Robot Race – Monday Code Night – Wednesday © School Robotics…</div></div>
-      <div class="robot" style="margin-top:8px">🤖 <b>Search robot:</b> “I see 4 boxes, but which one is the menu and which is the important content? I'll just mix all the text together.”
+      <div class="robot" style="margin-top:8px">🤖 <b>Search robot:</b> “I see 4 boxes, but which one is the menu and which is the important content? I'll just mix all the text together.”<span class="ar">روبوت البحث: شايف 4 صناديق، بس مش عارف مين القائمة ومين المحتوى المهم، فهلخبط الكلام كله على بعض.</span>
       <ul><li>Menu: ❓ unknown</li><li>Main content: ❓ unknown</li><li>Footer: ❓ unknown</li></ul></div>`;
     } else {
       light(4);
       out.innerHTML = `<div class="serp"><div class="u">school-club.example › robotics</div><div class="tt">Robotics Club</div><div><b>Upcoming Events:</b> Robot Race – Monday · Code Night – Wednesday</div><div class="sl"><span>Events</span><span>Join</span></div></div>
-      <div class="robot" style="margin-top:8px">🤖 <b>Search robot:</b> “Easy! I understand this page correctly.”
+      <div class="robot" style="margin-top:8px">🤖 <b>Search robot:</b> “Easy! I understand this page correctly.”<span class="ar">روبوت البحث: سهلة! فاهم الصفحة صح، القائمة في nav والمحتوى في main.</span>
       <ul><li>Menu: ✅ found in &lt;nav&gt; → shown as quick links</li><li>Main content: ✅ found in &lt;main&gt; → used for the description</li><li>Footer: ✅ found in &lt;footer&gt; → not important for search</li></ul></div>`;
     }
   };
@@ -984,11 +996,11 @@ function scaledFrame(stage, dev, iframe, w) {
 function screenT4Learn() {
   const t = TOPICS[3];
   const pts = [
-    '<b>Responsive design:</b> the layout adjusts automatically to the screen size.',
-    'With <b>one single web page</b>, it is easy to view on a phone, a tablet and a PC.',
-    'CSS <span class="tagc L-css">@media</span> rules switch the layout when the screen gets wider.',
-    '<b>Mobile-first:</b> design for small phone screens first, then add rules for bigger screens.',
-    'Without responsive design, phones get a page that is too wide — you must scroll sideways.'
+    '<b>Responsive design:</b> the layout adjusts automatically to the screen size.<span class="ar"><b>التصميم المتجاوب:</b> ترتيب الصفحة بيتظبط لوحده على حسب مقاس الشاشة.</span>',
+    'With <b>one single web page</b>, it is easy to view on a phone, a tablet and a PC.<span class="ar">بـ <b>صفحة واحدة بس</b> تقدر تتفرج عليها بسهولة على الموبايل والتابلت والكمبيوتر.</span>',
+    'CSS <span class="tagc L-css">@media</span> rules switch the layout when the screen gets wider.<span class="ar">قواعد @media في الـ CSS هي اللي بتغيّر الترتيب لما الشاشة تكبر.</span>',
+    '<b>Mobile-first:</b> design for small phone screens first, then add rules for bigger screens.<span class="ar"><b>الموبايل الأول:</b> نصمم لشاشة الموبايل الصغيرة الأول، وبعدين نزوّد قواعد للشاشات الأكبر.</span>',
+    'Without responsive design, phones get a page that is too wide — you must scroll sideways.<span class="ar">من غير تصميم متجاوب، الصفحة بتبقى أعرض من الموبايل ولازم تسحب يمين وشمال.</span>'
   ];
   let w = 1100, resp = true, lastCols = null, colsSeen = new Set(), anim = null;
   app.innerHTML = `<div class="screen fit">${topBar(t, 'learn')}
@@ -1006,10 +1018,10 @@ function screenT4Learn() {
           <button class="btn small" id="mf">🔢 Show mobile-first order</button>
         </div>
         <div class="rstage" id="st"><div class="rdev" id="dev"><div class="clip"><iframe id="pv" title="Responsive preview"></iframe></div></div></div>
-        <div class="tip" id="tip">↔️ Drag the slider or pick a device. Watch how many columns the event cards use.</div>
+        <div class="tip" id="tip">↔️ Drag the slider or pick a device. Watch how many columns the event cards use.<span class="ar">حرّك السلايدر أو اختار جهاز، وشوف كروت الفعاليات بقت كام عمود.</span></div>
       </section>
       <div style="display:grid;grid-template-rows:1fr auto;gap:12px;min-height:0">
-        <section class="panel" style="min-height:0"><h3>🎨 style.css</h3>
+        <section class="panel" style="min-height:0"><h3>🎨 style.css<span class="ar">ملف التنسيق</span></h3>
           <div class="codebox L-css" style="flex:1"><div class="cbody" id="code"></div></div>
         </section>
         ${discoverPanel(pts, '#t4-solve')}
@@ -1031,12 +1043,12 @@ function screenT4Learn() {
     if (resp) {
       $$('.cblk', $('#code')).forEach((el, i) => { const a = w >= R_CSS_BLOCKS[i].min; el.classList.toggle('act', a); el.classList.toggle('ina', !a); });
       const c = colsAt(w);
-      if (lastCols !== null && c !== lastCols && fromUser) { light(0); light(2); tip.innerHTML = `✨ The layout changed to <b>${c} column${c > 1 ? 's' : ''}</b> — ${c === 1 ? 'only the base phone styles apply now (no <span class="tagc L-css">@media</span> rule is active).' : `the <span class="tagc L-css">@media</span> rule for ${c === 2 ? '600px and wider' : '900px and wider'} is now active.`}`; tip.className = 'tip good'; }
+      if (lastCols !== null && c !== lastCols && fromUser) { light(0); light(2); tip.innerHTML = `✨ The layout changed to <b>${c} column${c > 1 ? 's' : ''}</b> — ${c === 1 ? 'only the base phone styles apply now (no <span class="tagc L-css">@media</span> rule is active).' : `the <span class="tagc L-css">@media</span> rule for ${c === 2 ? '600px and wider' : '900px and wider'} is now active.`}<span class="ar">الترتيب اتغيّر لـ ${c} ${c === 1 ? 'عمود' : 'أعمدة'}، لأن ${c === 1 ? 'مفيش قاعدة @media شغالة، فتنسيق الموبايل الأساسي هو اللي شغال' : 'قاعدة @media الخاصة بالعرض ده بقت شغالة'}.</span>`; tip.className = 'tip good'; }
       lastCols = c; colsSeen.add(c);
       if (colsSeen.size === 3) light(1);
     } else if (w < 600) {
       light(4);
-      tip.innerHTML = '🚫 <b>Not responsive:</b> the page is fixed at 1000px, so on a phone it doesn\'t fit. Users must zoom or scroll sideways to read it!'; tip.className = 'tip warn';
+      tip.innerHTML = '🚫 <b>Not responsive:</b> the page is fixed at 1000px, so on a phone it doesn\'t fit. Users must zoom or scroll sideways to read it!<span class="ar">الصفحة عرضها ثابت 1000px، فمش داخلة في شاشة الموبايل، ولازم تكبّر أو تسحب يمين وشمال عشان تقرا!</span>'; tip.className = 'tip warn';
     }
   }
   wr.oninput = () => { stopAnim(); w = +wr.value; update(); };
@@ -1045,17 +1057,17 @@ function screenT4Learn() {
     stopAnim(); resp = b.dataset.r === '1'; lastCols = null;
     $$('#rs button').forEach(x => x.classList.toggle('on', x === b));
     renderCode(); loadPage(); update(false);
-    if (!resp) { tip.innerHTML = '🚫 Responsive design is OFF. Now pick 📱 Phone — what happens?'; tip.className = 'tip warn'; }
-    else { tip.innerHTML = '✅ Responsive design is back ON.'; tip.className = 'tip good'; }
+    if (!resp) { tip.innerHTML = '🚫 Responsive design is OFF. Now pick 📱 Phone — what happens?<span class="ar">قفلنا التصميم المتجاوب. اختار الموبايل: إيه اللي هيحصل؟</span>'; tip.className = 'tip warn'; }
+    else { tip.innerHTML = '✅ Responsive design is back ON.<span class="ar">التصميم المتجاوب رجع يشتغل.</span>'; tip.className = 'tip good'; }
   });
   function stopAnim() { if (anim) { clearTimeout(anim); anim = null; $$('.cblk').forEach(x => x.classList.remove('pulse')); } }
   $('#mf').onclick = () => {
     stopAnim();
     if (!resp) $('#rs button[data-r="1"]').click();
     const steps = [
-      { w: 360, b: 0, t: '1️⃣ <b>Mobile-first:</b> we write the phone styles first — one column, big readable cards.' },
-      { w: 700, b: 1, t: '2️⃣ Then we <b>add</b> a rule for screens 600px and wider: two columns, menu in one line.' },
-      { w: 1200, b: 2, t: '3️⃣ Finally a rule for 900px and wider: three columns and the menu beside the title.' }
+      { w: 360, b: 0, t: '1️⃣ <b>Mobile-first:</b> we write the phone styles first — one column, big readable cards.<span class="ar">١. الموبايل الأول: بنكتب تنسيق الموبايل الأول، عمود واحد وكروت كبيرة سهل قراءتها.</span>' },
+      { w: 700, b: 1, t: '2️⃣ Then we <b>add</b> a rule for screens 600px and wider: two columns, menu in one line.<span class="ar">٢. بعدين بنزوّد قاعدة للشاشات من 600px وأكبر: عمودين والقائمة في سطر واحد.</span>' },
+      { w: 1200, b: 2, t: '3️⃣ Finally a rule for 900px and wider: three columns and the menu beside the title.<span class="ar">٣. وفي الآخر قاعدة لـ 900px وأكبر: 3 أعمدة والقائمة جنب العنوان.</span>' }
     ];
     let k = 0;
     const next = () => {
@@ -1085,7 +1097,7 @@ const FW_PARTS = {
 };
 const EVENTS = [['🏎️', 'Robot Race', 'Monday'], ['💻', 'Code Night', 'Wednesday'], ['🔬', 'Science Fair', 'Friday'], ['🚁', 'Drone Day', 'Saturday'], ['🎮', 'Game Jam', 'Sunday']];
 const FWS = [
-  { k: 'react', n: 'React', c: '#61DAFB', by: 'Developed by Meta (formerly Facebook)', pts: ['Efficiently updates <b>only part of the screen</b>.', 'Suited to <b>large-scale</b> web applications.'], code: `function SignupButton() {
+  { k: 'react', n: 'React', c: '#61DAFB', by: 'Developed by Meta (formerly Facebook)', pts: ['Efficiently updates <b>only part of the screen</b>.<span class="ar">بيحدّث جزء من الشاشة بس بكفاءة.</span>', 'Suited to <b>large-scale</b> web applications.<span class="ar">مناسب لتطبيقات الويب الكبيرة.</span>'], code: `function SignupButton() {
   const [count, setCount] = useState(0);
   return (
     <button onClick={() => setCount(count + 1)}>
@@ -1093,12 +1105,12 @@ const FWS = [
     </button>
   );
 }` },
-  { k: 'vue', n: 'Vue', c: '#42B883', by: 'Simple structure', pts: ['Has a <b>simple structure</b>.', 'Lets you build apps <b>step by step</b>, starting from small features.'], code: `<template>
+  { k: 'vue', n: 'Vue', c: '#42B883', by: 'Simple structure', pts: ['Has a <b>simple structure</b>.<span class="ar">تركيبه بسيط.</span>', 'Lets you build apps <b>step by step</b>, starting from small features.<span class="ar">بتبني التطبيق خطوة بخطوة من مميزات صغيرة.</span>'], code: `<template>
   <button @click="count++">
     Signed up: {{ count }}
   </button>
 </template>` },
-  { k: 'next', n: 'Next.js', c: '#E6E9FF', by: 'Built on React', pts: ['Has <b>all of React\'s features</b>…', '…plus mechanisms to <b>speed up page display</b> (pages can be prepared before they reach you).'], code: `// pages/index.js  (a Next.js page)
+  { k: 'next', n: 'Next.js', c: '#E6E9FF', by: 'Built on React', pts: ['Has <b>all of React\'s features</b>…', '…plus mechanisms to <b>speed up page display</b> (pages can be prepared before they reach you).<span class="ar">فيه كل مميزات React، وكمان طرق تسرّع ظهور الصفحة.</span>'], code: `// pages/index.js  (a Next.js page)
 export default function Home() {
   return (
     <main>
@@ -1112,11 +1124,11 @@ export default function Home() {
 function screenT5Learn() {
   const t = TOPICS[4];
   const pts = [
-    'A <b>framework</b> gives you commonly used functions and components <b>ready-made</b>.',
-    'You don\'t write all code from scratch → development is <b>faster and more efficient</b>.',
-    '<b>React</b> (by Meta) updates <b>only part of the screen</b> — great for large apps.',
-    '<b>Vue</b> is simple and lets you build step by step from small features.',
-    '<b>Next.js</b> = React\'s features + tricks to make pages <b>display faster</b>.'
+    'A <b>framework</b> gives you commonly used functions and components <b>ready-made</b>.<span class="ar">الـ <b>Framework</b> بيديك وظايف ومكونات بنستخدمها كتير <b>جاهزة</b>.</span>',
+    'You don\'t write all code from scratch → development is <b>faster and more efficient</b>.<span class="ar">مش لازم تكتب كل الكود من الصفر، فالشغل بيبقى <b>أسرع وأكفأ</b>.</span>',
+    '<b>React</b> (by Meta) updates <b>only part of the screen</b> — great for large apps.<span class="ar"><b>React</b> (من شركة Meta) بيحدّث <b>جزء من الشاشة بس</b>، ومناسب للتطبيقات الكبيرة.</span>',
+    '<b>Vue</b> is simple and lets you build step by step from small features.<span class="ar"><b>Vue</b> بسيط وبيخليك تبني التطبيق خطوة بخطوة من مميزات صغيرة.</span>',
+    '<b>Next.js</b> = React\'s features + tricks to make pages <b>display faster</b>.<span class="ar"><b>Next.js</b> فيه كل مميزات React، وكمان طرق تخلّي الصفحات <b>تظهر أسرع</b>.</span>'
   ];
   let tab = 'build', parts = [], evI = 0, openFw = null, justAdded = false;
   app.innerHTML = `<div class="screen fit">${topBar(t, 'learn')}
@@ -1135,7 +1147,7 @@ function screenT5Learn() {
     if (tab === 'build') buildPane(); else if (tab === 'update') updatePane(); else meetPane();
   }
   function buildPane() {
-    pane.innerHTML = `<p class="sub" style="margin:0">Click a ready-made component to add it to the page. Each one is a whole chunk of HTML, CSS and JS that someone already wrote for you.</p>
+    pane.innerHTML = `<p class="sub" style="margin:0">Click a ready-made component to add it to the page. Each one is a whole chunk of HTML, CSS and JS that someone already wrote for you.<span class="ar">دوس على مكون جاهز عشان تضيفه للصفحة. كل مكون عبارة عن HTML وCSS وJS حد كتبهولك قبل كده.</span></p>
       <div class="pal">${Object.keys(FW_PARTS).map(k => `<button data-k="${k}">+ &lt;${k} /&gt;</button>`).join('')}<button data-k="clear" style="border-color:var(--coral);color:var(--coral);background:transparent">🗑 Clear</button></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="upd">
         <div class="fwcanvas" id="cv"></div>
@@ -1145,7 +1157,7 @@ function screenT5Learn() {
         <span>✍️ Lines you wrote</span><div class="bar"><i id="m1" style="background:var(--mint)"></i></div><b id="n1">0</b>
         <span>🎁 Lines the parts gave you</span><div class="bar"><i id="m2" style="background:var(--violet)"></i></div><b id="n2">0</b>
       </div>
-      <div class="tip" id="tip">Add some parts and compare the two bars.</div>`;
+      <div class="tip" id="tip">Add some parts and compare the two bars.<span class="ar">زوّد شوية مكونات وقارن بين الشريطين.</span></div>`;
     const draw = () => {
       $('#cv').innerHTML = parts.length ? parts.map(p => FW_PARTS[p.k].html(p.d)).join('') : '<div class="empty">Empty page — add a component ➜</div>';
       $$('#cv .cp').forEach((el, k) => { if (k < parts.length - 1 || !justAdded) el.style.animation = 'none'; });
@@ -1163,7 +1175,7 @@ function screenT5Learn() {
       const e = EVENTS[evI++ % EVENTS.length];
       parts.push({ k: b.dataset.k, d: { e: e[0], t: e[1], d: e[2] } }); justAdded = true;
       draw(); light(0);
-      if (parts.length >= 4) { light(1); $('#tip').innerHTML = `🚀 You wrote only <b>${parts.length + 6} lines</b>, but the page uses <b>${parts.reduce((s, p) => s + FW_PARTS[p.k].inside, 0)}</b> lines of ready-made code. That's why frameworks make development efficient! (Try the Sign me up button — it already works.)`; $('#tip').className = 'tip good'; }
+      if (parts.length >= 4) { light(1); $('#tip').innerHTML = `🚀 You wrote only <b>${parts.length + 6} lines</b>, but the page uses <b>${parts.reduce((s, p) => s + FW_PARTS[p.k].inside, 0)}</b> lines of ready-made code. That's why frameworks make development efficient! (Try the Sign me up button — it already works.)<span class="ar">كتبت سطور قليلة، بس الصفحة شغالة بكود جاهز أكتر بكتير. ده اللي بيخلّي الـ Framework يوفّر وقت ومجهود!</span>`; $('#tip').className = 'tip good'; }
     });
     draw();
   }
@@ -1173,12 +1185,12 @@ function screenT5Learn() {
       <div class="row2"><div class="part">🏎️ Race</div><div class="part">💻 Code</div><div class="part">🔬 Fair</div></div>
       <div class="row2"><div class="part">🚁 Drone</div><div class="part">🎮 Games</div><div class="part">🧩 Puzzle</div></div>
       <div class="part">Signed up: <b class="cnt">0</b></div><div class="part">© School Robotics Club</div></div>`;
-    pane.innerHTML = `<p class="sub" style="margin:0">Someone clicks “Sign me up”. Only one number changes — but how much of the screen gets redrawn?</p>
+    pane.innerHTML = `<p class="sub" style="margin:0">Someone clicks “Sign me up”. Only one number changes — but how much of the screen gets redrawn?<span class="ar">حد داس على Sign me up. رقم واحد بس اللي بيتغير، بس قد إيه من الشاشة بيترسم من جديد؟</span></p>
       <div class="upd">
         <div class="panel"><h3>🐢 Old way: reload the whole page</h3>${page('pa')}<button class="btn" id="ba">Sign me up!</button><div class="meter"><span>Parts redrawn</span><div class="bar"><i id="ra" style="background:var(--coral);width:0"></i></div><b id="na">0</b></div></div>
         <div class="panel"><h3>⚡ React way: update only that part</h3>${page('pb')}<button class="btn primary" id="bb">Sign me up!</button><div class="meter"><span>Parts redrawn</span><div class="bar"><i id="rb" style="background:var(--mint);width:0"></i></div><b id="nb">0</b></div></div>
       </div>
-      <div class="tip" id="tip">Click both buttons and watch which parts flash yellow.</div>`;
+      <div class="tip" id="tip">Click both buttons and watch which parts flash yellow.<span class="ar">دوس على الزرارين وشوف أنهي أجزاء بتنوّر بالأصفر.</span></div>`;
     let ca = 0, cb = 0;
     const flash = el => { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); };
     $('#ba').onclick = () => {
@@ -1189,11 +1201,11 @@ function screenT5Learn() {
     $('#bb').onclick = () => {
       const pb = $('#pb'); cb++; const c = $('.cnt', pb); c.textContent = cb; flash(c);
       $('#nb').textContent = 1; $('#rb').style.width = (100 / $$('.part', pb).length) + '%';
-      light(2); $('#tip').innerHTML = '⚡ <b>React</b> changed only the number. Nothing else was redrawn and there was no waiting. This is why React suits big apps like social media feeds.'; $('#tip').className = 'tip good';
+      light(2); $('#tip').innerHTML = '⚡ <b>React</b> changed only the number. Nothing else was redrawn and there was no waiting. This is why React suits big apps like social media feeds.<span class="ar">React غيّر الرقم بس، ومفيش حاجة تانية اترسمت ولا استنينا. عشان كده React مناسب للتطبيقات الكبيرة زي السوشيال ميديا.</span>'; $('#tip').className = 'tip good';
     };
   }
   function meetPane() {
-    pane.innerHTML = `<p class="sub" style="margin:0">Click each framework card to learn about it.</p>
+    pane.innerHTML = `<p class="sub" style="margin:0">Click each framework card to learn about it.<span class="ar">دوس على كل كارت عشان تعرف معلومات عن الـ Framework ده.</span></p>
       <div class="fwc">${FWS.map(f => `<button class="fw" data-k="${f.k}" style="--c:${f.c}"><span class="lg" style="background:${f.c}">${f.n[0]}</span><b>${f.n}</b><small>${f.by}</small></button>`).join('')}</div>
       <div id="fwd"></div>`;
     const show = k => {
@@ -1212,9 +1224,36 @@ function screenT5Learn() {
 
 /* =========================================================
    QUIZ ENGINE (mcq · type · place)
+   - question order is shuffled every time
+   - the same correct answer never comes many times in a row
+   - answer options are shuffled (except fixed sets like True/False, HTML/CSS/JS)
    ========================================================= */
+const AR = s => s ? `<span class="ar">${s}</span>` : '';
+const op = (en, ar) => en + AR(ar);
+/* key of the correct answer for fixed-option questions (same buttons every time) */
+const answerKey = q => (q.type || !q.fixed) ? null : q.options[q.answer];
+function arrange(qs) {
+  let best = null;
+  for (let attempt = 0; attempt < 60; attempt++) {
+    const pool = shuffle(qs), out = [];
+    while (pool.length) {
+      const last = out.length ? answerKey(out[out.length - 1]) : null;
+      // take a random question (pool is shuffled) whose answer differs from the previous one
+      let pick = pool.findIndex(q => { const k = answerKey(q); return k === null || k !== last; });
+      if (pick < 0) pick = 0;
+      out.push(pool.splice(pick, 1)[0]);
+    }
+    // count repeats (two in a row with the same fixed answer)
+    let rep = 0;
+    for (let k = 1; k < out.length; k++) { const a = answerKey(out[k]); if (a !== null && a === answerKey(out[k - 1])) rep++; }
+    if (!best || rep < best.rep) best = { out, rep };
+    if (rep === 0) break;
+  }
+  return best.out;
+}
 function screenQuiz({ id, topic, title, questions, retry }) {
-  let i = 0, mistakes = 0; const results = [];
+  questions = arrange(questions);
+  let i = 0, mistakes = 0, lastPos = -1; const results = [];
   app.innerHTML = `<div class="screen fit">${topBar(topic, 'solve')}<div class="quiz" id="qz"></div></div>`;
   wireChrome();
   const qz = $('#qz');
@@ -1227,7 +1266,7 @@ function screenQuiz({ id, topic, title, questions, retry }) {
         <div class="miss">Question ${i + 1}/${questions.length} · Mistakes: <b>${mistakes}</b></div></div>
       <div class="qcard panel">
         ${q.tag ? `<div class="qtag">${q.tag}</div>` : ''}
-        <h2 class="qprompt">${q.prompt}</h2>
+        <h2 class="qprompt">${q.prompt}${AR(q.ar)}</h2>
         <div class="qgrid ${q.visual || q.mount ? 'v' : ''}">
           ${q.visual || q.mount ? `<div class="qvisual" id="qv">${q.visual || ''}</div>` : ''}
           <div class="qbody" id="qb" style="display:flex;flex-direction:column;gap:12px"></div>
@@ -1238,24 +1277,27 @@ function screenQuiz({ id, topic, title, questions, retry }) {
     if (q.mount) q.mount($('#qv'));
     const qb = $('#qb');
     let wrongHere = false;
-    const finishQ = (ok, extra = '') => {
+    const finishQ = (ok, extra = '', extraAr = '') => {
       results[i] = ok && !wrongHere;
-      const f = $('#qf'); f.hidden = false; f.className = 'qfeed' + (ok && !wrongHere ? '' : ' bad');
-      f.innerHTML = `<b>${ok && !wrongHere ? '✓ Correct!' : '✗ Not quite.'}</b> ${extra}${q.explain ? ' ' + q.explain : ''}`;
+      const good = ok && !wrongHere;
+      const f = $('#qf'); f.hidden = false; f.className = 'qfeed' + (good ? '' : ' bad');
+      const arLine = [good ? 'إجابة صحيحة!' : 'مش بالظبط.', extraAr, q.arEx].filter(Boolean).join(' ');
+      f.innerHTML = `<b>${good ? '✓ Correct!' : '✗ Not quite.'}</b> ${extra}${q.explain ? ' ' + q.explain : ''}${AR(arLine)}`;
       if (q.reveal) q.reveal($('#qv'));
       const n = $('#qn'); n.hidden = false; const b = $('button', n); b.onclick = () => { i++; show(); }; b.focus();
     };
     if (q.type === 'type') {
-      qb.innerHTML = `<div class="tin"><input id="ti" placeholder="Type your answer…" autocomplete="off"><button class="btn primary" id="tc">Check</button></div>`;
+      qb.innerHTML = `<div class="tin"><input id="ti" placeholder="Type your answer… / اكتب إجابتك" autocomplete="off"><button class="btn primary" id="tc">Check</button></div>`;
       const inp = $('#ti'); inp.focus();
       const check = () => {
         if (!inp.value.trim()) return;
         const ok = q.accept.some(a => norm(a) === norm(inp.value));
         inp.disabled = true; $('#tc').disabled = true;
         if (!ok) { mistakes++; wrongHere = true; }
-        finishQ(ok, ok ? '' : `The answer is <b>${q.accept[0]}</b>.`);
+        finishQ(ok, ok ? '' : `The answer is <b>${q.accept[0]}</b>.`, ok ? '' : `الإجابة الصحيحة: ${q.accept[0]}.`);
       };
       $('#tc').onclick = check; inp.onkeydown = e => { if (e.key === 'Enter') check(); };
+      lastPos = -1;
     } else if (q.type === 'place') {
       qb.innerHTML = `${q.layout}<div class="chips" id="chips">${shuffle(q.chips).map(c => `<button class="chip" data-c="${c}" ${q.chipClass ? `style="--c:${q.chipClass(c)}"` : ''}>${esc(c)}</button>`).join('')}</div>`;
       let sel = null; const total = Object.keys(q.answer).length; let filled = 0;
@@ -1264,7 +1306,7 @@ function screenQuiz({ id, topic, title, questions, retry }) {
         if (z.classList.contains('filled')) return;
         if (q.answer[z.dataset.z] === c) {
           z.classList.add('filled'); z.classList.remove('ready'); z.innerHTML = q.fillLabel ? q.fillLabel(c, z) : esc(c); filled++;
-          const chip = $(`.chip[data-c="${CSS.escape(c)}"]`, qb); if (chip && !q.reuse) chip.remove(); else if (chip) chip.classList.remove('sel');
+          const chip = $(`.chip[data-c="${CSS.escape(c)}"]`, qb); if (chip) chip.remove();
           sel = null; zones.forEach(x => x.classList.remove('ready'));
           if (filled === total) finishQ(true);
         } else {
@@ -1278,9 +1320,15 @@ function screenQuiz({ id, topic, title, questions, retry }) {
         if (chip) { $$('.chip', qb).forEach(x => x.classList.remove('sel')); sel = chip.dataset.c; chip.classList.add('sel'); zones.forEach(x => x.classList.toggle('ready', !x.classList.contains('filled'))); }
         else if (z && sel) tryPlace(z, sel);
       });
+      lastPos = -1;
     } else {
       const opts = q.options.map((o, k) => ({ o, k }));
-      const list = q.shuffle ? shuffle(opts) : opts;
+      let list = opts;
+      if (!q.fixed) {
+        // shuffle, and avoid putting the right answer in the same place as last time
+        for (let t = 0; t < 12; t++) { list = shuffle(opts); if (list.findIndex(x => x.k === q.answer) !== lastPos) break; }
+      }
+      lastPos = list.findIndex(x => x.k === q.answer);
       const cols = q.cols ? 'c' + q.cols : '';
       qb.innerHTML = `<div class="opts ${cols}">${list.map(({ o, k }, j) => `<button class="opt ${q.big ? 'big' : ''}" data-k="${k}" ${q.optColor ? `style="--c:${q.optColor[k]}"` : ''}>${q.noKeys || q.big ? '' : `<span class="k">${'ABCDEF'[j]}</span>`}<span>${o}</span></button>`).join('')}</div>`;
       $$('.opt', qb).forEach(b => b.onclick = () => {
@@ -1297,12 +1345,13 @@ function screenQuiz({ id, topic, title, questions, retry }) {
     const stars = mistakes <= 1 ? 3 : mistakes <= Math.max(3, Math.round(n * .25)) ? 2 : 1;
     Store.saveStars(id, stars);
     const nextT = topic && TOPICS[topic.n];
+    const msg = stars === 3 ? ['Amazing work! 🎉', 'شغل رائع!'] : stars === 2 ? ['Great job! 👏', 'شغل جميل!'] : ['Good try! Keep practising 💪', 'محاولة حلوة! كمّل تمرين'];
     qz.innerHTML = `<div class="panel result" style="flex:1">
       <div class="big">${'★'.repeat(stars)}<span style="color:#39406E">${'★'.repeat(3 - stars)}</span></div>
-      <h2>${stars === 3 ? 'Amazing work! 🎉' : stars === 2 ? 'Great job! 👏' : 'Good try! Keep practising 💪'}</h2>
-      <p style="font-weight:800;color:var(--soft);margin:0">${results.filter(Boolean).length} / ${n} first-try correct · ${mistakes} mistake${mistakes === 1 ? '' : 's'}</p>
+      <h2>${msg[0]}<span class="ar" style="text-align:center">${msg[1]}</span></h2>
+      <p style="font-weight:800;color:var(--soft);margin:0">${results.filter(Boolean).length} / ${n} first-try correct · ${mistakes} mistake${mistakes === 1 ? '' : 's'}<span class="ar" style="text-align:center">${results.filter(Boolean).length} من ${n} صح من أول مرة · ${mistakes} أخطاء</span></p>
       <div class="row">
-        <button class="btn" id="again">↺ Try again</button>
+        <button class="btn" id="again">↺ Try again · حاول تاني</button>
         ${topic ? `<button class="btn" data-go="#t${topic.n}-learn">🔬 Back to Learn</button>` : ''}
         ${nextT ? `<button class="btn primary" data-go="#t${nextT.n}-learn">Next: ${nextT.icon} ${nextT.title} →</button>` : topic ? `<button class="btn primary" data-go="#exam">🏆 Exam Arena →</button>` : `<button class="btn primary" data-go="#home">🏠 Home</button>`}
       </div></div>`;
@@ -1311,55 +1360,56 @@ function screenQuiz({ id, topic, title, questions, retry }) {
   }
   show();
 }
-const LAYER_OPTS = { options: ['HTML', 'CSS', 'JavaScript'], optColor: ['var(--html)', 'var(--css)', 'var(--js)'], big: true, cols: 3 };
+const LAYER_OPTS = { options: ['HTML', 'CSS', 'JavaScript'], optColor: ['var(--html)', 'var(--css)', 'var(--js)'], big: true, cols: 3, fixed: true };
 const L = { html: 0, css: 1, js: 2 };
+const TF = { options: ['○ True<span class="ar" style="text-align:center">صح</span>', '× False<span class="ar" style="text-align:center">غلط</span>'], cols: 2, big: true, fixed: true };
 
 /* ---------- T1 Solve: Who does this job? ---------- */
 const T1_TASKS = [
-  ['📝', 'Describe the structure of headings and paragraphs', 'html', 'Structure (headings, paragraphs) is HTML.'],
-  ['🎨', 'Change the color and size of text', 'css', 'Colors and sizes are appearance → CSS.'],
-  ['🔄', 'Update part of the screen when a button is pressed', 'js', 'Reacting to a click and updating the screen is behavior → JavaScript.'],
-  ['🖼️', 'Place images and links on the page', 'html', 'Putting images and links on the page is structure → HTML.'],
-  ['🌈', 'Set the background color of the entire page', 'css', 'Background color is appearance → CSS.'],
-  ['✅', 'Check (validate) what someone typed into a form', 'js', 'Checking input while the user uses the page is behavior → JavaScript.'],
-  ['📋', 'Write the list of club events', 'html', 'The content of the list is structure → HTML.'],
-  ['💛', 'Make the menu links yellow', 'css', 'Color → CSS.'],
-  ['🔢', 'Count sign-ups each time the button is clicked', 'js', 'Counting clicks is behavior → JavaScript.'],
-  ['🔤', 'Choose the font for the whole page', 'css', 'Fonts are appearance → CSS.'],
-  ['🔍', 'Filter the list of books as the user types', 'js', 'Reacting while the user types is behavior → JavaScript.'],
-  ['🔘', 'Put a “Sign me up!” button on the page', 'html', 'Adding the button element itself is structure → HTML. (Making it count is JS!)'],
-  ['⬜', 'Round the corners of the event cards', 'css', 'Shape and look → CSS.'],
-  ['🙏', 'Show “Thank you!” after someone clicks', 'js', 'Responding to a click → JavaScript.'],
+  ['📝', 'Describe the structure of headings and paragraphs', 'وصف هيكل العناوين والفقرات', 'html', 'Structure (headings, paragraphs) is HTML.', 'الهيكل (العناوين والفقرات) شغل HTML.'],
+  ['🎨', 'Change the color and size of text', 'تغيير لون وحجم الكلام', 'css', 'Colors and sizes are appearance → CSS.', 'الألوان والأحجام من الشكل، يعني CSS.'],
+  ['🔄', 'Update part of the screen when a button is pressed', 'تحديث جزء من الشاشة لما ندوس على زرار', 'js', 'Reacting to a click and updating the screen is behavior → JavaScript.', 'الاستجابة للضغط وتحديث الشاشة سلوك، يعني JavaScript.'],
+  ['🖼️', 'Place images and links on the page', 'وضع صور ولينكات في الصفحة', 'html', 'Putting images and links on the page is structure → HTML.', 'حط الصور واللينكات في الصفحة هيكل، يعني HTML.'],
+  ['🌈', 'Set the background color of the entire page', 'تحديد لون خلفية الصفحة كلها', 'css', 'Background color is appearance → CSS.', 'لون الخلفية من الشكل، يعني CSS.'],
+  ['✅', 'Check (validate) what someone typed into a form', 'التأكد من البيانات اللي اتكتبت في فورم', 'js', 'Checking input while the user uses the page is behavior → JavaScript.', 'فحص البيانات وقت استخدام الصفحة سلوك، يعني JavaScript.'],
+  ['📋', 'Write the list of club events', 'كتابة قائمة فعاليات النادي', 'html', 'The content of the list is structure → HTML.', 'محتوى القائمة هيكل، يعني HTML.'],
+  ['💛', 'Make the menu links yellow', 'تلوين لينكات القائمة بالأصفر', 'css', 'Color → CSS.', 'اللون شغل CSS.'],
+  ['🔢', 'Count sign-ups each time the button is clicked', 'عدّ المشتركين كل ما حد يدوس على الزرار', 'js', 'Counting clicks is behavior → JavaScript.', 'عدّ الضغطات سلوك، يعني JavaScript.'],
+  ['🔤', 'Choose the font for the whole page', 'اختيار نوع الخط للصفحة كلها', 'css', 'Fonts are appearance → CSS.', 'الخطوط من الشكل، يعني CSS.'],
+  ['🔍', 'Filter the list of books as the user types', 'فلترة قائمة الكتب وانت بتكتب', 'js', 'Reacting while the user types is behavior → JavaScript.', 'الاستجابة وقت الكتابة سلوك، يعني JavaScript.'],
+  ['🔘', 'Put a “Sign me up!” button on the page', 'إضافة زرار “Sign me up!” للصفحة', 'html', 'Adding the button element itself is structure → HTML. (Making it count is JS!)', 'إضافة الزرار نفسه هيكل، يعني HTML. (إنه يعدّ ده شغل JS!)'],
+  ['⬜', 'Round the corners of the event cards', 'تدوير أركان كروت الفعاليات', 'css', 'Shape and look → CSS.', 'الشكل والمظهر شغل CSS.'],
+  ['🙏', 'Show “Thank you!” after someone clicks', 'إظهار “Thank you!” بعد ما حد يدوس', 'js', 'Responding to a click → JavaScript.', 'الاستجابة للضغط شغل JavaScript.'],
 ];
 function screenT1Solve() {
-  const qs = shuffle(T1_TASKS).slice(0, 12).map(([e, txt, l, ex]) => ({
-    tag: 'Who does this job?', prompt: `${e} ${txt}`, ...LAYER_OPTS, answer: L[l], explain: ex
+  const qs = shuffle(T1_TASKS).slice(0, 12).map(([e, txt, ar, l, ex, arEx]) => ({
+    tag: 'Who does this job? · مين بيعمل الشغلانة دي؟', prompt: `${e} ${txt}`, ar, ...LAYER_OPTS, answer: L[l], explain: ex, arEx
   }));
   screenQuiz({ id: 't1', topic: TOPICS[0], title: '🧱 Who does this job?', questions: qs, retry: screenT1Solve });
 }
 
 /* ---------- T2 Solve: Page Doctor ---------- */
 const DOCTOR = [
-  { s: 'Click “Sign me up!” — the number never changes.', l: 'js', bug: 'document.querySelector("#cuont")', fix: 'document.querySelector("#count")', mk: c => ({ ...c, js: c.js.replace('"#count"', '"#cuont"') }), ex: 'Behavior is broken → JavaScript. A typo means JS cannot find the number to update.' },
-  { s: 'The header is plain white — the club\'s blue color is gone.', l: 'css', bug: 'header { backgound: #3b5bdb; ... }', fix: 'header { background: #3b5bdb; ... }', mk: c => ({ ...c, css: c.css.replace('header { background', 'header { backgound') }), ex: 'Colors are appearance → CSS. The property name was misspelled.' },
-  { s: 'The club has 3 events, but only 2 appear on the page.', l: 'html', bug: '(the line <li>Science Fair – Friday</li> is missing)', fix: '<li>Science Fair – Friday</li>', mk: c => ({ ...c, html: c.html.replace('    <li>Science Fair – Friday</li>\n', '') }), ex: 'Missing content is a structure problem → HTML.' },
-  { s: 'Each click adds 10 people instead of 1!', l: 'js', bug: 'count = count + 10;', fix: 'count = count + 1;', mk: c => ({ ...c, js: c.js.replace('count + 1', 'count + 10') }), ex: 'What happens on a click is behavior → JavaScript.' },
-  { s: 'All the text is giant and red!', l: 'css', bug: 'body { color: red; font-size: 40px; ... }', fix: 'body { font-family: sans-serif; ... }', mk: c => ({ ...c, css: c.css.replace('body { font-family', 'body { color: red; font-size: 40px; font-family') }), ex: 'Text color and size are appearance → CSS.' },
-  { s: 'There is no sign-up button on the page at all.', l: 'html', bug: '(the line <button id="signup">Sign me up!</button> is missing)', fix: '<button id="signup">Sign me up!</button>', mk: c => ({ ...c, html: c.html.replace('  <button id="signup">Sign me up!</button>\n', '') }), ex: 'The button element itself is part of the structure → HTML. (JS can\'t react to a button that doesn\'t exist!)' },
-  { s: 'The button looks empty — its text is invisible.', l: 'css', bug: 'button { background: #ff6b6b; color: #ff6b6b; ... }', fix: 'button { background: #ff6b6b; color: white; ... }', mk: c => ({ ...c, css: c.css.replace('button { background: #ff6b6b; color: white', 'button { background: #ff6b6b; color: #ff6b6b') }), ex: 'Text color the same as the background → CSS appearance problem.' },
-  { s: 'The heading says “Upcoming Evnts”.', l: 'html', bug: '<h2>Upcoming Evnts</h2>', fix: '<h2>Upcoming Events</h2>', mk: c => ({ ...c, html: c.html.replace('Upcoming Events', 'Upcoming Evnts') }), ex: 'The words on the page are content written in HTML.' },
-  { s: 'The number goes DOWN every time you click!', l: 'js', bug: 'count = count - 1;', fix: 'count = count + 1;', mk: c => ({ ...c, js: c.js.replace('count + 1', 'count - 1') }), ex: 'Counting is behavior → JavaScript.' },
+  { s: 'Click “Sign me up!” — the number never changes.', sa: 'لما ندوس Sign me up! الرقم مش بيتغير خالص.', l: 'js', bug: 'document.querySelector("#cuont")', fix: 'document.querySelector("#count")', mk: c => ({ ...c, js: c.js.replace('"#count"', '"#cuont"') }), ex: 'Behavior is broken → JavaScript. A typo means JS cannot find the number to update.', ea: 'السلوك بايظ، يعني JavaScript. غلطة في الكتابة خلّت الـ JS مش لاقية الرقم.' },
+  { s: 'The header is plain white — the club\'s blue color is gone.', sa: 'الهيدر بقى أبيض، واللون الأزرق بتاع النادي اختفى.', l: 'css', bug: 'header { backgound: #3b5bdb; ... }', fix: 'header { background: #3b5bdb; ... }', mk: c => ({ ...c, css: c.css.replace('header { background', 'header { backgound') }), ex: 'Colors are appearance → CSS. The property name was misspelled.', ea: 'الألوان من الشكل، يعني CSS. اسم الخاصية مكتوب غلط.' },
+  { s: 'The club has 3 events, but only 2 appear on the page.', sa: 'النادي عنده 3 فعاليات، بس اتنين بس اللي ظاهرين.', l: 'html', bug: '(missing) <li>Science Fair – Friday</li>', fix: '<li>Science Fair – Friday</li>', mk: c => ({ ...c, html: c.html.replace('    <li>Science Fair – Friday</li>\n', '') }), ex: 'Missing content is a structure problem → HTML.', ea: 'محتوى ناقص يبقى مشكلة في الهيكل، يعني HTML.' },
+  { s: 'Each click adds 10 people instead of 1!', sa: 'كل ضغطة بتزوّد 10 بدل 1!', l: 'js', bug: 'count = count + 10;', fix: 'count = count + 1;', mk: c => ({ ...c, js: c.js.replace('count + 1', 'count + 10') }), ex: 'What happens on a click is behavior → JavaScript.', ea: 'اللي بيحصل لما ندوس سلوك، يعني JavaScript.' },
+  { s: 'All the text is giant and red!', sa: 'كل الكلام بقى ضخم ولونه أحمر!', l: 'css', bug: 'body { color: red; font-size: 40px; ... }', fix: 'body { font-family: sans-serif; ... }', mk: c => ({ ...c, css: c.css.replace('body { font-family', 'body { color: red; font-size: 40px; font-family') }), ex: 'Text color and size are appearance → CSS.', ea: 'لون الكلام وحجمه من الشكل، يعني CSS.' },
+  { s: 'There is no sign-up button on the page at all.', sa: 'مفيش زرار اشتراك في الصفحة خالص.', l: 'html', bug: '(missing) <button id="signup">Sign me up!</button>', fix: '<button id="signup">Sign me up!</button>', mk: c => ({ ...c, html: c.html.replace('  <button id="signup">Sign me up!</button>\n', '') }), ex: 'The button element itself is part of the structure → HTML. (JS can\'t react to a button that doesn\'t exist!)', ea: 'الزرار نفسه جزء من الهيكل، يعني HTML. والـ JS مش هتقدر تتعامل مع زرار مش موجود!' },
+  { s: 'The button looks empty — its text is invisible.', sa: 'الزرار شكله فاضي، والكلام اللي عليه مش باين.', l: 'css', bug: 'button { background: #ff6b6b; color: #ff6b6b; ... }', fix: 'button { background: #ff6b6b; color: white; ... }', mk: c => ({ ...c, css: c.css.replace('button { background: #ff6b6b; color: white', 'button { background: #ff6b6b; color: #ff6b6b') }), ex: 'Text color the same as the background → CSS appearance problem.', ea: 'لون الكلام نفس لون الخلفية، دي مشكلة شكل في الـ CSS.' },
+  { s: 'The heading says “Upcoming Evnts”.', sa: 'العنوان مكتوب “Upcoming Evnts” غلط.', l: 'html', bug: '<h2>Upcoming Evnts</h2>', fix: '<h2>Upcoming Events</h2>', mk: c => ({ ...c, html: c.html.replace('Upcoming Events', 'Upcoming Evnts') }), ex: 'The words on the page are content written in HTML.', ea: 'الكلام اللي في الصفحة محتوى مكتوب في الـ HTML.' },
+  { s: 'The number goes DOWN every time you click!', sa: 'الرقم بيقل كل ما ندوس!', l: 'js', bug: 'count = count - 1;', fix: 'count = count + 1;', mk: c => ({ ...c, js: c.js.replace('count + 1', 'count - 1') }), ex: 'Counting is behavior → JavaScript.', ea: 'العدّ سلوك، يعني JavaScript.' },
 ];
 function screenT2Solve() {
   const qs = shuffle(DOCTOR).slice(0, 8).map(d => {
     const code = d.mk(CLUB);
     return {
-      tag: '🩺 Page Doctor', prompt: 'Which layer is sick?', ...LAYER_OPTS, cols: 1, answer: L[d.l], explain: d.ex,
+      tag: '🩺 Page Doctor · دكتور الصفحات', prompt: 'Which layer is sick?', ar: 'أنهي طبقة فيها المشكلة؟', ...LAYER_OPTS, cols: 1, answer: L[d.l], explain: d.ex, arEx: d.ea,
       mount: el => {
-        el.innerHTML = `<div class="symptom">🤒 Symptom: ${d.s}</div><div class="browser"><div class="bar"><i></i><i></i><i></i><span>robotics-club.html</span></div><iframe style="min-height:300px"></iframe></div><small style="color:var(--soft);font-weight:700">You can click the page to test it.</small>`;
+        el.innerHTML = `<div class="symptom">🤒 Symptom: ${d.s}<span class="ar">العَرَض: ${d.sa}</span></div><div class="browser"><div class="bar"><i></i><i></i><i></i><span>robotics-club.html</span></div><iframe style="min-height:300px"></iframe></div><small style="color:var(--soft);font-weight:700">You can click the page to test it. · تقدر تدوس على الصفحة وتجرّبها.</small>`;
         $('iframe', el).srcdoc = pageDoc(code);
       },
-      reveal: el => { el.insertAdjacentHTML('beforeend', `<div class="snip L-${d.l}">🐞 Bug:  <span class="bug">${esc(d.bug)}</span>\n💊 Fix:  <span class="fix">${esc(d.fix)}</span></div>`); }
+      reveal: el => { el.insertAdjacentHTML('beforeend', `<div class="snip L-${d.l}">🐞 Bug / الغلط:  <span class="bug">${esc(d.bug)}</span>\n💊 Fix / التصليح:  <span class="fix">${esc(d.fix)}</span></div>`); }
     };
   });
   screenQuiz({ id: 't2', topic: TOPICS[1], title: '🩺 Page Doctor', questions: qs, retry: screenT2Solve });
@@ -1369,30 +1419,30 @@ function screenT2Solve() {
 function screenT3Solve() {
   const tagFill = c => `<span class="tg">&lt;${c}&gt;</span>`;
   const wire1 = `<div class="wire">
-    <div class="zone" data-z="header">📰 Daily News — logo & title<small>(top of the page)</small></div>
-    <div class="zone" data-z="nav">Home · World · Sport · Science<small>(menu links)</small></div>
-    <div class="zone" data-z="main" style="min-height:6em">Today's big story + all the articles<small>(the important content)</small></div>
-    <div class="zone" data-z="footer">© Daily News · Contact us<small>(bottom of the page)</small></div></div>`;
+    <div class="zone" data-z="header">📰 Daily News — logo & title<small>(top of the page · أعلى الصفحة)</small></div>
+    <div class="zone" data-z="nav">Home · World · Sport · Science<small>(menu links · لينكات القائمة)</small></div>
+    <div class="zone" data-z="main" style="min-height:6em">Today's big story + all the articles<small>(the important content · المحتوى المهم)</small></div>
+    <div class="zone" data-z="footer">© Daily News · Contact us<small>(bottom of the page · أسفل الصفحة)</small></div></div>`;
   const wire2 = `<div class="wire" style="grid-template-columns:1fr 2fr">
-    <div class="zone" data-z="header" style="grid-column:1/3">🍰 Sara's Baking Blog<small>(top)</small></div>
-    <div class="zone" data-z="nav" style="min-height:8em">Recipes<br>Cakes<br>About<small>(side menu)</small></div>
-    <div class="zone" data-z="main" style="min-height:8em">How to bake a chocolate cake<small>(the post)</small></div>
-    <div class="zone" data-z="footer" style="grid-column:1/3">Made by Sara · 2026<small>(bottom)</small></div></div>`;
+    <div class="zone" data-z="header" style="grid-column:1/3">🍰 Sara's Baking Blog<small>(top · فوق)</small></div>
+    <div class="zone" data-z="nav" style="min-height:8em">Recipes<br>Cakes<br>About<small>(side menu · قائمة جانبية)</small></div>
+    <div class="zone" data-z="main" style="min-height:8em">How to bake a chocolate cake<small>(the post · المقال)</small></div>
+    <div class="zone" data-z="footer" style="grid-column:1/3">Made by Sara · 2026<small>(bottom · تحت)</small></div></div>`;
   const qs = [
-    { type: 'place', tag: 'Tag the page', prompt: 'Pick a tag, then tap the part of the news site it belongs to.', layout: wire1, chips: ['header', 'nav', 'main', 'footer'], answer: { header: 'header', nav: 'nav', main: 'main', footer: 'footer' }, fillLabel: tagFill, explain: 'Each part now has a tag that says what it means.' },
-    { type: 'place', tag: 'Tag the page', prompt: 'This blog has its menu on the side. Tag every part!', layout: wire2, chips: ['header', 'nav', 'main', 'footer'], answer: { header: 'header', nav: 'nav', main: 'main', footer: 'footer' }, fillLabel: tagFill, explain: 'The menu is still <nav>, even on the side: the tag describes meaning, not position.' },
-    { tag: 'Try 2 (1)', prompt: 'Which is <u>NOT</u> a benefit of using semantic HTML?', options: ['Screen reader software can correctly understand the structure of the page.', 'Search engines can more easily understand the content of a web page.', 'The display speed of a web page necessarily becomes faster.', 'Information becomes easier to convey to users with visual impairments.'], answer: 2, explain: 'Semantic HTML improves accessibility and SEO — it does not necessarily make a page faster.' },
-    { tag: 'Pause & think', prompt: 'Why does a screen reader understand a page better with <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code> and <code>&lt;main&gt;</code> instead of plain boxes?', options: ['The tag names tell it what each part means, so it can describe and jump to them', 'Those tags make the text bigger', 'Those tags add colors that a screen reader can see', 'Plain boxes are not allowed in HTML'], answer: 0, explain: 'A <div> means nothing; <nav> means "menu" and <main> means "main content".' },
-    { tag: 'Key terms', prompt: 'Being found easily by search engines is called…', options: ['Accessibility', 'SEO (Search Engine Optimization)', 'Responsive design', 'A framework'], answer: 1, explain: 'SEO = Search Engine Optimization.' },
-    { tag: 'Key terms', prompt: 'A page that people with visual impairments can use well has good…', options: ['SEO', 'Speed', 'Accessibility', 'Colors'], answer: 2, explain: 'Accessibility = usable by people with impairments.' },
-    { tag: 'Code', prompt: 'Which tag should wrap the menu links?', options: ['&lt;footer&gt;', '&lt;nav&gt;', '&lt;div&gt;', '&lt;main&gt;'], answer: 1, cols: 2, explain: '<nav> = navigation.' },
+    { type: 'place', tag: 'Tag the page', prompt: 'Pick a tag, then tap the part of the news site it belongs to.', ar: 'اختار تاج، وبعدين دوس على الجزء بتاعه في موقع الأخبار.', layout: wire1, chips: ['header', 'nav', 'main', 'footer'], answer: { header: 'header', nav: 'nav', main: 'main', footer: 'footer' }, fillLabel: tagFill, explain: 'Each part now has a tag that says what it means.', arEx: 'كل جزء دلوقتي ليه تاج بيقول معناه.' },
+    { type: 'place', tag: 'Tag the page', prompt: 'This blog has its menu on the side. Tag every part!', ar: 'المدونة دي القائمة بتاعتها على الجنب. حط تاج لكل جزء!', layout: wire2, chips: ['header', 'nav', 'main', 'footer'], answer: { header: 'header', nav: 'nav', main: 'main', footer: 'footer' }, fillLabel: tagFill, explain: 'The menu is still <nav>, even on the side: the tag describes meaning, not position.', arEx: 'القائمة لسه nav حتى لو على الجنب، لأن التاج بيوصف المعنى مش المكان.' },
+    { tag: 'Try 2 (1)', prompt: 'Which is <u>NOT</u> a benefit of using semantic HTML?', ar: 'أنهي واحدة <u>مش</u> من فوايد الـ semantic HTML؟', options: [op('Screen reader software can correctly understand the structure of the page.', 'برامج قراءة الشاشة بتفهم هيكل الصفحة صح.'), op('Search engines can more easily understand the content of a web page.', 'محركات البحث بتفهم محتوى الصفحة أسهل.'), op('The display speed of a web page necessarily becomes faster.', 'سرعة ظهور الصفحة لازم تبقى أسرع.'), op('Information becomes easier to convey to users with visual impairments.', 'المعلومة بتوصل أسهل لضعاف البصر.')], answer: 2, explain: 'Semantic HTML improves accessibility and SEO — it does not necessarily make a page faster.', arEx: 'الـ semantic HTML بيحسّن إمكانية الوصول والـ SEO، لكن مش شرط يخلّي الصفحة أسرع.' },
+    { tag: 'Pause & think', prompt: 'Why does a screen reader understand a page better with <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code> and <code>&lt;main&gt;</code> instead of plain boxes?', ar: 'ليه قارئ الشاشة بيفهم الصفحة أحسن لما نستخدم header وnav وmain بدل الصناديق العادية؟', options: [op('The tag names tell it what each part means, so it can describe and jump to them', 'أسماء التاجات بتقوله كل جزء معناه إيه، فيقدر يوصفه ويروحله'), op('Those tags make the text bigger', 'التاجات دي بتكبّر الكلام'), op('Those tags add colors that a screen reader can see', 'التاجات دي بتضيف ألوان قارئ الشاشة بيشوفها'), op('Plain boxes are not allowed in HTML', 'الصناديق العادية ممنوعة في HTML')], answer: 0, explain: 'A <div> means nothing; <nav> means "menu" and <main> means "main content".', arEx: 'الـ div ملوش معنى، لكن nav معناها قائمة وmain معناها المحتوى الأساسي.' },
+    { tag: 'Key terms', prompt: 'Being found easily by search engines is called…', ar: 'إن محركات البحث تلاقي الصفحة بسهولة اسمه…', options: [op('Accessibility', 'إمكانية الوصول'), op('SEO (Search Engine Optimization)', 'تحسين الظهور في محركات البحث'), op('Responsive design', 'التصميم المتجاوب'), op('A framework', 'إطار عمل')], answer: 1, explain: 'SEO = Search Engine Optimization.', arEx: 'SEO يعني تحسين الظهور في محركات البحث.' },
+    { tag: 'Key terms', prompt: 'A page that people with visual impairments can use well has good…', ar: 'الصفحة اللي ضعاف البصر يقدروا يستخدموها كويس بيبقى عندها…', options: [op('SEO', 'ظهور في البحث'), op('Speed', 'سرعة'), op('Accessibility', 'إمكانية وصول'), op('Colors', 'ألوان')], answer: 2, explain: 'Accessibility = usable by people with impairments.', arEx: 'إمكانية الوصول يعني الناس اللي عندهم إعاقة يقدروا يستخدموا الصفحة.' },
+    { tag: 'Code', prompt: 'Which tag should wrap the menu links?', ar: 'أنهي تاج نحط فيه لينكات القائمة؟', options: ['&lt;footer&gt;', '&lt;nav&gt;', '&lt;div&gt;', '&lt;main&gt;'], answer: 1, cols: 2, explain: '<nav> = navigation.', arEx: 'nav معناها التنقل (القائمة).' },
   ];
   screenQuiz({ id: 't3', topic: TOPICS[2], title: '🏷️ Tag the Page', questions: qs, retry: screenT3Solve });
 }
 
 /* ---------- T4 Solve: Predict the Layout ---------- */
 function screenT4Solve() {
-  const thumb = n => `<div class="thumb" style="grid-template-columns:repeat(${n},1fr)">${'<i></i>'.repeat(n * 2)}</div><div style="text-align:center;margin-top:4px">${n} column${n > 1 ? 's' : ''}</div>`;
+  const thumb = n => `<div class="thumb" style="grid-template-columns:repeat(${n},1fr)">${'<i></i>'.repeat(n * 2)}</div><div style="text-align:center;margin-top:4px">${n} column${n > 1 ? 's' : ''}<span class="ar" style="text-align:center">${n === 1 ? 'عمود واحد' : n === 2 ? 'عمودين' : '3 أعمدة'}</span></div>`;
   const cssSnip = `<div class="codebox L-css"><div class="ch"><span class="fn">style.css</span></div><div class="cbody">${codeLines(`.cards { grid-template-columns: 1fr; }
 
 @media (min-width: 600px) {
@@ -1402,10 +1452,13 @@ function screenT4Solve() {
 @media (min-width: 900px) {
   .cards { grid-template-columns: 1fr 1fr 1fr; }
 }`, 'css')}</div></div>`;
+  const devAr = w => w < 600 ? 'موبايل' : w < 900 ? 'تابلت' : 'كمبيوتر';
   const widthQ = w => ({
-    tag: 'Predict the layout', prompt: `The screen is <b>${w}px</b> wide (${devName(w)}). How many columns of event cards?`,
-    options: [thumb(1), thumb(2), thumb(3)], answer: colsAt(w) - 1, cols: 3, noKeys: true,
+    tag: 'Predict the layout · توقّع الترتيب', prompt: `The screen is <b>${w}px</b> wide (${devName(w)}). How many columns of event cards?`,
+    ar: `عرض الشاشة ${w}px (${devAr(w)}). كروت الفعاليات هتبقى كام عمود؟`,
+    options: [thumb(1), thumb(2), thumb(3)], answer: colsAt(w) - 1, cols: 3, noKeys: true, fixed: true,
     explain: (w === 600 || w === 900 ? `<code>min-width: ${w}px</code> means "${w}px <b>or wider</b>", so it counts! ` : w === 599 ? '599 is less than 600, so the tablet rule does not apply yet. ' : '') + `At ${w}px ${w >= 900 ? 'both @media rules apply, and the 900px rule (3 columns) comes last, so it wins' : w >= 600 ? 'only the 600px rule applies → 2 columns' : 'no @media rule applies, so the base style (1 column) is used'}.`,
+    arEx: (w === 600 || w === 900 ? `min-width: ${w}px معناها ${w}px أو أكبر، فالقاعدة بتشتغل. ` : w === 599 ? '599 أقل من 600، فقاعدة التابلت لسه مش شغالة. ' : '') + (w >= 900 ? 'القاعدتين شغالين، وقاعدة 900px جاية في الآخر فهي اللي بتكسب: 3 أعمدة.' : w >= 600 ? 'قاعدة 600px بس اللي شغالة: عمودين.' : 'مفيش قاعدة @media شغالة، فبيتطبّق التنسيق الأساسي: عمود واحد.'),
     visual: cssSnip,
     reveal: el => {
       el.insertAdjacentHTML('beforeend', `<div class="rstage" style="min-height:220px;height:240px;padding:8px"><div class="rdev"><div class="clip"><iframe></iframe></div></div></div>`);
@@ -1415,67 +1468,72 @@ function screenT4Solve() {
     }
   });
   const qs = [
-    ...shuffle([375, 700, 1280, 599, 900, 600]).map(widthQ),
-    { tag: 'Exercise 3 (2)', prompt: 'Why is responsive design needed?', options: ['To improve the display speed of websites', 'Because websites are accessed from various devices such as PCs, smartphones, and tablets', 'To raise rankings in search engines', 'To add behavior to web pages'], answer: 1, explain: 'One page must look good on every screen size.' },
-    { tag: 'Mobile-first', prompt: 'What does <b>mobile-first</b> mean?', options: ['Only phones can open the website', 'Design for small screens like smartphones first, then add rules for bigger screens', 'Build the phone app before the website', 'Phones load the page before PCs'], answer: 1, explain: 'In the code, the base styles are for phones; @media rules add changes for bigger screens.' },
-    { tag: 'Fix it', prompt: 'On a phone, the club page is so wide you must scroll sideways. Which change fixes it?', options: ['Set <code>body { width: 1000px; }</code>', 'Use <code>@media</code> rules so the cards stack into one column on small screens', 'Add more JavaScript', 'Use smaller images only on PCs'], answer: 1, explain: 'Let the layout adjust to the screen size instead of a fixed width.' },
+    ...[375, 700, 1280, 599, 900, 600, 820, 1024].map(widthQ),
+    { tag: 'Exercise 3 (2)', prompt: 'Why is responsive design needed?', ar: 'ليه بنحتاج التصميم المتجاوب؟', options: [op('To improve the display speed of websites', 'عشان نسرّع ظهور المواقع'), op('Because websites are accessed from various devices such as PCs, smartphones, and tablets', 'لأن الناس بتفتح المواقع من أجهزة مختلفة: كمبيوتر وموبايل وتابلت'), op('To raise rankings in search engines', 'عشان نطلع أعلى في نتايج البحث'), op('To add behavior to web pages', 'عشان نضيف سلوك للصفحات')], answer: 1, explain: 'One page must look good on every screen size.', arEx: 'الصفحة الواحدة لازم تبان كويس على كل مقاسات الشاشات.' },
+    { tag: 'Mobile-first', prompt: 'What does <b>mobile-first</b> mean?', ar: 'يعني إيه <b>الموبايل أولًا</b> (mobile-first)؟', options: [op('Only phones can open the website', 'الموبايل بس اللي يقدر يفتح الموقع'), op('Design for small screens like smartphones first, then add rules for bigger screens', 'نصمم للشاشات الصغيرة زي الموبايل الأول، وبعدين نزوّد قواعد للشاشات الأكبر'), op('Build the phone app before the website', 'نعمل تطبيق الموبايل قبل الموقع'), op('Phones load the page before PCs', 'الموبايل بيحمّل الصفحة قبل الكمبيوتر')], answer: 1, explain: 'In the code, the base styles are for phones; @media rules add changes for bigger screens.', arEx: 'في الكود، التنسيق الأساسي للموبايل، وقواعد @media بتضيف تغييرات للشاشات الأكبر.' },
+    { tag: 'Fix it', prompt: 'On a phone, the club page is so wide you must scroll sideways. Which change fixes it?', ar: 'على الموبايل صفحة النادي عريضة لدرجة إنك لازم تسحب يمين وشمال. إيه التعديل اللي يصلّحها؟', options: [op('Set <code>body { width: 1000px; }</code>', 'نخلّي عرض الصفحة ثابت 1000px'), op('Use <code>@media</code> rules so the cards stack into one column on small screens', 'نستخدم قواعد @media عشان الكروت تبقى عمود واحد على الشاشات الصغيرة'), op('Add more JavaScript', 'نزوّد JavaScript'), op('Use smaller images only on PCs', 'نصغّر الصور على الكمبيوتر بس')], answer: 1, explain: 'Let the layout adjust to the screen size instead of a fixed width.', arEx: 'نخلّي الترتيب يتظبط على مقاس الشاشة بدل العرض الثابت.' },
   ];
   screenQuiz({ id: 't4', topic: TOPICS[3], title: '📱 Predict the Layout', questions: qs, retry: screenT4Solve });
 }
 
 /* ---------- T5 Solve: Framework Match ---------- */
 function screenT5Solve() {
-  const FW = { options: ['React', 'Vue', 'Next.js'], optColor: ['#61DAFB', '#42B883', '#E6E9FF'], big: true, cols: 3 };
+  const FW = { options: ['React', 'Vue', 'Next.js'], optColor: ['#61DAFB', '#42B883', '#E6E9FF'], big: true, cols: 3, fixed: true };
   const qs = [
-    ...shuffle([
-      { prompt: 'Developed by Meta (formerly Facebook).', a: 0 },
-      { prompt: 'Efficiently updates only part of the screen; suited to large-scale web apps.', a: 0 },
-      { prompt: 'Has a simple structure and lets you build an app step by step from small features.', a: 1 },
-      { prompt: 'Has React\'s features plus mechanisms to speed up page display.', a: 2 },
-    ]).map(x => ({ tag: 'Framework match', prompt: x.prompt, ...FW, answer: x.a })),
-    { tag: 'Try 2 (2)', prompt: 'Which most appropriately describes a <b>framework</b>?', options: ['A language for defining the structure of a web page', 'A structure for making web application development more efficient', 'A technology for encrypting data and sending it safely', 'A design concept for supporting different screen sizes'], answer: 1, explain: 'A framework provides common functions and components in advance.' },
-    { tag: 'True or false?', prompt: '“Using a framework means you do not need to write all the code from scratch, so development is more efficient.”', options: ['○ True', '× False'], answer: 0, cols: 2, big: true, explain: 'Correct description of the benefit of frameworks.' },
-    { tag: 'True or false?', prompt: '“With a framework you never have to write any code at all.”', options: ['○ True', '× False'], answer: 1, cols: 2, big: true, explain: 'You still write code — just not ALL of it from scratch.' },
-    { tag: 'Think', prompt: 'A social media feed updates likes and comments all the time without reloading. Which idea makes this efficient?', options: ['Reloading the whole page every second', 'Updating only the part of the screen that changed (like React)', 'Using only HTML with no JavaScript', 'Making the page 1000px wide'], answer: 1 },
+    ...[
+      { prompt: 'Developed by Meta (formerly Facebook).', ar: 'اتعمل بواسطة شركة Meta (فيسبوك قبل كده).', a: 0 },
+      { prompt: 'Efficiently updates only part of the screen; suited to large-scale web apps.', ar: 'بيحدّث جزء من الشاشة بس بكفاءة، ومناسب للتطبيقات الكبيرة.', a: 0 },
+      { prompt: 'Has a simple structure and lets you build an app step by step from small features.', ar: 'تركيبه بسيط وبيخليك تبني التطبيق خطوة بخطوة من مميزات صغيرة.', a: 1 },
+      { prompt: 'Good for starting small and adding features little by little.', ar: 'كويس لو هتبدأ صغير وتزوّد مميزات واحدة واحدة.', a: 1 },
+      { prompt: 'Has React\'s features plus mechanisms to speed up page display.', ar: 'فيه مميزات React، وكمان طرق تسرّع ظهور الصفحة.', a: 2 },
+      { prompt: 'Built on top of React to make pages show up faster.', ar: 'مبني فوق React عشان الصفحات تظهر أسرع.', a: 2 },
+    ].map(x => ({ tag: 'Framework match · طابق الـ Framework', prompt: x.prompt, ar: x.ar, ...FW, answer: x.a })),
+    { tag: 'Try 2 (2)', prompt: 'Which most appropriately describes a <b>framework</b>?', ar: 'أنهي جملة بتوصف الـ <b>framework</b> أحسن وصف؟', options: [op('A language for defining the structure of a web page', 'لغة لتحديد هيكل صفحة الويب'), op('A structure for making web application development more efficient', 'هيكل جاهز بيخلّي تطوير تطبيقات الويب أكفأ'), op('A technology for encrypting data and sending it safely', 'تقنية لتشفير البيانات وإرسالها بأمان'), op('A design concept for supporting different screen sizes', 'فكرة تصميم لدعم مقاسات الشاشات المختلفة')], answer: 1, explain: 'A framework provides common functions and components in advance.', arEx: 'الـ framework بيوفّر وظايف ومكونات جاهزة مقدمًا.' },
+    { tag: 'True or false? · صح ولا غلط؟', prompt: '“Using a framework means you do not need to write all the code from scratch, so development is more efficient.”', ar: '“استخدام framework معناه إنك مش محتاج تكتب كل الكود من الصفر، فالتطوير بيبقى أكفأ.”', ...TF, answer: 0, explain: 'Correct description of the benefit of frameworks.', arEx: 'ده وصف صحيح لفايدة الـ frameworks.' },
+    { tag: 'True or false? · صح ولا غلط؟', prompt: '“With a framework you never have to write any code at all.”', ar: '“مع الـ framework مش هتكتب أي كود خالص.”', ...TF, answer: 1, explain: 'You still write code — just not ALL of it from scratch.', arEx: 'لسه بتكتب كود، بس مش كله من الصفر.' },
+    { tag: 'Think · فكّر', prompt: 'A social media feed updates likes and comments all the time without reloading. Which idea makes this efficient?', ar: 'صفحة السوشيال ميديا بتحدّث اللايكات والكومنتات طول الوقت من غير ما تتحمّل تاني. إيه الفكرة اللي بتخلّي ده سريع؟', options: [op('Reloading the whole page every second', 'إعادة تحميل الصفحة كلها كل ثانية'), op('Updating only the part of the screen that changed (like React)', 'تحديث الجزء اللي اتغير بس (زي React)'), op('Using only HTML with no JavaScript', 'استخدام HTML بس من غير JavaScript'), op('Making the page 1000px wide', 'نخلّي عرض الصفحة 1000px')], answer: 1, arEx: 'React بيحدّث الجزء اللي اتغير بس.' },
   ];
   screenQuiz({ id: 't5', topic: TOPICS[4], title: '🧩 Framework Match', questions: qs, retry: screenT5Solve });
 }
 
 /* ---------- Exam Arena ---------- */
 function screenExam() {
-  const TF = { options: ['○ True', '× False'], cols: 2, big: true };
-  const ABC = { options: ['A · HTML', 'B · CSS', 'C · JavaScript'], optColor: ['var(--html)', 'var(--css)', 'var(--js)'], big: true, cols: 3 };
+  const ABC = { options: ['A · HTML', 'B · CSS', 'C · JavaScript'], optColor: ['var(--html)', 'var(--css)', 'var(--js)'], big: true, cols: 3, fixed: true };
   const tagOf = c => ({ HTML: 'var(--html)', CSS: 'var(--css)', JavaScript: 'var(--js)' })[c] || 'var(--violet)';
+  const MCQ_SEM = [op('Screen reader software can correctly understand the structure of the page.', 'برامج قراءة الشاشة بتفهم هيكل الصفحة صح.'), op('Search engines can more easily understand the content of a web page.', 'محركات البحث بتفهم محتوى الصفحة أسهل.'), op('The display speed of a web page necessarily becomes faster.', 'سرعة ظهور الصفحة لازم تبقى أسرع.'), op('Information becomes easier to convey to users with visual impairments.', 'المعلومة بتوصل أسهل لضعاف البصر.')];
+  const MCQ_FW = [op('A language for defining the structure of a web page', 'لغة لتحديد هيكل صفحة الويب'), op('A structure for making web application development more efficient', 'هيكل جاهز بيخلّي تطوير تطبيقات الويب أكفأ'), op('A technology for encrypting data and sending it safely', 'تقنية لتشفير البيانات وإرسالها بأمان'), op('A design concept for supporting different screen sizes', 'فكرة تصميم لدعم مقاسات الشاشات المختلفة')];
   const qs = [
-    { tag: 'Worked example (1) · A', prompt: 'HTML is a technology that defines the structure (skeleton) of a web page.', ...TF, answer: 0, explain: 'HTML defines the structure → ○.' },
-    { tag: 'Worked example (1) · B', prompt: 'CSS is a technology that adds behavior to a web page.', ...TF, answer: 1, explain: 'CSS specifies appearance. Adding behavior is JavaScript → ×.' },
-    { tag: 'Worked example (1) · C', prompt: 'Responsive design is a concept in which the layout is automatically adjusted according to different screen sizes.', ...TF, answer: 0, explain: 'Correct definition → ○.' },
-    { tag: 'Worked example (1) · D', prompt: 'Using a framework eliminates the need to write all code from scratch and allows efficient development.', ...TF, answer: 0, explain: 'Correct benefit of frameworks → ○.' },
-    { type: 'place', tag: 'Worked example (2)', prompt: 'Match each role with the right technology.', reuse: false, chipClass: tagOf,
-      layout: `<div class="passage">a. Defines the structure of a web page → <span class="zone" data-z="a"></span><br>b. Specifies the appearance of a web page → <span class="zone" data-z="b"></span><br>c. Adds behavior and interactivity → <span class="zone" data-z="c"></span></div>`,
+    { tag: 'Worked example (1) · A', prompt: 'HTML is a technology that defines the structure (skeleton) of a web page.', ar: 'HTML تقنية بتحدد هيكل صفحة الويب.', ...TF, answer: 0, explain: 'HTML defines the structure → ○.', arEx: 'HTML فعلًا بتحدد الهيكل، يعني صح.' },
+    { tag: 'Worked example (1) · B', prompt: 'CSS is a technology that adds behavior to a web page.', ar: 'CSS تقنية بتضيف سلوك لصفحة الويب.', ...TF, answer: 1, explain: 'CSS specifies appearance. Adding behavior is JavaScript → ×.', arEx: 'CSS بتحدد الشكل، والسلوك شغل JavaScript، يعني غلط.' },
+    { tag: 'Worked example (1) · C', prompt: 'Responsive design is a concept in which the layout is automatically adjusted according to different screen sizes.', ar: 'التصميم المتجاوب فكرة إن ترتيب الصفحة بيتظبط لوحده على حسب مقاس الشاشة.', ...TF, answer: 0, explain: 'Correct definition → ○.', arEx: 'تعريف صحيح، يعني صح.' },
+    { tag: 'Worked example (1) · D', prompt: 'Using a framework eliminates the need to write all code from scratch and allows efficient development.', ar: 'استخدام framework بيخلّيك مش محتاج تكتب كل الكود من الصفر، فالتطوير بيبقى أكفأ.', ...TF, answer: 0, explain: 'Correct benefit of frameworks → ○.', arEx: 'دي فايدة صحيحة للـ frameworks، يعني صح.' },
+    { tag: 'Extra · إضافي', prompt: 'JavaScript specifies the colors and fonts of a web page.', ar: 'JavaScript هي اللي بتحدد ألوان وخطوط صفحة الويب.', ...TF, answer: 1, explain: 'Colors and fonts are CSS → ×.', arEx: 'الألوان والخطوط شغل CSS، يعني غلط.' },
+    { tag: 'Extra · إضافي', prompt: 'Semantic HTML helps screen readers and search engines understand a page.', ar: 'الـ semantic HTML بيساعد قارئ الشاشة ومحركات البحث يفهموا الصفحة.', ...TF, answer: 0, explain: 'Accessibility + SEO → ○.', arEx: 'إمكانية الوصول والـ SEO، يعني صح.' },
+    { type: 'place', tag: 'Worked example (2)', prompt: 'Match each role with the right technology.', ar: 'وصّل كل دور بالتقنية الصح.', chipClass: tagOf,
+      layout: `<div class="passage">a. Defines the structure of a web page <small class="ar inl">بتحدد الهيكل</small> → <span class="zone" data-z="a"></span><br>b. Specifies the appearance of a web page <small class="ar inl">بتحدد الشكل</small> → <span class="zone" data-z="b"></span><br>c. Adds behavior and interactivity <small class="ar inl">بتضيف السلوك والتفاعل</small> → <span class="zone" data-z="c"></span></div>`,
       chips: ['HTML', 'CSS', 'JavaScript'], answer: { a: 'HTML', b: 'CSS', c: 'JavaScript' } },
-    { type: 'type', tag: 'Try 1 · Q1', prompt: 'The four-letter abbreviation for the technology that defines the structure (skeleton) of a web page?', accept: ['HTML', 'hypertext markup language'] },
-    { type: 'type', tag: 'Try 1 · Q2', prompt: 'The three-letter abbreviation for the technology that specifies the appearance (colors, layout, size…)?', accept: ['CSS', 'cascading style sheets'] },
-    { type: 'type', tag: 'Try 1 · Q3', prompt: 'The technology that adds behavior and interactivity to a web page?', accept: ['JavaScript', 'JS', 'java script'] },
-    { type: 'type', tag: 'Try 1 · Q4', prompt: 'The design concept in which the layout is automatically adjusted to different screen sizes?', accept: ['responsive design', 'responsive', 'responsive web design'] },
-    { tag: 'Try 2 (1)', prompt: 'Which is <u>NOT</u> an appropriate benefit of using semantic HTML?', options: ['Screen reader software can correctly understand the structure of the page.', 'Search engines can more easily understand the content of a web page.', 'The display speed of a web page necessarily becomes faster.', 'Information becomes easier to convey to users with visual impairments.'], answer: 2 },
-    { tag: 'Try 2 (2)', prompt: 'Which most appropriately describes a framework?', options: ['A language for defining the structure of a web page', 'A structure for making web application development more efficient', 'A technology for encrypting data and sending it safely', 'A design concept for supporting different screen sizes'], answer: 1 },
-    { type: 'place', tag: 'Exercise 2', prompt: 'Fill in the blanks (a)–(d).', chipClass: tagOf,
-      layout: `<div class="passage">Web pages are mainly composed of three technologies: <span class="zone" data-z="a">(a)</span>, which defines the structure of the page; <span class="zone" data-z="b">(b)</span>, which specifies the appearance; and <span class="zone" data-z="c">(c)</span>, which adds behavior and interactivity. The concept of adjusting the layout according to different screen sizes such as PCs, smartphones, and tablets is called <span class="zone" data-z="d">(d)</span>.</div>`,
+    { type: 'type', tag: 'Try 1 · Q1', prompt: 'The four-letter abbreviation for the technology that defines the structure (skeleton) of a web page?', ar: 'الاختصار اللي من 4 حروف للتقنية اللي بتحدد هيكل صفحة الويب؟', accept: ['HTML', 'hypertext markup language'] },
+    { type: 'type', tag: 'Try 1 · Q2', prompt: 'The three-letter abbreviation for the technology that specifies the appearance (colors, layout, size…)?', ar: 'الاختصار اللي من 3 حروف للتقنية اللي بتحدد الشكل (ألوان وترتيب وأحجام)؟', accept: ['CSS', 'cascading style sheets'] },
+    { type: 'type', tag: 'Try 1 · Q3', prompt: 'The technology that adds behavior and interactivity to a web page?', ar: 'التقنية اللي بتضيف سلوك وتفاعل لصفحة الويب؟', accept: ['JavaScript', 'JS', 'java script'] },
+    { type: 'type', tag: 'Try 1 · Q4', prompt: 'The design concept in which the layout is automatically adjusted to different screen sizes?', ar: 'فكرة التصميم اللي فيها الترتيب بيتظبط لوحده على مقاسات الشاشات المختلفة؟', accept: ['responsive design', 'responsive', 'responsive web design'] },
+    { tag: 'Try 2 (1)', prompt: 'Which is <u>NOT</u> an appropriate benefit of using semantic HTML?', ar: 'أنهي واحدة <u>مش</u> من فوايد الـ semantic HTML؟', options: MCQ_SEM, answer: 2, arEx: 'الـ semantic HTML مش شرط يخلّي الصفحة أسرع.' },
+    { tag: 'Try 2 (2)', prompt: 'Which most appropriately describes a framework?', ar: 'أنهي جملة بتوصف الـ framework أحسن وصف؟', options: MCQ_FW, answer: 1, arEx: 'الـ framework هيكل جاهز بيخلّي التطوير أكفأ.' },
+    { type: 'place', tag: 'Exercise 2', prompt: 'Fill in the blanks (a)–(d).', ar: 'املأ الفراغات من (a) لـ (d).', chipClass: tagOf,
+      layout: `<div class="passage">Web pages are mainly composed of three technologies: <span class="zone" data-z="a">(a)</span>, which defines the structure of the page; <span class="zone" data-z="b">(b)</span>, which specifies the appearance; and <span class="zone" data-z="c">(c)</span>, which adds behavior and interactivity. The concept of adjusting the layout according to different screen sizes such as PCs, smartphones, and tablets is called <span class="zone" data-z="d">(d)</span>.<span class="ar">صفحات الويب بتتكون من 3 تقنيات: (a) بتحدد الهيكل، و(b) بتحدد الشكل، و(c) بتضيف السلوك والتفاعل. وفكرة إن الترتيب يتظبط على مقاس الشاشة اسمها (d).</span></div>`,
       chips: ['HTML', 'CSS', 'JavaScript', 'responsive design', 'framework', 'SEO'], answer: { a: 'HTML', b: 'CSS', c: 'JavaScript', d: 'responsive design' } },
     ...[
-      ['a', 'Describing the structure of headings and paragraphs', 0],
-      ['b', 'Changing the color and size of text', 1],
-      ['c', 'Updating part of the screen when a button is pressed', 2],
-      ['d', 'Placing images and links', 0],
-      ['e', 'Setting the background color of the entire page', 1],
-      ['f', 'Validating the contents entered into a form', 2],
-    ].map(([k, p, a]) => ({ tag: `Exercise 3 (1) · ${k}`, prompt: p, ...ABC, answer: a })),
-    { tag: 'Exercise 3 (2)', prompt: 'Choose the reason responsive design is needed.', options: ['To improve the display speed of websites', 'Because websites are accessed from various devices such as PCs, smartphones, and tablets', 'To raise rankings in search engines', 'To add behavior to web pages'], answer: 1 },
-    { tag: '⚙ Think as an Engineer', prompt: 'The student club page lists events, uses the club\'s colors and has a live sign-up counter. What should the club do?', options: ['Write everything in one file', 'Use HTML, CSS and JavaScript for their proper roles'], answer: 1, cols: 2, explain: 'Each part has one job, so it is easier to find and fix problems, and you can change the look (CSS) without touching the content (HTML) or the behavior (JS).' },
-    { tag: '⚙ Think as an Engineer', prompt: 'What does the live sign-up counter need from <b>JavaScript</b>?', options: ['To count each click and update the number on the screen', 'To paint the page in the club\'s colors', 'To write the list of events', 'To make the page appear in search results'], answer: 0, explain: 'HTML holds the button and the number, CSS styles them, JavaScript makes them react and update.' },
-    { tag: '🌍 New context', prompt: 'A news site must look good on phones. Which is a <b>responsive-design</b> choice?', options: ['Make every page exactly 1200px wide', 'Use @media rules so the news columns stack into one column on phones', 'Wrap the menu in &lt;nav&gt;', 'Add more div boxes'], answer: 1, explain: 'It improves readability on every screen size.' },
-    { tag: '🌍 New context', prompt: 'The news site must be found easily by search engines. Which is a <b>semantic-HTML</b> choice?', options: ['Put each part in &lt;header&gt;, &lt;nav&gt;, &lt;main&gt; and &lt;footer&gt;', 'Make all the text bigger', 'Use red headings', 'Reload the page every minute'], answer: 0, explain: 'Meaningful tags improve SEO (and accessibility too).' },
+      ['a', 'Describing the structure of headings and paragraphs', 'وصف هيكل العناوين والفقرات', 0],
+      ['b', 'Changing the color and size of text', 'تغيير لون وحجم الكلام', 1],
+      ['c', 'Updating part of the screen when a button is pressed', 'تحديث جزء من الشاشة لما ندوس على زرار', 2],
+      ['d', 'Placing images and links', 'وضع الصور واللينكات', 0],
+      ['e', 'Setting the background color of the entire page', 'تحديد لون خلفية الصفحة كلها', 1],
+      ['f', 'Validating the contents entered into a form', 'التأكد من البيانات اللي اتكتبت في فورم', 2],
+    ].map(([k, p, ar, a]) => ({ tag: `Exercise 3 (1) · ${k}`, prompt: p, ar, ...ABC, answer: a })),
+    { tag: 'Exercise 3 (2)', prompt: 'Choose the reason responsive design is needed.', ar: 'اختار سبب احتياجنا للتصميم المتجاوب.', options: [op('To improve the display speed of websites', 'عشان نسرّع ظهور المواقع'), op('Because websites are accessed from various devices such as PCs, smartphones, and tablets', 'لأن الناس بتفتح المواقع من أجهزة مختلفة: كمبيوتر وموبايل وتابلت'), op('To raise rankings in search engines', 'عشان نطلع أعلى في نتايج البحث'), op('To add behavior to web pages', 'عشان نضيف سلوك للصفحات')], answer: 1 },
+    { tag: '⚙ Think as an Engineer', prompt: 'The student club page lists events, uses the club\'s colors and has a live sign-up counter. What should the club do?', ar: 'صفحة النادي فيها قائمة فعاليات، وألوان النادي، وعدّاد اشتراك مباشر. النادي يعمل إيه؟', options: [op('Write everything in one file', 'يكتب كل حاجة في ملف واحد'), op('Use HTML, CSS and JavaScript for their proper roles', 'يستخدم HTML وCSS وJavaScript كل واحدة في شغلتها')], answer: 1, cols: 2, explain: 'Each part has one job, so it is easier to find and fix problems, and you can change the look (CSS) without touching the content (HTML) or the behavior (JS).', arEx: 'كل جزء ليه شغلانة واحدة، فبيبقى أسهل نلاقي المشاكل ونصلّحها، ونقدر نغيّر الشكل (CSS) من غير ما نلمس المحتوى (HTML) أو السلوك (JS).' },
+    { tag: '⚙ Think as an Engineer', prompt: 'What does the live sign-up counter need from <b>JavaScript</b>?', ar: 'عدّاد الاشتراك محتاج إيه من الـ <b>JavaScript</b>؟', options: [op('To count each click and update the number on the screen', 'يعدّ كل ضغطة ويحدّث الرقم على الشاشة'), op('To paint the page in the club\'s colors', 'يلوّن الصفحة بألوان النادي'), op('To write the list of events', 'يكتب قائمة الفعاليات'), op('To make the page appear in search results', 'يخلّي الصفحة تظهر في نتايج البحث')], answer: 0, explain: 'HTML holds the button and the number, CSS styles them, JavaScript makes them react and update.', arEx: 'الـ HTML فيه الزرار والرقم، والـ CSS بينسّقهم، والـ JavaScript بتخلّيهم يتفاعلوا ويتحدّثوا.' },
+    { tag: '🌍 New context', prompt: 'A news site must look good on phones. Which is a <b>responsive-design</b> choice?', ar: 'موقع أخبار لازم يبان كويس على الموبايل. أنهي اختيار من <b>التصميم المتجاوب</b>؟', options: [op('Make every page exactly 1200px wide', 'نخلّي عرض كل صفحة 1200px بالظبط'), op('Use @media rules so the news columns stack into one column on phones', 'نستخدم @media عشان أعمدة الأخبار تبقى عمود واحد على الموبايل'), op('Wrap the menu in &lt;nav&gt;', 'نحط القائمة جوه nav'), op('Add more div boxes', 'نزوّد صناديق div')], answer: 1, explain: 'It improves readability on every screen size.', arEx: 'ده بيخلّي القراية أسهل على كل مقاسات الشاشات.' },
+    { tag: '🌍 New context', prompt: 'The news site must be found easily by search engines. Which is a <b>semantic-HTML</b> choice?', ar: 'موقع الأخبار لازم محركات البحث تلاقيه بسهولة. أنهي اختيار من <b>الـ semantic HTML</b>؟', options: [op('Put each part in &lt;header&gt;, &lt;nav&gt;, &lt;main&gt; and &lt;footer&gt;', 'نحط كل جزء في header وnav وmain وfooter'), op('Make all the text bigger', 'نكبّر كل الكلام'), op('Use red headings', 'نخلّي العناوين حمرا'), op('Reload the page every minute', 'نعيد تحميل الصفحة كل دقيقة')], answer: 0, explain: 'Meaningful tags improve SEO (and accessibility too).', arEx: 'التاجات اللي ليها معنى بتحسّن الـ SEO (وإمكانية الوصول كمان).' },
   ];
   screenQuiz({ id: 'exam', topic: null, title: '🏆 Exam Arena', questions: qs, retry: screenExam });
 }
