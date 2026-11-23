@@ -46,11 +46,29 @@ button{font:inherit;color:inherit}
 
 .screen{min-height:100vh;min-height:100dvh;max-width:1920px;margin:0 auto;display:flex;flex-direction:column;gap:12px;padding:clamp(10px,1.6vh,18px) clamp(12px,2vw,28px);animation:fade .3s ease both}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-@media (min-width:1000px) and (min-height:600px){
-  .screen.fit{height:100vh;height:100dvh}
-  .screen.fit .work{flex:1;min-height:0}
-  .screen.fit .work > *{min-height:0}
-}
+/* ---------- presentation mode: a fixed 16:9 slide (1920×1080) scaled to fill the screen, like PowerPoint ---------- */
+html.pres{font-size:21px}
+html.pres body{overflow:hidden;height:100vh;height:100dvh;background:#04060F}
+html.pres #app{position:fixed;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center;overflow:hidden;border-radius:6px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.06),0 30px 80px rgba(0,0,0,.6);
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(900px 520px at 90% -10%, rgba(77,163,255,.18), transparent 60%),
+    radial-gradient(760px 520px at -10% 110%, rgba(255,138,61,.12), transparent 60%),
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size:auto,auto,32px 32px,32px 32px}
+html.pres .screen{height:1080px;min-height:0;max-width:none;padding:22px 34px;gap:14px}
+html.pres .screen > .work, html.pres .screen > .quiz{flex:1;min-height:0}
+html.pres .screen .work > *{min-height:0}
+html.pres .screen.home{overflow:auto}
+html.pres .screen.home .cards{grid-template-columns:repeat(6,1fr);flex:1;min-height:0}
+html.pres .screen.home .tcard p{font-size:.85rem}
+html.pres .screen.home .hero .panel{gap:10px}
+.slideNav{display:none}
+html.pres .slideNav{display:flex;position:fixed;right:14px;bottom:12px;gap:6px;z-index:5;opacity:.35;transition:opacity .2s}
+html.pres .slideNav:hover{opacity:1}
+.slideNav button{width:38px;height:38px;border-radius:10px;border:1px solid #2C3874;background:#10173A;color:#F3F5FF;cursor:pointer;font-size:16px}
 
 /* ---------- buttons ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;font-family:var(--display);font-weight:800;font-size:1.05rem;
@@ -158,7 +176,7 @@ i.t{color:#FF9E64} i.p{color:#6E78B8} i.a{color:#7DCFFF} i.s{color:#9ECE6A} i.k{
 .g-t3{grid-template-columns:.85fr 1.3fr .8fr}
 .g-t4{grid-template-columns:1.6fr .9fr}
 .g-t5{grid-template-columns:1.7fr .75fr}
-@media (max-width:1000px){ .g-t1,.g-t2,.g-t3,.g-t4,.g-t5,.hero{grid-template-columns:1fr} }
+@media (max-width:899px){ .g-t1,.g-t2,.g-t3,.g-t4,.g-t5,.hero{grid-template-columns:1fr} }
 
 /* T1 */
 .t1stage{display:grid;grid-template-columns:1fr 9em;gap:10px;min-height:0;flex:1}
@@ -299,7 +317,7 @@ i.t{color:#FF9E64} i.p{color:#6E78B8} i.a{color:#7DCFFF} i.s{color:#9ECE6A} i.k{
 .qprompt{margin:0;font-family:var(--display);font-size:clamp(1.3rem,2.4vw,1.9rem);line-height:1.15}
 .qgrid{display:grid;gap:16px;align-items:start}
 .qgrid.v{grid-template-columns:1.1fr 1fr}
-@media (max-width:900px){.qgrid.v{grid-template-columns:1fr}}
+@media (max-width:899px){.qgrid.v{grid-template-columns:1fr}}
 .qvisual{display:flex;flex-direction:column;gap:8px;min-width:0}
 .opts{display:grid;gap:10px}
 .opts.c3{grid-template-columns:repeat(3,1fr)}
@@ -349,6 +367,7 @@ i.t{color:#FF9E64} i.p{color:#6E78B8} i.a{color:#7DCFFF} i.s{color:#9ECE6A} i.k{
 </head>
 <body>
 <div id="app"></div>
+<div class="slideNav"><button id="navPrev" title="Previous (←)">◀</button><button id="navNext" title="Next (→)">▶</button></div>
 <script>
 /* =========================================================
    Frontend Lab — Lesson 3-3: Fundamentals of Frontend Technology
@@ -427,6 +446,7 @@ function scrollToLine(box, ln) {
 const BRIDGE = `<script>
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(a)e.preventDefault();var t=e.target;parent.postMessage({lab:'click',tag:t.tagName.toLowerCase(),id:t.id||''},'*');},true);
 document.addEventListener('input',function(e){parent.postMessage({lab:'input',value:e.target.value||''},'*');});
+document.addEventListener('keydown',function(e){var t=e.target;if(t.tagName==='INPUT'||t.tagName==='TEXTAREA')return;if(['ArrowRight','ArrowLeft','PageDown','PageUp'].indexOf(e.key)>-1){e.preventDefault();parent.postMessage({lab:'key',key:e.key},'*');}});
 window.onerror=function(m){parent.postMessage({lab:'error',msg:String(m)},'*');};
 <\/script>`;
 function pageDoc({ html = '', css = null, js = null, viewport = true }) {
@@ -553,7 +573,7 @@ function makeDiscover(total) {
    HOME
    ========================================================= */
 function screenHome() {
-  app.innerHTML = `<div class="screen">
+  app.innerHTML = `<div class="screen home">
     <header class="top"><div class="crumb"><small>Lesson 3-3</small><b>Fundamentals of Frontend Technology</b></div>
       <button class="btn small ghost" id="fsBtn" title="Full screen">⛶</button></header>
     <section class="hero">
@@ -1020,7 +1040,7 @@ function screenT4Learn() {
         <div class="rstage" id="st"><div class="rdev" id="dev"><div class="clip"><iframe id="pv" title="Responsive preview"></iframe></div></div></div>
         <div class="tip" id="tip">↔️ Drag the slider or pick a device. Watch how many columns the event cards use.<span class="ar">حرّك السلايدر أو اختار جهاز، وشوف كروت الفعاليات بقت كام عمود.</span></div>
       </section>
-      <div style="display:grid;grid-template-rows:1fr auto;gap:12px;min-height:0">
+      <div style="display:grid;grid-template-rows:1fr 1fr;gap:12px;min-height:0">
         <section class="panel" style="min-height:0"><h3>🎨 style.css<span class="ar">ملف التنسيق</span></h3>
           <div class="codebox L-css" style="flex:1"><div class="cbody" id="code"></div></div>
         </section>
@@ -1557,6 +1577,40 @@ function route() {
   window.scrollTo(0, 0);
 }
 window.addEventListener('hashchange', route);
+
+/* ---------- presentation mode: fixed 1920×1080 slide scaled to the window ---------- */
+function fitStage() {
+  const pres = innerWidth >= 900 && innerWidth / innerHeight > 1.15;
+  document.documentElement.classList.toggle('pres', pres);
+  if (pres) {
+    const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+    app.style.transform = `translate(-50%, -50%) scale(${s})`;
+  } else app.style.transform = '';
+}
+window.addEventListener('resize', fitStage);
+document.addEventListener('fullscreenchange', () => setTimeout(fitStage, 50));
+fitStage();
+
+/* ---------- move between screens like slides (← → / PageUp PageDown / clicker) ---------- */
+const SLIDES = Object.keys(ROUTES);
+function stepSlide(d) {
+  const cur = SLIDES.indexOf(location.hash.slice(1) || 'home');
+  const next = SLIDES[Math.min(SLIDES.length - 1, Math.max(0, cur + d))];
+  if (next) location.hash = '#' + next;
+}
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  if (t && (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT' || t.isContentEditable)) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); stepSlide(1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); stepSlide(-1); }
+  else if (e.key === 'f' || e.key === 'F5') { e.preventDefault(); $('#fsBtn')?.click(); }
+});
+window.addEventListener('message', e => {
+  if (!e.data || e.data.lab !== 'key') return;
+  if (e.data.key === 'ArrowRight' || e.data.key === 'PageDown') stepSlide(1); else stepSlide(-1);
+});
+$('#navPrev').onclick = () => stepSlide(-1);
+$('#navNext').onclick = () => stepSlide(1);
 route();
 </script>
 </body>
