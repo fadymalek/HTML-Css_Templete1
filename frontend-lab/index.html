@@ -336,6 +336,43 @@ i.t{color:#FF9E64} i.p{color:#6E78B8} i.a{color:#7DCFFF} i.s{color:#9ECE6A} i.k{
 .qfeed.bad{border-color:var(--coral);background:rgba(255,107,122,.1)}
 .qfeed b{font-family:var(--display);font-size:1.1rem}
 .qnext{display:flex;justify-content:flex-end}
+
+/* ---------- question card: centered in height and width, bigger text ---------- */
+.qcard{display:flex;flex-direction:column;
+  background:radial-gradient(900px 420px at 50% 0%, rgba(167,139,250,.10), transparent 70%),linear-gradient(180deg,var(--panel),var(--bg2))}
+.qin{margin:auto;width:100%;max-width:1180px;display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2vh,22px);text-align:center;padding:4px 0}
+.qin.wide{max-width:1640px;gap:16px}
+.qin.wide .qprompt{font-size:clamp(1.5rem,2.6vw,2.1rem)}
+.qin.wide .qgrid.v{align-items:start}
+.qin .qtag{align-self:center;font-size:.85rem;padding:4px 16px}
+.qin .qprompt{font-size:clamp(1.7rem,3.4vw,2.7rem);line-height:1.18;max-width:28em;text-wrap:balance}
+.qin .qprompt .ar{text-align:center;font-size:.6em;margin-top:12px;color:var(--soft)}
+.qin .qgrid{width:100%}
+.qin .qgrid.v{text-align:left}
+.qin .qbody{display:flex;flex-direction:column;gap:14px;width:100%}
+.qin .opts{gap:16px}
+.qin .opt{font-size:1.2rem;padding:.75em 1.1em;border-radius:20px;box-shadow:0 6px 0 rgba(0,0,0,.25)}
+.qin .opt:hover{transform:translateY(-3px);box-shadow:0 9px 0 rgba(0,0,0,.25)}
+.qin .opt.big{font-size:clamp(1.6rem,2.6vw,2.2rem);padding:.85em .6em;min-height:3.6em;flex-direction:column;gap:4px}
+.qin .opt.big .ar{text-align:center}
+.qin .opt .ar{text-align:right}
+.qin .opt:not(.big) > span:last-child{flex:1;text-align:left}
+.qin .opt .k{width:2em;height:2em;font-size:1.05rem}
+.qin .qfeed{width:100%;text-align:left;font-size:1.05rem;padding:14px 18px}
+.qin .qfoot{width:100%;display:flex;gap:16px;align-items:stretch}
+.qin .qfoot:empty,.qin .qfoot:has(> [hidden]:first-child + [hidden]){display:none}
+.qin .qfoot .qfeed{flex:1;width:auto}
+.qin .qnext{width:auto;justify-content:center;align-items:center}
+.qin .opts.c2 .opt{min-height:3.8em}
+@media (max-width:700px){.qin .qfoot{flex-direction:column}}
+.qin .qnext .btn{font-size:1.3rem;padding:.6em 2.2em}
+.qin .tin{width:100%;max-width:760px;margin:0 auto}
+.qin .tin input{text-align:center;font-size:1.6rem}
+.qin .passage{text-align:left}
+.qin .chips{justify-content:center}
+.qin .chip{font-size:1.15rem;padding:.5em 1.1em}
+.qin .wire{width:100%;max-width:900px;margin:0 auto}
+.qin .thumb{max-width:7em}
 .tin{display:flex;gap:10px;flex-wrap:wrap}
 .tin input{flex:1;min-width:200px;font:inherit;font-weight:800;font-size:1.3rem;padding:.5em .8em;border-radius:14px;border:2px solid var(--line);background:#0A0F24;color:var(--text)}
 .tin input:focus{outline:none;border-color:var(--css)}
@@ -1284,16 +1321,16 @@ function screenQuiz({ id, topic, title, questions, retry }) {
     qz.innerHTML = `<div class="qtop"><b style="font-family:var(--display);font-size:1.2rem">${title}</b>
         <div class="dots">${questions.map((_, k) => `<span class="${k < i ? (results[k] ? 'done' : 'bad') : k === i ? 'now' : ''}"></span>`).join('')}</div>
         <div class="miss">Question ${i + 1}/${questions.length} · Mistakes: <b>${mistakes}</b></div></div>
-      <div class="qcard panel">
+      <div class="qcard panel"><div class="qin ${q.visual || q.mount ? 'wide' : ''}">
         ${q.tag ? `<div class="qtag">${q.tag}</div>` : ''}
         <h2 class="qprompt">${q.prompt}${AR(q.ar)}</h2>
         <div class="qgrid ${q.visual || q.mount ? 'v' : ''}">
           ${q.visual || q.mount ? `<div class="qvisual" id="qv">${q.visual || ''}</div>` : ''}
-          <div class="qbody" id="qb" style="display:flex;flex-direction:column;gap:12px"></div>
+          <div class="qbody" id="qb"></div>
         </div>
-        <div class="qfeed" id="qf" hidden></div>
-        <div class="qnext" id="qn" hidden><button class="btn primary">${i === questions.length - 1 ? 'See results 🏁' : 'Next →'}</button></div>
-      </div>`;
+        <div class="qfoot"><div class="qfeed" id="qf" hidden></div>
+        <div class="qnext" id="qn" hidden><button class="btn primary">${i === questions.length - 1 ? 'See results 🏁' : 'Next →'}</button></div></div>
+      </div></div>`;
     if (q.mount) q.mount($('#qv'));
     const qb = $('#qb');
     let wrongHere = false;
@@ -1304,7 +1341,7 @@ function screenQuiz({ id, topic, title, questions, retry }) {
       const arLine = [good ? 'إجابة صحيحة!' : 'مش بالظبط.', extraAr, q.arEx].filter(Boolean).join(' ');
       f.innerHTML = `<b>${good ? '✓ Correct!' : '✗ Not quite.'}</b> ${extra}${q.explain ? ' ' + q.explain : ''}${AR(arLine)}`;
       if (q.reveal) q.reveal($('#qv'));
-      const n = $('#qn'); n.hidden = false; const b = $('button', n); b.onclick = () => { i++; show(); }; b.focus();
+      const n = $('#qn'); n.hidden = false; const b = $('button', n); b.onclick = () => { i++; show(); }; b.focus({ preventScroll: true });
     };
     if (q.type === 'type') {
       qb.innerHTML = `<div class="tin"><input id="ti" placeholder="Type your answer… / اكتب إجابتك" autocomplete="off"><button class="btn primary" id="tc">Check</button></div>`;
@@ -1325,7 +1362,7 @@ function screenQuiz({ id, topic, title, questions, retry }) {
       const tryPlace = (z, c) => {
         if (z.classList.contains('filled')) return;
         if (q.answer[z.dataset.z] === c) {
-          z.classList.add('filled'); z.classList.remove('ready'); z.innerHTML = q.fillLabel ? q.fillLabel(c, z) : esc(c); filled++;
+          z.classList.add('filled'); z.classList.remove('ready', 'bad'); z.innerHTML = q.fillLabel ? q.fillLabel(c, z) : esc(c); filled++;
           const chip = $(`.chip[data-c="${CSS.escape(c)}"]`, qb); if (chip) chip.remove();
           sel = null; zones.forEach(x => x.classList.remove('ready'));
           if (filled === total) finishQ(true);
@@ -1349,7 +1386,7 @@ function screenQuiz({ id, topic, title, questions, retry }) {
         for (let t = 0; t < 12; t++) { list = shuffle(opts); if (list.findIndex(x => x.k === q.answer) !== lastPos) break; }
       }
       lastPos = list.findIndex(x => x.k === q.answer);
-      const cols = q.cols ? 'c' + q.cols : '';
+      const cols = q.cols ? 'c' + q.cols : (!q.big && !q.visual && !q.mount && q.options.length === 4 ? 'c2' : '');
       qb.innerHTML = `<div class="opts ${cols}">${list.map(({ o, k }, j) => `<button class="opt ${q.big ? 'big' : ''}" data-k="${k}" ${q.optColor ? `style="--c:${q.optColor[k]}"` : ''}>${q.noKeys || q.big ? '' : `<span class="k">${'ABCDEF'[j]}</span>`}<span>${o}</span></button>`).join('')}</div>`;
       $$('.opt', qb).forEach(b => b.onclick = () => {
         const k = +b.dataset.k, ok = k === q.answer;
@@ -1481,8 +1518,8 @@ function screenT4Solve() {
     arEx: (w === 600 || w === 900 ? `min-width: ${w}px معناها ${w}px أو أكبر، فالقاعدة بتشتغل. ` : w === 599 ? '599 أقل من 600، فقاعدة التابلت لسه مش شغالة. ' : '') + (w >= 900 ? 'القاعدتين شغالين، وقاعدة 900px جاية في الآخر فهي اللي بتكسب: 3 أعمدة.' : w >= 600 ? 'قاعدة 600px بس اللي شغالة: عمودين.' : 'مفيش قاعدة @media شغالة، فبيتطبّق التنسيق الأساسي: عمود واحد.'),
     visual: cssSnip,
     reveal: el => {
-      el.insertAdjacentHTML('beforeend', `<div class="rstage" style="min-height:220px;height:240px;padding:8px"><div class="rdev"><div class="clip"><iframe></iframe></div></div></div>`);
-      const st = $('.rstage', el), dev = $('.rdev', el), fr = $('iframe', el);
+      const host = $('#qb') || el; host.insertAdjacentHTML('beforeend', `<div class="rstage" style="min-height:220px;height:270px;padding:8px;flex:none"><div class="rdev"><div class="clip"><iframe></iframe></div></div></div>`);
+      const st = $('.rstage', host), dev = $('.rdev', host), fr = $('iframe', host);
       fr.srcdoc = pageDoc({ html: R_HTML, css: R_CSS });
       requestAnimationFrame(() => scaledFrame(st, dev, fr, w));
     }
